@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "./public",
+        "target": "es2020",
+        "module": "es2020",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": false,
+        "allowSyntheticDefaultImports": true
+    }
+}
