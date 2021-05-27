@@ -5,10 +5,6 @@ import { createFileTree, TreeFolder } from "./FileTree";
 import FileTreeView from "./components/FileTreeView";
 import ExtensionDetails from "./components/ExtensionDetails";
 
-const root = document.createElement("div");
-root.id = "root";
-document.body.appendChild(root);
-
 (async () => {
     const extension = "tabs-aside";
 
@@ -28,7 +24,7 @@ document.body.appendChild(root);
             <ExtensionDetails details={info} />
             <FileTreeView data={fileTree} />
         </>,
-        root
+        document.body
     );
 
     // close the ZipReader
