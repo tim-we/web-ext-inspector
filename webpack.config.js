@@ -19,11 +19,14 @@ module.exports = {
                 options: {
                     onlyCompileBundledFiles: true,
                 },
-            }
+            },
         ],
     },
     output: {
         filename: "[name].bundle.js",
         path: path.resolve(__dirname, "public"),
+    },
+    devServer: {
+        contentBase: path.join(__dirname, "public"),
     },
 };

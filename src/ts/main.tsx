@@ -1,32 +1,27 @@
 import * as Preact from "preact";
-import * as AMOAPI from "./AMOAPI";
-import * as zip from "@zip.js/zip.js";
-import { createFileTree, TreeFolder } from "./FileTree";
-import FileTreeView from "./components/FileTreeView";
-import ExtensionDetails from "./components/ExtensionDetails";
+import Analyzer from "./components/Analyzer";
+import Home from "./components/ExtensionSelector";
 
-(async () => {
-    const extension = "tabs-aside";
+type AppState = {
+    extension?: string;
+};
 
-    const info = await AMOAPI.getInfo(extension);
+class App extends Preact.Component<{}, AppState> {
+    public render() {
+        const extension = this.state.extension;
 
-    const data = info.current_version.files.filter(
-        (file) => file.is_webextension
-    )[0];
+        if (extension) {
+            return <Analyzer extension={extension} />;
+        } else {
+            return (
+                <Home
+                    onSelect={(ext) =>
+                        this.setState({ extension: ext })
+                    }
+                />
+            );
+        }
+    }
+}
 
-    //@ts-ignore
-    const reader = new zip.ZipReader(new zip.HttpReader(data.url));
-
-    const fileTree = createFileTree(await reader.getEntries());
-
-    Preact.render(
-        <>
-            <ExtensionDetails details={info} />
-            <FileTreeView data={fileTree} />
-        </>,
-        document.body
-    );
-
-    // close the ZipReader
-    await reader.close();
-})();
+Preact.render(<App />, document.body);
