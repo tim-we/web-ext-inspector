@@ -1,5 +1,6 @@
 import { Component } from "preact";
 import { Details } from "../AMOAPI";
+import prettyBytes from "pretty-bytes";
 
 type Props = {
     details: Details;
@@ -8,6 +9,8 @@ type Props = {
 export default class ExtensionDetails extends Component<Props> {
     public render() {
         const details = this.props.details;
+
+        const ext = details.current_version.files.filter(f => f.is_webextension)[0];
 
         return (
             <div>
@@ -33,6 +36,10 @@ export default class ExtensionDetails extends Component<Props> {
                         <tr>
                             <td>Version</td>
                             <td>{details.current_version.version}</td>
+                        </tr>
+                        <tr>
+                            <td>Size</td>
+                            <td>{prettyBytes(ext.size)}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -1,6 +1,6 @@
 import * as Preact from "preact";
 import Analyzer from "./components/Analyzer";
-import Home from "./components/ExtensionSelector";
+import ExtensionSelector from "./components/ExtensionSelector";
 
 type AppState = {
     extension?: string;
@@ -14,7 +14,7 @@ class App extends Preact.Component<{}, AppState> {
             return <Analyzer extension={extension} />;
         } else {
             return (
-                <Home
+                <ExtensionSelector
                     onSelect={(ext) =>
                         this.setState({ extension: ext })
                     }

@@ -12,7 +12,8 @@
     "dependencies": {
         "@zip.js/zip.js": "^2.2.38",
         "comlink": "^4.3.1",
-        "preact": "^10.5.13"
+        "preact": "^10.5.13",
+        "pretty-bytes": "^5.6.0"
     },
     "devDependencies": {
         "ts-loader": "^9.2.2",
