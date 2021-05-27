@@ -1,0 +1,29 @@
+name: Create & Publish
+
+on:
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.x
+      
+      - name: NPM install
+        run: npm ci
+        
+      - name: Build
+        run: npm run build:prod
+
+      - name: Publish
+        run: echo TODO
