@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "webpack --config webpack.config.js",
-        "build:prod": "webpack --config webpack.config.prod.js --progress",
+        "build": "webpack --config webpack.config.js --progress",
+        "build:prod": "webpack --config webpack.config.prod.js",
         "start:dev": "webpack serve --config webpack.config.prod.js --progress"
     },
     "author": "tim-we",
