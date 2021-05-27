@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: github pages
 
 on:
   push:
@@ -9,21 +9,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
       
       - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.5
+        uses: actions/setup-node@v2
         with:
-          node-version: 14.x
-      
-      - name: NPM install
-        run: npm ci
-        
-      - name: Build
-        run: npm run build:prod
+          node-version: '14'
+
+      - run: npm install
+      - run: npm run build:prod
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
