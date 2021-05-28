@@ -46,10 +46,10 @@ class FolderView extends Component<FVProps> {
             <ul>
                 {data.map((node) => {
                     if (node.type === "file") {
-                        return <li>{node.name}</li>;
+                        return <li class="file">{node.name}</li>;
                     } else {
                         return (
-                            <li>
+                            <li class="folder">
                                 {node.name}
                                 <FolderView
                                     path={this.props.path + "/" + node.name}

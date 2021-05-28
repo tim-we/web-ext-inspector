@@ -1,0 +1,23 @@
+.file-explorer {
+    ul {
+        list-style: none;
+
+        li {
+            margin-bottom: 5px;
+            margin-top: 5px;
+        }
+
+        li::before {
+            content: " ";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-image: url("../icons/bootstrap/file.svg");
+            margin-right: 10px;
+        }
+
+        li.folder::before {
+            background-image: url("../icons/bootstrap/folder2.svg");
+        }
+    }
+}

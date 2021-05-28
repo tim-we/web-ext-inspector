@@ -17,7 +17,8 @@
         "less-loader": "^9.0.0",
         "preact": "^10.5.13",
         "pretty-bytes": "^5.6.0",
-        "style-loader": "^2.0.0"
+        "style-loader": "^2.0.0",
+        "svg-url-loader": "^7.1.1"
     },
     "devDependencies": {
         "ts-loader": "^9.2.2",
