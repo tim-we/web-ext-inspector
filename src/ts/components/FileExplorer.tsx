@@ -48,7 +48,7 @@ class FolderView extends Component<FVProps> {
                     if (node.type === "file") {
                         return (
                             <li
-                                class={isCode(node.name) ? "file codes" : "file"}
+                                class={isCode(node.name) ? "file code" : "file"}
                             >
                                 {node.name}
                             </li>
