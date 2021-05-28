@@ -5,7 +5,7 @@ import {
 } from "../Inspector";
 import * as zip from "@zip.js/zip.js";
 import * as AMOAPI from "./AMOAPI";
-import { createFileTree, TreeFolder } from "./FileTree";
+import { createFileTree, TreeFolder, TreeNodeDTO } from "./FileTree";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
@@ -59,11 +59,11 @@ export class WorkerAPI {
         return this.details;
     }
 
-    public listDirectoryContents(path: string): string[] {
+    public listDirectoryContents(path: string): TreeNodeDTO[] {
         const dir = this.root.get(path);
 
         if (dir instanceof TreeFolder) {
-            return Array.from(dir.children.values()).map((tn) => tn.name);
+            return Array.from(dir.children.values()).map((tn) => tn.toDTO());
         } else {
             throw new Error(`${path} is not a directory.`);
         }

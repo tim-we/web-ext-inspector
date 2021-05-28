@@ -1,5 +1,5 @@
 import { Component } from "preact";
-import FileTreeView from "./FileTreeView";
+import FileExplorer from "./FileExplorer";
 import ExtensionDetails from "./ExtensionDetails";
 import {
     createInspector,
@@ -40,7 +40,11 @@ export default class Analyzer extends Component<Props, State> {
                 {state.readyState !== "loading-details" ? (
                     <ExtensionDetails inspector={state.inspector} />
                 ) : null}
-                <div class="readyState">{state.readyState}</div>
+                {state.readyState === "ready" ? (
+                    <FileExplorer path="" inspector={state.inspector} />
+                ) : (
+                    <div class="readyState">{state.readyState}</div>
+                )}
             </div>
         );
     }
