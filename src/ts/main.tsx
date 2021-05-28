@@ -11,7 +11,7 @@ class App extends Preact.Component<{}, AppState> {
         const extension = this.state.extension;
 
         if (extension) {
-            return <Analyzer extension={extension} />;
+            return <Analyzer extId={extension} />;
         } else {
             return (
                 <ExtensionSelector

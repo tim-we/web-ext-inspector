@@ -5,6 +5,14 @@ module.exports = {
     mode: "production",
     entry: {
         main: path.join(__dirname, "src", "ts", "main.tsx"),
+        worker: path.join(
+            __dirname,
+            "src",
+            "ts",
+            "inspector",
+            "worker",
+            "worker.ts"
+        ),
     },
     target: "web",
     resolve: {
@@ -18,7 +26,7 @@ module.exports = {
                 options: {
                     onlyCompileBundledFiles: true,
                 },
-            }
+            },
         ],
     },
     output: {

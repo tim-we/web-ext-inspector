@@ -1,5 +1,5 @@
 import { Component } from "preact";
-import { TreeFolder, TreeFile, TreeNode } from "../FileTree";
+import { TreeFolder, TreeFile, TreeNode } from "../inspector/worker/FileTree";
 
 type Data<T> = {
     data: T;

@@ -1,16 +1,34 @@
 import { Component } from "preact";
-import { Details } from "../AMOAPI";
+import { Details } from "../inspector/worker/AMOAPI";
 import prettyBytes from "pretty-bytes";
+import { Inspector } from "../inspector/Inspector";
 
 type Props = {
-    details: Details;
+    inspector: Inspector;
 };
 
-export default class ExtensionDetails extends Component<Props> {
-    public render() {
-        const details = this.props.details;
+type State = {
+    details?: Details;
+};
 
-        const ext = details.current_version.files.filter(f => f.is_webextension)[0];
+export default class ExtensionDetails extends Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        props.inspector
+            .getDetails()
+            .then((details) => this.setState({ details }));
+    }
+
+    public render() {
+        const details = this.state.details;
+
+        if (details === undefined) {
+            return <div>loading details...</div>;
+        }
+
+        const ext = details.current_version.files.filter(
+            (f) => f.is_webextension
+        )[0];
 
         return (
             <div>

@@ -1,53 +1,47 @@
 import { Component } from "preact";
 import FileTreeView from "./FileTreeView";
 import ExtensionDetails from "./ExtensionDetails";
-import { Details } from "../AMOAPI";
-import { createFileTree, TreeFolder } from "../FileTree";
-import * as AMOAPI from "../AMOAPI";
-import * as zip from "@zip.js/zip.js";
+import {
+    createInspector,
+    Inspector,
+    InspectorReadyState,
+} from "../inspector/Inspector";
+import * as Comlink from "comlink";
 
 type Props = {
-    extension: string;
+    extId: string;
 };
 
 type State = {
-    details?: Details,
-    files?: TreeFolder
+    inspector: Inspector;
+    readyState: InspectorReadyState;
 };
 
 export default class Analyzer extends Component<Props, State> {
     public constructor(props: Props) {
         super(props);
-    }
-
-    public async componentWillMount() {
-        const details = await AMOAPI.getInfo(this.props.extension)
-        this.setState({details});
-
-        const data = details.current_version.files.filter(
-            (file) => file.is_webextension
-        )[0];
-
-        //@ts-ignore
-        const reader = new zip.ZipReader(new zip.HttpReader(data.url));
-
-        const files = createFileTree(await reader.getEntries());
-        this.setState({files});
-
-        await reader.close();
+        const inspector = createInspector(props.extId);
+        this.state = {
+            inspector,
+            readyState: "downloading",
+        };
+        inspector.onReadyStateChange(
+            Comlink.proxy((readyState) => {
+                this.setState({ readyState });
+            })
+        );
     }
 
     public render() {
         const state = this.state;
-        return <div>
-            <h2>Analyzer</h2>
-            {
-                state.details ? <ExtensionDetails details={state.details} /> : null
-            }
-            {
-                state.files ? <FileTreeView data={state.files} /> : null
-            }
-            
-        </div>;
+        return (
+            <div>
+                <h2>Extension Inspector</h2>
+                {state.readyState !== "loading-details" ? (
+                    <ExtensionDetails inspector={state.inspector} />
+                ) : null}
+                <div class="readyState">{state.readyState}</div>
+            </div>
+        );
     }
 }

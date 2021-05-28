@@ -35,6 +35,23 @@ export class TreeFolder extends TreeNode {
     public get numFiles(): number {
         return this.count;
     }
+
+    public get(path: string): TreeNode | undefined {
+        let parts = path.split("/");
+
+        if(parts.length === 0) {
+            return undefined;
+        }
+
+        const node = this.children.get(parts.shift()!);
+
+
+        if(node instanceof TreeFolder && parts.length > 0) {
+            return node.get(parts.join("/"));
+        } else {
+            return node;
+        }
+    }
 }
 
 export class TreeFile extends TreeNode {
