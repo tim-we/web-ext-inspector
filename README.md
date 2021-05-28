@@ -1,4 +1,4 @@
-# web-ext-analyzer
+# web-ext-inspector
 
 Inspect the contents of web extensions hosted on addons.mozilla.org
 
