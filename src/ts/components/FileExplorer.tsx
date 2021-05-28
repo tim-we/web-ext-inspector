@@ -71,5 +71,5 @@ class FolderView extends Component<FVProps> {
 }
 
 function isCode(filename: string): boolean {
-    return /\.(js|json)$/i.test(filename);
+    return /\.(js|jsx|json)$/i.test(filename);
 }
