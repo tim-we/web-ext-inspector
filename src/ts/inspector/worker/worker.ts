@@ -1,11 +1,19 @@
 import * as Comlink from "comlink";
-import { InspectorReadyState, InspectorReadyStateChangeHandler } from "../Inspector";
+import {
+    InspectorReadyState,
+    InspectorReadyStateChangeHandler,
+} from "../Inspector";
 import * as zip from "@zip.js/zip.js";
 import * as AMOAPI from "./AMOAPI";
 import { createFileTree, TreeFolder } from "./FileTree";
 
+zip.configure({
+    useWebWorkers: false, // this is already a worker
+});
+
 export class WorkerAPI {
-    private readyStateHandlers: Set<InspectorReadyStateChangeHandler> = new Set();
+    private readyStateHandlers: Set<InspectorReadyStateChangeHandler> =
+        new Set();
     private root: TreeFolder = new TreeFolder("root");
     private details: AMOAPI.Details | undefined;
     private readyState: InspectorReadyState = "loading-details";
@@ -16,7 +24,7 @@ export class WorkerAPI {
 
     public async load(extId: string): Promise<void> {
         this.setReadyState("loading-details");
-        const details = this.details = await AMOAPI.getInfo(extId);
+        const details = (this.details = await AMOAPI.getInfo(extId));
 
         const webExts = details.current_version.files.filter(
             (file) => file.is_webextension
@@ -37,15 +45,15 @@ export class WorkerAPI {
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {
-        if(this.readyState === "loading-details") {
+        if (this.readyState === "loading-details") {
             let resolver: InspectorReadyStateChangeHandler;
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 resolver = resolve;
                 this.onReadyStateChange(resolve);
             });
             this.readyStateHandlers.delete(resolver!);
         }
-        if(this.details === undefined) {
+        if (this.details === undefined) {
             throw new Error("Details not available.");
         }
         return this.details;
