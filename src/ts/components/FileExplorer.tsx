@@ -38,7 +38,7 @@ class FolderView extends Component<FVProps> {
     public render() {
         const data = this.props.data.get(this.props.path);
 
-        if(!data) {
+        if (!data) {
             return null;
         }
 
@@ -46,7 +46,13 @@ class FolderView extends Component<FVProps> {
             <ul>
                 {data.map((node) => {
                     if (node.type === "file") {
-                        return <li class="file">{node.name}</li>;
+                        return (
+                            <li
+                                class={isCode(node.name) ? "file codes" : "file"}
+                            >
+                                {node.name}
+                            </li>
+                        );
                     } else {
                         return (
                             <li class="folder">
@@ -62,4 +68,8 @@ class FolderView extends Component<FVProps> {
             </ul>
         );
     }
+}
+
+function isCode(filename: string): boolean {
+    return /\.(js|json)$/i.test(filename);
 }
