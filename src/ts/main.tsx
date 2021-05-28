@@ -2,6 +2,9 @@ import * as Preact from "preact";
 import Analyzer from "./components/Analyzer";
 import ExtensionSelector from "./components/ExtensionSelector";
 
+// create styles (in <head>)
+import "../less/app.less";
+
 type AppState = {
     extension?: string;
 };

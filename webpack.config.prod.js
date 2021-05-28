@@ -27,6 +27,14 @@ module.exports = {
                     onlyCompileBundledFiles: true,
                 },
             },
+            {
+                test: /\.less$/i,
+                use: [
+                    { loader: "style-loader" }, //  creates style nodes from JS strings
+                    { loader: "css-loader" }, //    translates CSS into a JS module (CommonJS)
+                    { loader: "less-loader" }, //   compiles Less to CSS
+                ],
+            },
         ],
     },
     output: {
