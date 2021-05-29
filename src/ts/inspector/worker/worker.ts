@@ -5,7 +5,8 @@ import {
 } from "../Inspector";
 import * as zip from "@zip.js/zip.js";
 import * as AMOAPI from "./AMOAPI";
-import { createFileTree, TreeFolder, TreeNodeDTO } from "./FileTree";
+import { createFileTree, TreeFile, TreeFolder, TreeNodeDTO } from "./FileTree";
+import { Manifest } from "../../types/Manifest";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
@@ -17,6 +18,7 @@ export class WorkerAPI {
     private root: TreeFolder = new TreeFolder("root");
     private details: AMOAPI.Details | undefined;
     private readyState: InspectorReadyState = "loading-details";
+    private manifest: Manifest | undefined;
 
     public onReadyStateChange(callback: InspectorReadyStateChangeHandler) {
         this.readyStateHandlers.add(callback);
@@ -40,8 +42,26 @@ export class WorkerAPI {
 
         const reader = new zip.ZipReader(httpReader);
         this.root = createFileTree(await reader.getEntries());
+
+        this.loadManifest();
+
         await reader.close();
         this.setReadyState("ready");
+    }
+
+    private async loadManifest() {
+        const manifestNode = this.root.get("manifest.json") as TreeFile;
+        if (!(manifestNode instanceof TreeFile)) {
+            throw new Error("Could not find manifest.json.");
+        }
+        const entry = manifestNode.entry;
+
+        if (entry.getData === undefined) {
+            throw new Error("Unknown error.");
+        }
+
+        const text: string = await entry.getData(new zip.TextWriter());
+        this.manifest = JSON.parse(text);
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {
@@ -67,6 +87,13 @@ export class WorkerAPI {
         } else {
             throw new Error(`${path} is not a directory.`);
         }
+    }
+
+    public getManifest(): Manifest {
+        if (this.manifest === undefined) {
+            throw new Error("Manifest not available.");
+        }
+        return this.manifest;
     }
 
     private setReadyState(newState: InspectorReadyState) {

@@ -61,7 +61,7 @@ export class TreeFolder extends TreeNode {
 }
 
 export class TreeFile extends TreeNode {
-    private entry: Entry;
+    public entry: Entry;
     public readonly type = "file";
 
     public constructor(entry: Entry, name: string) {
