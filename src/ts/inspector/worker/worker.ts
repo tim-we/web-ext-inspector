@@ -22,6 +22,7 @@ export class WorkerAPI {
     private readyState: InspectorReadyState = "loading-details";
     private manifest: Manifest | undefined;
     private backgroundScripts: TreeFile[] = [];
+    private contentScripts: TreeFile[] = [];
 
     public onReadyStateChange(callback: InspectorReadyStateChangeHandler) {
         this.readyStateHandlers.add(callback);
@@ -47,11 +48,18 @@ export class WorkerAPI {
         this.root = createFileTree(await reader.getEntries());
 
         this.manifest = await ManifestExtractor.getManifest(this.root);
+
         this.backgroundScripts = ScriptFinder.getBackgroundScripts(
             this.root,
             this.manifest
         );
-        this.backgroundScripts.forEach(file => file.addTag("background"));
+        this.backgroundScripts.forEach((file) => file.addTag("background"));
+
+        this.contentScripts = ScriptFinder.getContentScripts(
+            this.root,
+            this.manifest
+        );
+        this.contentScripts.forEach((file) => file.addTag("content"));
 
         await reader.close();
         this.setReadyState("ready");
