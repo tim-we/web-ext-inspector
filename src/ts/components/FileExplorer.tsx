@@ -1,6 +1,7 @@
 import { Component } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
+import { startDownload } from "../utils/download";
 
 type Props = {
     inspector: Inspector;
@@ -50,25 +51,39 @@ class FolderView extends Component<FVProps> {
         return (
             <ul>
                 {data.map((node) => {
+                    const objPath = (this.props.path + "/" + node.name).replace(
+                        /^\//,
+                        ""
+                    );
+
                     if (node.type === "file") {
                         return (
                             <li
                                 class={isCode(node.name) ? "file code" : "file"}
                             >
-                                {node.name}
+                                <a
+                                    href={"#/files/" + objPath}
+                                    title="open file"
+                                    onClick={async (e: MouseEvent) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        const url =
+                                            await this.props.inspector.getFileDownloadURL(
+                                                objPath
+                                            );
+                                        startDownload(url, node.name);
+                                    }}
+                                >
+                                    {node.name}
+                                </a>
                             </li>
                         );
                     } else {
-                        const folderPath = (
-                            this.props.path +
-                            "/" +
-                            node.name
-                        ).replace(/^\//, "");
-                        const isOpen = this.props.data.has(folderPath);
+                        const isOpen = this.props.data.has(objPath);
                         return (
                             <li class={isOpen ? "folder open" : "folder"}>
                                 <a
-                                    href={"#/files/" + folderPath}
+                                    href={"#/files/" + objPath}
                                     title={
                                         isOpen
                                             ? "click to collapse"
@@ -78,16 +93,13 @@ class FolderView extends Component<FVProps> {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         if (isOpen) {
-                                            this.props.data.delete(folderPath);
+                                            this.props.data.delete(objPath);
                                         } else {
                                             const list =
                                                 await this.props.inspector.listDirectoryContents(
-                                                    folderPath
+                                                    objPath
                                                 );
-                                            this.props.data.set(
-                                                folderPath,
-                                                list
-                                            );
+                                            this.props.data.set(objPath, list);
                                         }
                                         this.forceUpdate();
                                     }}
@@ -96,7 +108,7 @@ class FolderView extends Component<FVProps> {
                                 </a>
                                 {isOpen ? (
                                     <FolderView
-                                        path={folderPath}
+                                        path={objPath}
                                         data={this.props.data}
                                         inspector={this.props.inspector}
                                     />

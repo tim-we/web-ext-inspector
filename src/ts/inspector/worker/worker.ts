@@ -96,6 +96,24 @@ export class WorkerAPI {
         return this.manifest;
     }
 
+    public async getFileDownloadURL(
+        path: string,
+        timeout: number = 10.0
+    ): Promise<string> {
+        const fileNode = this.root.get(path);
+
+        if (!(fileNode instanceof TreeFile)) {
+            throw new Error(`"${path}" is not a file.`);
+        }
+
+        const blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
+        const url = URL.createObjectURL(blob);
+
+        setTimeout(() => URL.revokeObjectURL(url), timeout * 1000);
+
+        return url;
+    }
+
     private setReadyState(newState: InspectorReadyState) {
         this.readyState = newState;
         this.readyStateHandlers.forEach((cb) => cb(newState));
