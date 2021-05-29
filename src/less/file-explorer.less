@@ -4,10 +4,20 @@
     ul {
         list-style: none;
         margin: 0px;
+        padding-left: 25px;
 
         li {
             margin-bottom: 5px;
             margin-top: 5px;
+
+            a {
+                color: white;
+                text-decoration: none;
+            }
+
+            a:hover, a:active {
+                text-decoration: underline;
+            }
         }
 
         li::before {
@@ -19,8 +29,18 @@
             margin-right: 10px;
         }
 
-        li.folder::before {
-            background-image: url("../icons/bootstrap/folder2.svg");
+        li.folder {
+            &::before {
+                background-image: url("../icons/bootstrap/folder2.svg");
+            }
+
+            &.open::before {
+                background-image: url("../icons/bootstrap/folder2-open.svg");
+            }
+
+            &.open > a {
+                opacity: 0.8;
+            }
         }
 
         li.code::before {

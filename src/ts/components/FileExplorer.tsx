@@ -23,7 +23,11 @@ export default class FileExplorer extends Component<Props> {
     public render() {
         return (
             <div class="file-explorer">
-                <FolderView path={this.props.path ?? ""} data={this.data} />
+                <FolderView
+                    path={this.props.path ?? ""}
+                    data={this.data}
+                    inspector={this.props.inspector}
+                />
             </div>
         );
     }
@@ -32,6 +36,7 @@ export default class FileExplorer extends Component<Props> {
 type FVProps = {
     path: string;
     data: Map<string, TreeNodeDTO[]>;
+    inspector: Inspector;
 };
 
 class FolderView extends Component<FVProps> {
@@ -54,13 +59,48 @@ class FolderView extends Component<FVProps> {
                             </li>
                         );
                     } else {
+                        const folderPath = (
+                            this.props.path +
+                            "/" +
+                            node.name
+                        ).replace(/^\//, "");
+                        const isOpen = this.props.data.has(folderPath);
                         return (
-                            <li class="folder">
-                                {node.name}
-                                <FolderView
-                                    path={this.props.path + "/" + node.name}
-                                    data={this.props.data}
-                                />
+                            <li class={isOpen ? "folder open" : "folder"}>
+                                <a
+                                    href={"#/files/" + folderPath}
+                                    title={
+                                        isOpen
+                                            ? "click to collapse"
+                                            : "click to expand"
+                                    }
+                                    onClick={async (e: MouseEvent) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (isOpen) {
+                                            this.props.data.delete(folderPath);
+                                        } else {
+                                            const list =
+                                                await this.props.inspector.listDirectoryContents(
+                                                    folderPath
+                                                );
+                                            this.props.data.set(
+                                                folderPath,
+                                                list
+                                            );
+                                        }
+                                        this.forceUpdate();
+                                    }}
+                                >
+                                    {node.name}
+                                </a>
+                                {isOpen ? (
+                                    <FolderView
+                                        path={folderPath}
+                                        data={this.props.data}
+                                        inspector={this.props.inspector}
+                                    />
+                                ) : null}
                             </li>
                         );
                     }
