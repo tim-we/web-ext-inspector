@@ -2,7 +2,7 @@ import { Entry } from "@zip.js/zip.js";
 
 export type TreeNodeDTO =
     | { name: string; type: "folder" }
-    | { name: string; type: "file"; size: number };
+    | { name: string; type: "file"; size: number; tags: string[] };
 
 export abstract class TreeNode {
     public name: string;
@@ -64,6 +64,7 @@ export class TreeFolder extends TreeNode {
 
 export class TreeFile extends TreeNode {
     public entry: Entry;
+    private tags: Set<string> = new Set();
 
     public constructor(entry: Entry, name: string) {
         super(name);
@@ -72,6 +73,14 @@ export class TreeFile extends TreeNode {
         if (entry.directory) {
             throw new Error(`Entry is a directory: ${entry.filename}`);
         }
+
+        if (/\.(js|jsx|json)$/i.test(name)) {
+            this.tags.add("code");
+        }
+    }
+
+    public addTag(tag: string): void {
+        this.tags.add(tag);
     }
 
     public toDTO(): TreeNodeDTO {
@@ -79,6 +88,7 @@ export class TreeFile extends TreeNode {
             name: this.name,
             type: "file",
             size: this.entry.uncompressedSize,
+            tags: Array.from(this.tags),
         };
     }
 }

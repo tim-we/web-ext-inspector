@@ -1,4 +1,4 @@
-import { Component } from "preact";
+import { Component, FunctionComponent } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import { startDownload } from "../utils/download";
@@ -59,26 +59,11 @@ class FolderView extends Component<FVProps> {
 
                     if (node.type === "file") {
                         return (
-                            <li
-                                class={isCode(node.name) ? "file code" : "file"}
-                            >
-                                <a
-                                    href={"#/files/" + objPath}
-                                    title="open file"
-                                    onClick={async (e: MouseEvent) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        const url =
-                                            await this.props.inspector.getFileDownloadURL(
-                                                objPath
-                                            );
-                                        startDownload(url, node.name);
-                                    }}
-                                >
-                                    {node.name}
-                                </a>
-                                <span class="size">{prettyBytes(node.size)}</span>
-                            </li>
+                            <FileNodeView
+                                path={objPath}
+                                node={node}
+                                inspector={this.props.inspector}
+                            />
                         );
                     } else {
                         const isOpen = this.props.data.has(objPath);
@@ -124,6 +109,53 @@ class FolderView extends Component<FVProps> {
     }
 }
 
-function isCode(filename: string): boolean {
-    return /\.(js|jsx|json)$/i.test(filename);
+type FNVProps = {
+    path: string;
+    node: TreeNodeDTO;
+    inspector: Inspector;
+};
+
+class FileNodeView extends Component<FNVProps> {
+    public render() {
+        const path = this.props.path;
+        const node = this.props.node;
+
+        if (node.type === "folder") {
+            throw new Error(`Node ${node.name} is not a folder.`);
+        }
+
+        const classes = ["file"].concat(node.tags);
+
+        return (
+            <li class={classes.join(" ")}>
+                <a
+                    href={"#/files/" + path}
+                    title="open file"
+                    onClick={async (e: MouseEvent) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const url =
+                            await this.props.inspector.getFileDownloadURL(path);
+                        startDownload(url, node.name);
+                    }}
+                >
+                    {node.name}
+                </a>
+                <span class="size">{prettyBytes(node.size)}</span>
+                {node.tags.map((tag) => (
+                    <FileTag tag={tag} />
+                ))}
+            </li>
+        );
+    }
 }
+
+type FTProps = { tag: string };
+
+const FileTag: FunctionComponent<FTProps> = (props: FTProps) => {
+    const tag = props.tag;
+    if (tag === "code") {
+        return null;
+    }
+    return <span class={"tag " + tag}>{tag}</span>;
+};
