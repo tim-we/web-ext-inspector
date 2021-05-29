@@ -30,6 +30,7 @@ type Manifest2 = {
     browser_action?: any;
     page_action?: any;
     sidebar_action?: any;
+    protocol_handlers?: any[];
 };
 
 type Permission = string;
