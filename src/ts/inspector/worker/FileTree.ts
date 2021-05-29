@@ -1,24 +1,22 @@
 import { Entry } from "@zip.js/zip.js";
 
-export type TreeNodeDTO = { name: string, type: "folder" | "file" };
+export type TreeNodeDTO =
+    | { name: string; type: "folder" }
+    | { name: string; type: "file"; size: number };
 
 export abstract class TreeNode {
     public name: string;
-    public abstract readonly type: "folder" | "file";
 
     public constructor(name: string) {
         this.name = name;
     }
 
-    public toDTO(): TreeNodeDTO {
-        return { name: this.name, type: this.type };
-    }
+    public abstract toDTO(): TreeNodeDTO;
 }
 
 export class TreeFolder extends TreeNode {
     public children: Map<string, TreeNode> = new Map();
     private count: number = 0;
-    public readonly type = "folder";
 
     public insertEntry(entry: Entry): void {
         this.insert(entry.filename, entry);
@@ -45,7 +43,7 @@ export class TreeFolder extends TreeNode {
     }
 
     public get(path: string): TreeNode | undefined {
-        if(path === "") {
+        if (path === "") {
             return this;
         }
 
@@ -58,11 +56,14 @@ export class TreeFolder extends TreeNode {
             return node;
         }
     }
+
+    public toDTO(): TreeNodeDTO {
+        return { name: this.name, type: "folder" };
+    }
 }
 
 export class TreeFile extends TreeNode {
     public entry: Entry;
-    public readonly type = "file";
 
     public constructor(entry: Entry, name: string) {
         super(name);
@@ -71,6 +72,14 @@ export class TreeFile extends TreeNode {
         if (entry.directory) {
             throw new Error(`Entry is a directory: ${entry.filename}`);
         }
+    }
+
+    public toDTO(): TreeNodeDTO {
+        return {
+            name: this.name,
+            type: "file",
+            size: this.entry.uncompressedSize,
+        };
     }
 }
 

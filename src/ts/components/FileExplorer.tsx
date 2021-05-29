@@ -2,6 +2,7 @@ import { Component } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import { startDownload } from "../utils/download";
+import prettyBytes from "pretty-bytes";
 
 type Props = {
     inspector: Inspector;
@@ -76,6 +77,7 @@ class FolderView extends Component<FVProps> {
                                 >
                                     {node.name}
                                 </a>
+                                <span class="size">{prettyBytes(node.size)}</span>
                             </li>
                         );
                     } else {
