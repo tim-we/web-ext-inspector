@@ -12,15 +12,19 @@ type Manifest2 = {
     };
 
     content_scripts?: ContentScript[];
+    user_scripts?: {
+        [scriptName: string]: string;
+    };
 
     optional_permissions?: Permission[];
     permissions?: Permission[];
 
     commands?: {
-        [keyName: string]: Command;
+        [commandName: string]: Command;
     };
 
-    update_url?: string;
+    web_accessible_resources?: string[];
+    content_security_policy?: string;
 
     // TODO
     browser_action?: any;
