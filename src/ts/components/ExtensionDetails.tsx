@@ -48,10 +48,6 @@ export default class ExtensionDetails extends Component<Props, State> {
                             </td>
                         </tr>
                         <tr>
-                            <td>Slug</td>
-                            <td>{details.slug}</td>
-                        </tr>
-                        <tr>
                             <td>Version</td>
                             <td>{details.current_version.version}</td>
                         </tr>
