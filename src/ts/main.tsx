@@ -10,6 +10,16 @@ type AppState = {
 };
 
 class App extends Preact.Component<{}, AppState> {
+    public constructor() {
+        super();
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("extension")) {
+            if (/^[a-z0-9\-]+$/.test(urlParams.get("extension")!)) {
+                this.state = { extension: urlParams.get("extension")! };
+            }
+        }
+    }
+
     public render() {
         const extension = this.state.extension;
 
@@ -18,9 +28,7 @@ class App extends Preact.Component<{}, AppState> {
         } else {
             return (
                 <ExtensionSelector
-                    onSelect={(ext) =>
-                        this.setState({ extension: ext })
-                    }
+                    onSelect={(ext) => this.setState({ extension: ext })}
                 />
             );
         }
