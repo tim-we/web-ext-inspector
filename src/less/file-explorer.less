@@ -21,6 +21,7 @@
 
             .size, .num-files {
                 margin-left: 10px;
+                margin-right: 5px;
                 font-size: 0.8em;
                 opacity: 0.5;
                 user-select: none;
@@ -29,7 +30,7 @@
             .tag {
                 background-color: rgba(0, 60, 255, 0.6);
                 border-radius: 10px;
-                margin-left: 10px;
+                margin-left: 5px;
                 padding: 1px 7px;
                 font-size: 0.8em;
                 box-shadow: inset 0px 0px 0px 1px rgba(255,255,255,0.085);
@@ -37,12 +38,17 @@
                 user-select: none;
 
                 &.content {
-                    background-color: rgba(255, 255, 0, 0.6);
+                    background-color: rgb(153, 153, 0);
                     color: rgb(245,245,245);
                 }
 
                 &.user-script-api {
-                    background-color: rgba(235, 0, 255, 0.6);
+                    background-color: rgb(141, 0, 153);
+                }
+
+                &.module {
+                    background-color: rgb(0, 108, 21);
+                    color: rgb(235,235,235);
                 }
             }
         }

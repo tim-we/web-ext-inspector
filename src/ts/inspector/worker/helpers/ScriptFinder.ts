@@ -6,14 +6,18 @@ import { extractScripts } from "../../../utils/html";
 
 export async function getBackgroundScripts(
     root: TreeFolder,
-    manifest: Manifest
+    manifest: Manifest,
+    tagFiles: boolean = false
 ): Promise<TreeFile[]> {
     if (!manifest.background) {
         return [];
     }
 
+    let scripts: TreeFile[] = [];
+    let moduleScripts: TreeFile[] = [];
+
     if (manifest.background.scripts) {
-        return manifest.background.scripts
+        scripts = manifest.background.scripts
             .map((path) => root.get(cleanPath(path)))
             .filter(isFile);
     } else if (manifest.background.page) {
@@ -26,17 +30,27 @@ export async function getBackgroundScripts(
 
         const htmlString = await htmlNode.entry.getData!(new zip.TextWriter());
 
-        return extractScripts(htmlString)
-            .map((script) => {
-                const path = joinPaths(basePath, script.src);
-                console.log("path ", path, script.src); 
-                return path;
-            })
-            .map((path) => root.get(path))
+        scripts = extractScripts(htmlString)
+            .filter((script) => script.type !== "module")
+            .map((script) => root.get(joinPaths(basePath, script.src)))
+            .filter(isFile);
+
+        moduleScripts = extractScripts(htmlString)
+            .filter((script) => script.type === "module")
+            .map((script) => root.get(joinPaths(basePath, script.src)))
             .filter(isFile);
     } else {
         throw new Error("Unsupported background scripts.");
     }
+
+    const allScripts = scripts.concat(moduleScripts);
+
+    if (tagFiles) {
+        allScripts.forEach((file) => file.addTag("background"));
+        moduleScripts.forEach((file) => file.addTag("module"));
+    }
+
+    return allScripts;
 }
 
 export function getContentScripts(
