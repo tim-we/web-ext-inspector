@@ -1,7 +1,7 @@
 import { Entry } from "@zip.js/zip.js";
 
 export type TreeNodeDTO =
-    | { name: string; type: "folder" }
+    | { name: string; type: "folder"; numFiles: number }
     | { name: string; type: "file"; size: number; tags: string[] };
 
 export abstract class TreeNode {
@@ -58,7 +58,7 @@ export class TreeFolder extends TreeNode {
     }
 
     public toDTO(): TreeNodeDTO {
-        return { name: this.name, type: "folder" };
+        return { name: this.name, type: "folder", numFiles: this.count };
     }
 }
 

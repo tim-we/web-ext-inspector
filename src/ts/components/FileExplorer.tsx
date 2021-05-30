@@ -93,6 +93,11 @@ class FolderView extends Component<FVProps> {
                                 >
                                     {node.name}
                                 </a>
+                                {node.numFiles >= 2 ? (
+                                    <span class="num-files">
+                                        {node.numFiles + " files"}
+                                    </span>
+                                ) : null}
                                 {isOpen ? (
                                     <FolderView
                                         path={objPath}
