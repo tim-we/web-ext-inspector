@@ -1,3 +1,5 @@
+[![build badge](https://github.com/tim-we/web-ext-inspector/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/tim-we/web-ext-inspector/actions/workflows/gh-pages.yml)
+
 # web-ext-inspector
 
 Inspect the contents of web extensions hosted on [addons.mozilla.org](https://addons.mozilla.org)
