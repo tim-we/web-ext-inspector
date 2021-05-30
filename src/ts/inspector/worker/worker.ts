@@ -28,7 +28,9 @@ export class WorkerAPI {
         this.readyStateHandlers.add(callback);
     }
 
-    public async load(extId: string): Promise<void> {
+    public async init(
+        extId: string
+    ): Promise<void> {
         this.setReadyState("loading-details");
         const details = (this.details = await AMOAPI.getInfo(extId));
 
@@ -51,7 +53,7 @@ export class WorkerAPI {
             root
         ));
 
-        this.backgroundScripts = ScriptFinder.getBackgroundScripts(
+        this.backgroundScripts = await ScriptFinder.getBackgroundScripts(
             root,
             manifest
         );
@@ -60,7 +62,9 @@ export class WorkerAPI {
         this.contentScripts = ScriptFinder.getContentScripts(root, manifest);
         this.contentScripts.forEach((file) => file.addTag("content"));
 
-        ScriptFinder.getUserScriptAPI(root, manifest)?.addTag("user-script-api");
+        ScriptFinder.getUserScriptAPI(root, manifest)?.addTag(
+            "user-script-api"
+        );
 
         await reader.close();
         this.setReadyState("ready");

@@ -1,20 +1,42 @@
 import { Manifest } from "../../../types/Manifest";
-import { cleanPath } from "../../../utils/paths";
+import { cleanPath, getFolder, joinPaths } from "../../../utils/paths";
 import { TreeFile, TreeFolder, TreeNode } from "../FileTree";
+import * as zip from "@zip.js/zip.js";
+import { extractScripts } from "../../../utils/html";
 
-export function getBackgroundScripts(
+export async function getBackgroundScripts(
     root: TreeFolder,
     manifest: Manifest
-): TreeFile[] {
-    //TODO: handle background page
-
-    if (!manifest.background || !manifest.background.scripts) {
+): Promise<TreeFile[]> {
+    if (!manifest.background) {
         return [];
     }
 
-    return manifest.background.scripts
-        .map((path) => root.get(cleanPath(path)))
-        .filter(isFile);
+    if (manifest.background.scripts) {
+        return manifest.background.scripts
+            .map((path) => root.get(cleanPath(path)))
+            .filter(isFile);
+    } else if (manifest.background.page) {
+        const pagePath = cleanPath(manifest.background.page);
+        const basePath = getFolder(pagePath);
+        const htmlNode = root.get(pagePath);
+        if (!isFile(htmlNode)) {
+            return [];
+        }
+
+        const htmlString = await htmlNode.entry.getData!(new zip.TextWriter());
+
+        return extractScripts(htmlString)
+            .map((script) => {
+                const path = joinPaths(basePath, script.src);
+                console.log("path ", path, script.src); 
+                return path;
+            })
+            .map((path) => root.get(path))
+            .filter(isFile);
+    } else {
+        throw new Error("Unsupported background scripts.");
+    }
 }
 
 export function getContentScripts(

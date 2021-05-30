@@ -6,9 +6,11 @@ export type TreeNodeDTO =
 
 export abstract class TreeNode {
     public name: string;
+    protected parent: TreeFolder | undefined;
 
-    public constructor(name: string) {
+    public constructor(name: string, parent?: TreeFolder) {
         this.name = name;
+        this.parent = parent;
     }
 
     public abstract toDTO(): TreeNodeDTO;
@@ -28,11 +30,12 @@ export class TreeFolder extends TreeNode {
         const name = parts.shift()!;
 
         if (parts.length === 0) {
-            const file = new TreeFile(entry, name);
+            const file = new TreeFile(entry, name, this);
             this.children.set(name, file);
         } else {
             const folder =
-                (this.children.get(name) as TreeFolder) ?? new TreeFolder(name);
+                (this.children.get(name) as TreeFolder) ??
+                new TreeFolder(name, this);
             this.children.set(name, folder);
             folder.insert(parts.join("/"), entry);
         }
@@ -48,7 +51,17 @@ export class TreeFolder extends TreeNode {
         }
 
         let parts = path.split("/");
-        const node = this.children.get(parts.shift()!);
+        const name = parts.shift()!;
+
+        let node;
+
+        if (name === "..") {
+            node = this.parent;
+        } else if (name === ".") {
+            node = this;
+        } else {
+            node = this.children.get(name);
+        }
 
         if (node instanceof TreeFolder && parts.length > 0) {
             return node.get(parts.join("/"));
@@ -66,8 +79,8 @@ export class TreeFile extends TreeNode {
     public entry: Entry;
     private tags: Set<string> = new Set();
 
-    public constructor(entry: Entry, name: string) {
-        super(name);
+    public constructor(entry: Entry, name: string, parent?: TreeFolder) {
+        super(name, parent);
         this.entry = entry;
 
         if (entry.directory) {

@@ -14,7 +14,7 @@ export function createInspector(extId: string): Inspector {
         new Worker("worker.bundle.js", { name: "ExtensionWorker" })
     );
 
-    worker.load(extId);
+    worker.init(extId);
 
     return worker;
 }
