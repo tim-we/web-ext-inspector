@@ -12,11 +12,9 @@ export function getBackgroundScripts(
         return [];
     }
 
-    const scriptNodes = manifest.background.scripts
+    return manifest.background.scripts
         .map((path) => root.get(cleanPath(path)))
-        .filter(isFile) as TreeFile[];
-
-    return scriptNodes;
+        .filter(isFile);
 }
 
 export function getContentScripts(
@@ -27,13 +25,24 @@ export function getContentScripts(
         return [];
     }
 
-    const scriptNodes = manifest.content_scripts
+    return manifest.content_scripts
         .flatMap((cs) => cs.js ?? [])
         .map((path) => root.get(cleanPath(path)))
-        .filter(isFile) as TreeFile[];
-
-    return scriptNodes;
+        .filter(isFile);
 }
 
-const isFile = (node: TreeNode | undefined) =>
-    node !== undefined && node instanceof TreeFile;
+export function getUserScriptAPI(
+    root: TreeFolder,
+    manifest: Manifest
+): TreeFile | undefined {
+    if (manifest.user_scripts && manifest.user_scripts.api_script) {
+        const node = root.get(cleanPath(manifest.user_scripts.api_script));
+        if (isFile(node)) {
+            return node;
+        }
+    }
+}
+
+const isFile = function (node: TreeNode | undefined): node is TreeFile {
+    return node !== undefined && node instanceof TreeFile;
+};

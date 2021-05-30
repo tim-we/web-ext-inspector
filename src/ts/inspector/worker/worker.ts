@@ -45,21 +45,22 @@ export class WorkerAPI {
         const httpReader = new zip.HttpReader(webExts[0].url);
 
         const reader = new zip.ZipReader(httpReader);
-        this.root = createFileTree(await reader.getEntries());
+        const root = (this.root = createFileTree(await reader.getEntries()));
 
-        this.manifest = await ManifestExtractor.getManifest(this.root);
+        const manifest = (this.manifest = await ManifestExtractor.getManifest(
+            root
+        ));
 
         this.backgroundScripts = ScriptFinder.getBackgroundScripts(
-            this.root,
-            this.manifest
+            root,
+            manifest
         );
         this.backgroundScripts.forEach((file) => file.addTag("background"));
 
-        this.contentScripts = ScriptFinder.getContentScripts(
-            this.root,
-            this.manifest
-        );
+        this.contentScripts = ScriptFinder.getContentScripts(root, manifest);
         this.contentScripts.forEach((file) => file.addTag("content"));
+
+        ScriptFinder.getUserScriptAPI(root, manifest)?.addTag("user-script-api");
 
         await reader.close();
         this.setReadyState("ready");

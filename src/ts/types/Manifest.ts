@@ -13,7 +13,7 @@ type Manifest2 = {
 
     content_scripts?: ContentScript[];
     user_scripts?: {
-        [scriptName: string]: string;
+        api_script?: string;
     };
 
     optional_permissions?: Permission[];
