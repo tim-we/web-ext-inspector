@@ -27,7 +27,7 @@ export class WorkerAPI {
         statusListener?: StatusListener
     ): Promise<void> {
         this.statusListener = statusListener ?? this.statusListener;
-        this.setStatus("loading-details");
+        this.setStatus("loading meta data");
         const details = (this.details = await AMOAPI.getInfo(extId));
 
         const webExts = details.current_version.files.filter(
@@ -38,14 +38,23 @@ export class WorkerAPI {
             throw new Error("No web extension files.");
         }
 
-        this.setStatus("downloading");
+        this.setStatus("downloading & extracting");
         //@ts-ignore
         const httpReader = new zip.HttpReader(webExts[0].url);
 
         const reader = new zip.ZipReader(httpReader);
-        const root = (this.root = createFileTree(await reader.getEntries()));
+        this.root = createFileTree(await reader.getEntries());
 
+        this.analyze();
+
+        this.setStatus("");
+        await reader.close();
+        this.initialized.fire();
+    }
+
+    private async analyze() {
         this.setStatus("analyzing");
+        const root = this.root;
 
         const manifest = (this.manifest = await ManifestExtractor.getManifest(
             root
@@ -63,10 +72,6 @@ export class WorkerAPI {
         ScriptFinder.getUserScriptAPI(root, manifest)?.addTag(
             "user-script-api"
         );
-
-        await reader.close();
-        this.setStatus("");
-        this.initialized.fire();
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {
