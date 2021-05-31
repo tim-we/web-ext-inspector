@@ -1,12 +1,6 @@
 import * as Comlink from "comlink";
 import { StatusListener, WorkerAPI } from "./worker/worker";
 
-export type InspectorReadyState = "loading-details" | "downloading" | "ready";
-
-export type InspectorReadyStateChangeHandler = (
-    newState: InspectorReadyState
-) => void;
-
 export type Inspector = Comlink.Remote<WorkerAPI>;
 
 export async function createInspector(
