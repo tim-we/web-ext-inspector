@@ -10,15 +10,21 @@
         max-height: 600px;
         overflow-y: auto;
         scrollbar-width: thin;
+        contain: layout paint;
 
         ul {
             list-style: none;
             margin: 0px;
             padding-left: 25px;
+            contain: layout paint;
 
             li {
                 margin-bottom: 5px;
                 margin-top: 5px;
+
+                &:last-child {
+                    margin-bottom: 0px;
+                }
 
                 a {
                     color: white;
@@ -97,6 +103,17 @@
             li.image::before {
                 background-image: url("../icons/bootstrap/file-earmark-image.svg");
             }
+
+            ul::before {
+                content: " ";
+                position: absolute;
+                left: 7px;
+                top: 3px;
+                bottom: 5px;
+                width: 1px;
+                display: block;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
         }
     }
 
@@ -119,7 +136,7 @@
             border-radius: 5px;
             box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            
+
             &::before {
                 content: " ";
                 display: inline-block;
