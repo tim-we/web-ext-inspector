@@ -1,35 +1,33 @@
 import * as Comlink from "comlink";
-import {
-    InspectorReadyState,
-    InspectorReadyStateChangeHandler,
-} from "../Inspector";
 import * as zip from "@zip.js/zip.js";
 import * as AMOAPI from "./AMOAPI";
 import { createFileTree, TreeFile, TreeFolder, TreeNodeDTO } from "./FileTree";
 import { Manifest } from "../../types/Manifest";
 import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
+import AsyncEvent from "../../utils/AsyncEvent";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
 
+export type StatusListener = (status: string) => void;
+
 export class WorkerAPI {
-    private readyStateHandlers: Set<InspectorReadyStateChangeHandler> =
-        new Set();
+    private statusListener: StatusListener = () => {};
     private root: TreeFolder = new TreeFolder("root");
     private details: AMOAPI.Details | undefined;
-    private readyState: InspectorReadyState = "loading-details";
+    private initialized: AsyncEvent = new AsyncEvent("WorkerInitialized");
     private manifest: Manifest | undefined;
     private backgroundScripts: TreeFile[] = [];
     private contentScripts: TreeFile[] = [];
 
-    public onReadyStateChange(callback: InspectorReadyStateChangeHandler) {
-        this.readyStateHandlers.add(callback);
-    }
-
-    public async init(extId: string): Promise<void> {
-        this.setReadyState("loading-details");
+    public async init(
+        extId: string,
+        statusListener?: StatusListener
+    ): Promise<void> {
+        this.statusListener = statusListener ?? this.statusListener;
+        this.setStatus("loading-details");
         const details = (this.details = await AMOAPI.getInfo(extId));
 
         const webExts = details.current_version.files.filter(
@@ -40,12 +38,14 @@ export class WorkerAPI {
             throw new Error("No web extension files.");
         }
 
-        this.setReadyState("downloading");
+        this.setStatus("downloading");
         //@ts-ignore
         const httpReader = new zip.HttpReader(webExts[0].url);
 
         const reader = new zip.ZipReader(httpReader);
         const root = (this.root = createFileTree(await reader.getEntries()));
+
+        this.setStatus("analyzing");
 
         const manifest = (this.manifest = await ManifestExtractor.getManifest(
             root
@@ -65,18 +65,13 @@ export class WorkerAPI {
         );
 
         await reader.close();
-        this.setReadyState("ready");
+        this.setStatus("");
+        this.initialized.fire();
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {
-        if (this.readyState === "loading-details") {
-            let resolver: InspectorReadyStateChangeHandler;
-            await new Promise((resolve) => {
-                resolver = resolve;
-                this.onReadyStateChange(resolve);
-            });
-            this.readyStateHandlers.delete(resolver!);
-        }
+        await this.initialized.waitFor();
+
         if (this.details === undefined) {
             throw new Error("Details not available.");
         }
@@ -118,9 +113,8 @@ export class WorkerAPI {
         return url;
     }
 
-    private setReadyState(newState: InspectorReadyState) {
-        this.readyState = newState;
-        this.readyStateHandlers.forEach((cb) => cb(newState));
+    private setStatus(status: string) {
+        this.statusListener(status);
     }
 }
 
