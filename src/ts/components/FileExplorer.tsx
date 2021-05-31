@@ -179,9 +179,11 @@ class FileNodeView extends Component<FNVProps> {
 
 type FTProps = { tag: string };
 
+const ignoreTags = new Set(["code", "image", "text"]);
+
 const FileTag: FunctionComponent<FTProps> = (props: FTProps) => {
     const tag = props.tag;
-    if (tag === "code") {
+    if (ignoreTags.has(tag)) {
         return null;
     }
     return <span class={"tag " + tag}>{tag}</span>;
