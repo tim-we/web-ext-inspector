@@ -11,7 +11,7 @@ type State = {
     details?: Details;
 };
 
-export default class ExtensionDetails extends Component<Props, State> {
+export default class ExtensionMetaData extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         props.inspector
@@ -31,7 +31,7 @@ export default class ExtensionDetails extends Component<Props, State> {
         )[0];
 
         return (
-            <div>
+            <div class="extension-meta-data">
                 <table>
                     <tbody>
                         <tr>
