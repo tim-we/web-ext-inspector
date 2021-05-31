@@ -27,7 +27,9 @@ export async function getBackgroundScripts(
         if (!isFile(htmlNode)) {
             return [];
         }
-        htmlNode.addTag("background");
+        if (tagFiles) {
+            htmlNode.addTag("background");
+        }
 
         const htmlString = await htmlNode.entry.getData!(new zip.TextWriter());
 

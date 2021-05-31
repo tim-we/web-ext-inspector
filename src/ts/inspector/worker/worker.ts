@@ -45,7 +45,7 @@ export class WorkerAPI {
         const reader = new zip.ZipReader(httpReader);
         this.root = createFileTree(await reader.getEntries());
 
-        this.analyze();
+        await this.analyze();
 
         this.setStatus("");
         await reader.close();
