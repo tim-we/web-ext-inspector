@@ -1,83 +1,129 @@
 .file-explorer {
     .ui-box();
 
-    ul {
-        list-style: none;
-        margin: 0px;
-        padding-left: 25px;
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
 
-        li {
-            margin-bottom: 5px;
-            margin-top: 5px;
+    .file-tree {
+        flex-grow: 1;
 
-            a {
-                color: white;
-                text-decoration: none;
-            }
+        ul {
+            list-style: none;
+            margin: 0px;
+            padding-left: 25px;
 
-            a:hover, a:active {
-                text-decoration: underline;
-            }
+            li {
+                margin-bottom: 5px;
+                margin-top: 5px;
 
-            .size, .num-files {
-                margin-left: 10px;
-                margin-right: 5px;
-                font-size: 0.8em;
-                opacity: 0.5;
-                user-select: none;
-            }
-
-            .tag {
-                background-color: rgba(0, 60, 255, 0.6);
-                border-radius: 10px;
-                margin-left: 5px;
-                padding: 1px 7px;
-                font-size: 0.8em;
-                box-shadow: inset 0px 0px 0px 1px rgba(255,255,255,0.085);
-                color: rgb(225,225,225);
-                user-select: none;
-
-                &.content {
-                    background-color: rgb(153, 153, 0);
-                    color: rgb(245,245,245);
+                a {
+                    color: white;
+                    text-decoration: none;
                 }
 
-                &.user-script-api {
-                    background-color: rgb(141, 0, 153);
+                a:hover,
+                a:active {
+                    text-decoration: underline;
                 }
 
-                &.module {
-                    background-color: rgb(0, 108, 21);
-                    color: rgb(235,235,235);
+                .size,
+                .num-files {
+                    margin-left: 10px;
+                    margin-right: 5px;
+                    font-size: 0.8em;
+                    opacity: 0.5;
+                    user-select: none;
                 }
+
+                .tag {
+                    background-color: rgba(0, 60, 255, 0.6);
+                    border-radius: 10px;
+                    margin-left: 5px;
+                    padding: 1px 7px;
+                    font-size: 0.8em;
+                    box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.085);
+                    color: rgb(225, 225, 225);
+                    user-select: none;
+
+                    &.content {
+                        background-color: rgb(153, 153, 0);
+                        color: rgb(245, 245, 245);
+                    }
+
+                    &.user-script-api {
+                        background-color: rgb(141, 0, 153);
+                    }
+
+                    &.module {
+                        background-color: rgb(0, 108, 21);
+                        color: rgb(235, 235, 235);
+                    }
+                }
+            }
+
+            li::before {
+                content: " ";
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                background-image: url("../icons/bootstrap/file.svg");
+                background-repeat: no-repeat;
+                background-position: center;
+                margin-right: 10px;
+            }
+
+            li.folder {
+                &::before {
+                    background-image: url("../icons/bootstrap/folder2.svg");
+                }
+
+                &.open::before {
+                    background-image: url("../icons/bootstrap/folder2-open.svg");
+                }
+
+                &.open > a {
+                    opacity: 0.8;
+                }
+            }
+
+            li.code::before {
+                background-image: url("../icons/bootstrap/file-code.svg");
             }
         }
+    }
 
-        li::before {
-            content: " ";
+    .file-preview {
+        min-width: 300px;
+        padding: 10px;
+        margin-left: 10px;
+        background-color: rgb(64, 64, 64);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
+        a.download {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            background-image: url("../icons/bootstrap/file.svg");
-            margin-right: 10px;
-        }
-
-        li.folder {
+            background-color: rgb(0, 75, 190);
+            text-decoration: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            
             &::before {
-                background-image: url("../icons/bootstrap/folder2.svg");
+                content: " ";
+                display: inline-block;
+                margin-right: 7px;
+                width: 16px;
+                height: 16px;
+                background-image: url("../icons/bootstrap/download.svg");
+                background-repeat: no-repeat;
+                background-position: center;
+                vertical-align: sub;
             }
-
-            &.open::before {
-                background-image: url("../icons/bootstrap/folder2-open.svg");
-            }
-
-            &.open > a {
-                opacity: 0.8;
-            }
-        }
-
-        li.code::before {
-            background-image: url("../icons/bootstrap/file-code.svg");
         }
     }
 }

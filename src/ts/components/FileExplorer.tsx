@@ -1,15 +1,24 @@
 import { Component, FunctionComponent } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
-import { startDownload } from "../utils/download";
 import prettyBytes from "pretty-bytes";
+import FilePreview from "./FilePreview";
 
 type Props = {
     inspector: Inspector;
     path?: string;
 };
 
-export default class FileExplorer extends Component<Props> {
+type State = {
+    selectedFile?: {
+        path: string;
+        node: TreeNodeDTO;
+    };
+};
+
+type FileSelectHandler = (path: string, node: TreeNodeDTO) => void;
+
+export default class FileExplorer extends Component<Props, State> {
     private data: Map<string, TreeNodeDTO[]>;
 
     public constructor(props: Props) {
@@ -25,11 +34,23 @@ export default class FileExplorer extends Component<Props> {
     public render() {
         return (
             <div class="file-explorer">
-                <FolderView
-                    path={this.props.path ?? ""}
-                    data={this.data}
-                    inspector={this.props.inspector}
-                />
+                <div class="file-tree">
+                    <FolderView
+                        path={this.props.path ?? ""}
+                        data={this.data}
+                        inspector={this.props.inspector}
+                        onFileSelect={(path, node) => {
+                            this.setState({ selectedFile: { path, node } });
+                        }}
+                    />
+                </div>
+                {this.state.selectedFile ? (
+                    <FilePreview
+                        inspector={this.props.inspector}
+                        path={this.state.selectedFile.path}
+                        node={this.state.selectedFile.node}
+                    />
+                ) : null}
             </div>
         );
     }
@@ -39,6 +60,7 @@ type FVProps = {
     path: string;
     data: Map<string, TreeNodeDTO[]>;
     inspector: Inspector;
+    onFileSelect: FileSelectHandler;
 };
 
 class FolderView extends Component<FVProps> {
@@ -63,6 +85,7 @@ class FolderView extends Component<FVProps> {
                                 path={objPath}
                                 node={node}
                                 inspector={this.props.inspector}
+                                onSelect={this.props.onFileSelect}
                             />
                         );
                     } else {
@@ -103,6 +126,7 @@ class FolderView extends Component<FVProps> {
                                         path={objPath}
                                         data={this.props.data}
                                         inspector={this.props.inspector}
+                                        onFileSelect={this.props.onFileSelect}
                                     />
                                 ) : null}
                             </li>
@@ -118,6 +142,7 @@ type FNVProps = {
     path: string;
     node: TreeNodeDTO;
     inspector: Inspector;
+    onSelect: (path: string, node: TreeNodeDTO) => void;
 };
 
 class FileNodeView extends Component<FNVProps> {
@@ -135,13 +160,10 @@ class FileNodeView extends Component<FNVProps> {
             <li class={classes.join(" ")}>
                 <a
                     href={"#/files/" + path}
-                    title="open file"
-                    onClick={async (e: MouseEvent) => {
+                    onClick={(e: MouseEvent) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        const url =
-                            await this.props.inspector.getFileDownloadURL(path);
-                        startDownload(url, node.name);
+                        this.props.onSelect(path, node);
                     }}
                 >
                     {node.name}
