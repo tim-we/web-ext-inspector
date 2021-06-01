@@ -6,6 +6,7 @@ import { Manifest } from "../../types/Manifest";
 import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import AsyncEvent from "../../utils/AsyncEvent";
+import { extractScripts } from "../../utils/html";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
@@ -100,6 +101,20 @@ export class WorkerAPI {
         return this.manifest;
     }
 
+    public async analyzeHTML(path: string) {
+        const file = this.root.get(path);
+
+        if (!(file instanceof TreeFile) || !file.hasTag("html")) {
+            throw new Error(`${path} is not a HTML file.`);
+        }
+
+        const htmlString = await file.entry.getData!(new zip.TextWriter());
+
+        const scripts = extractScripts(htmlString).map((script) => script.src);
+
+        return { scripts };
+    }
+
     public async getFileDownloadURL(
         path: string,
         timeout: number = 10.0
@@ -113,7 +128,7 @@ export class WorkerAPI {
         const blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
         const url = URL.createObjectURL(blob);
 
-        if(timeout > 0.0) {
+        if (timeout > 0.0) {
             setTimeout(() => URL.revokeObjectURL(url), timeout * 1000);
         }
 

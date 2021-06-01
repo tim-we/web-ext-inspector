@@ -1,9 +1,11 @@
-import { Component, FunctionComponent } from "preact";
+import { FunctionComponent } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import prettyBytes from "pretty-bytes";
 import { startDownload } from "../utils/download";
 import TagList from "./TagList";
+import ImagePreview from "./previews/ImagePreview";
+import HTMLPreview from "./previews/HTMLPreview";
 
 type FPProps = {
     path: string;
@@ -91,47 +93,17 @@ const ContentPreview: FunctionComponent<CPProps> = (props) => {
                 />
             </div>
         );
+    } else if (file.tags.includes("html")) {
+        return (
+            <div class="content-preview">
+                <HTMLPreview
+                    path={props.path}
+                    name={file.name}
+                    inspector={props.inspector}
+                />
+            </div>
+        );
     }
 
     return null;
 };
-
-type IPProps = {
-    path: string;
-    name: string;
-    inspector: Inspector;
-};
-
-type IPState = {
-    dataURL?: string;
-};
-
-class ImagePreview extends Component<IPProps, IPState> {
-    componentWillMount() {
-        this.props.inspector
-            .getFileDownloadURL(this.props.path, 0.0)
-            .then((dataURL) => this.setState({ dataURL }));
-    }
-
-    componentWillUnmount() {
-        if (this.state.dataURL) {
-            URL.revokeObjectURL(this.state.dataURL);
-        }
-    }
-
-    public render() {
-        if (this.state.dataURL) {
-            return (
-                <div class="image-preview">
-                    <img
-                        src={this.state.dataURL}
-                        alt={this.props.name}
-                        decoding="async"
-                    />
-                </div>
-            );
-        } else {
-            return null;
-        }
-    }
-}
