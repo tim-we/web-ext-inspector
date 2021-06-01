@@ -50,6 +50,9 @@ export default class FileExplorer extends Component<Props, State> {
                         inspector={this.props.inspector}
                         path={this.state.selectedFile.path}
                         node={this.state.selectedFile.node}
+                        closer={() =>
+                            this.setState({ selectedFile: undefined })
+                        }
                     />
                 ) : null}
             </div>

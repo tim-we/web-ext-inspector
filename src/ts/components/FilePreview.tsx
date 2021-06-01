@@ -11,6 +11,7 @@ type FPProps = {
     path: string;
     node: TreeNodeDTO;
     inspector: Inspector;
+    closer: () => void;
 };
 
 const FilePreview: FunctionComponent<FPProps> = (props) => {
@@ -22,6 +23,11 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
 
     return (
         <div class="file-preview">
+            <a
+                class="close"
+                title="close preview"
+                onClick={() => props.closer()}
+            ></a>
             <div>
                 <table>
                     <tbody>
