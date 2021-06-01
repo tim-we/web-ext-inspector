@@ -3,6 +3,7 @@ import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import prettyBytes from "pretty-bytes";
 import FilePreview from "./FilePreview";
+import TagList from "./TagList";
 
 type Props = {
     inspector: Inspector;
@@ -169,22 +170,8 @@ class FileNodeView extends Component<FNVProps> {
                     {node.name}
                 </a>
                 <span class="size">{prettyBytes(node.size)}</span>
-                {node.tags.map((tag) => (
-                    <FileTag tag={tag} />
-                ))}
+                <TagList tags={node.tags} />
             </li>
         );
     }
 }
-
-type FTProps = { tag: string };
-
-const ignoreTags = new Set(["code", "image", "text"]);
-
-const FileTag: FunctionComponent<FTProps> = (props: FTProps) => {
-    const tag = props.tag;
-    if (ignoreTags.has(tag)) {
-        return null;
-    }
-    return <span class={"tag " + tag}>{tag}</span>;
-};
