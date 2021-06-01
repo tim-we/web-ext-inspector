@@ -2,7 +2,7 @@ import { FunctionComponent } from "preact";
 
 type TLProps = { tags: string[]; showAll?: boolean };
 
-const ignoreTags = new Set(["code", "image", "text"]);
+const ignoreTags = new Set(["code", "image", "text", "html"]);
 
 const TagList: FunctionComponent<TLProps> = ({ tags, showAll }) => {
     const tagsToShow = showAll
