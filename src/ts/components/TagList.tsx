@@ -9,7 +9,7 @@ const TagList: FunctionComponent<TLProps> = ({ tags, showAll }) => {
         ? tags
         : tags.filter((tag) => !ignoreTags.has(tag));
     return (
-        <span>
+        <span class="tags">
             {tagsToShow.map((tag) => (
                 <Tag tag={tag} />
             ))}

@@ -91,6 +91,8 @@ export class TreeFile extends TreeNode {
             this.tags.add("code");
         } else if(/\.(jpg|png|gif|svg)$/i.test(name)) {
             this.tags.add("image");
+        } else if(/\.(txt|md)$/i.test(name) || name === "LICENSE") {
+            this.tags.add("text");
         }
     }
 
