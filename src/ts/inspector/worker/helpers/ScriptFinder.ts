@@ -58,27 +58,41 @@ export async function getBackgroundScripts(
 
 export function getContentScripts(
     root: TreeFolder,
-    manifest: Manifest
+    manifest: Manifest,
+    tagFiles: boolean = false
 ): TreeFile[] {
     if (!manifest.content_scripts) {
         return [];
     }
 
-    return manifest.content_scripts
+    const scripts = manifest.content_scripts
         .flatMap((cs) => cs.js ?? [])
         .map((path) => root.get(cleanPath(path)))
         .filter(isFile);
+
+    if (tagFiles) {
+        scripts.forEach((script) => script.addTag("content"));
+    }
+
+    return scripts;
 }
 
 export function getUserScriptAPI(
     root: TreeFolder,
-    manifest: Manifest
+    manifest: Manifest,
+    tagFile?: boolean
 ): TreeFile | undefined {
     if (manifest.user_scripts && manifest.user_scripts.api_script) {
         const node = root.get(cleanPath(manifest.user_scripts.api_script));
-        if (isFile(node)) {
-            return node;
+        if (!isFile(node)) {
+            return;
         }
+
+        if (tagFile) {
+            node.addTag("user-script-api");
+        }
+
+        return node;
     }
 }
 

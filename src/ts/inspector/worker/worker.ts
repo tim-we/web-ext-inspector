@@ -20,8 +20,6 @@ export class WorkerAPI {
     private details: AMOAPI.Details | undefined;
     private initialized: AsyncEvent = new AsyncEvent("WorkerInitialized");
     private manifest: Manifest | undefined;
-    private backgroundScripts: TreeFile[] = [];
-    private contentScripts: TreeFile[] = [];
 
     public async init(
         extId: string,
@@ -61,18 +59,11 @@ export class WorkerAPI {
             root
         ));
 
-        this.backgroundScripts = await ScriptFinder.getBackgroundScripts(
-            root,
-            manifest,
-            true
-        );
+        await ScriptFinder.getBackgroundScripts(root, manifest, true);
 
-        this.contentScripts = ScriptFinder.getContentScripts(root, manifest);
-        this.contentScripts.forEach((file) => file.addTag("content"));
+        ScriptFinder.getContentScripts(root, manifest, true);
 
-        ScriptFinder.getUserScriptAPI(root, manifest)?.addTag(
-            "user-script-api"
-        );
+        ScriptFinder.getUserScriptAPI(root, manifest, true);
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {
