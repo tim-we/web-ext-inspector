@@ -6,6 +6,7 @@ import { startDownload } from "../utils/download";
 import TagList from "./TagList";
 import ImagePreview from "./previews/ImagePreview";
 import HTMLPreview from "./previews/HTMLPreview";
+import { getFolder } from "../utils/paths";
 
 type FPProps = {
     path: string;
@@ -23,11 +24,6 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
 
     return (
         <div class="file-preview">
-            <a
-                class="close"
-                title="close preview"
-                onClick={() => props.closer()}
-            ></a>
             <div>
                 <table>
                     <tbody>
@@ -37,8 +33,12 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                         </tr>
                         {node.name !== props.path ? (
                             <tr>
-                                <th>Path</th>
-                                <td>{props.path}</td>
+                                <th>Folder</th>
+                                <td>
+                                    <span class="path">
+                                        {getFolder(props.path)}
+                                    </span>
+                                </td>
                             </tr>
                         ) : null}
                         <tr>
@@ -70,6 +70,11 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
             >
                 Download
             </a>
+            <a
+                class="close"
+                title="close preview"
+                onClick={() => props.closer()}
+            ></a>
         </div>
     );
 };
