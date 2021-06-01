@@ -14,5 +14,8 @@ export function getFolder(filePath: string): string {
 export function joinPaths(path1: string, path2: string): string {
     const parts1 = cleanPath(path1).split("/");
     const parts2 = cleanPath(path2).split("/");
-    return parts1.concat(parts2).join("/");
+    return parts1
+        .concat(parts2)
+        .filter((part) => part !== "")
+        .join("/");
 }
