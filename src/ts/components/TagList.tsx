@@ -11,7 +11,7 @@ const TagList: FunctionComponent<TLProps> = ({ tags, showAll }) => {
     return (
         <span class="tags">
             {tagsToShow.map((tag) => (
-                <Tag tag={tag} />
+                <Tag key={tag} tag={tag} />
             ))}
         </span>
     );

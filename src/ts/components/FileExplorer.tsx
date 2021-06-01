@@ -83,6 +83,7 @@ class FolderView extends Component<FVProps> {
                     if (node.type === "file") {
                         return (
                             <FileNodeView
+                                key={objPath}
                                 path={objPath}
                                 node={node}
                                 inspector={this.props.inspector}
@@ -92,7 +93,10 @@ class FolderView extends Component<FVProps> {
                     } else {
                         const isOpen = this.props.data.has(objPath);
                         return (
-                            <li class={isOpen ? "folder open" : "folder"}>
+                            <li
+                                key={objPath}
+                                class={isOpen ? "folder open" : "folder"}
+                            >
                                 <a
                                     href={"#/files/" + objPath}
                                     title={
