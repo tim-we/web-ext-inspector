@@ -24,7 +24,7 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
 
     return (
         <div class="file-preview">
-            <div>
+            <div class="properties">
                 <table>
                     <tbody>
                         <tr>

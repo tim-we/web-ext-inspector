@@ -107,8 +107,23 @@
         align-items: center;
         justify-content: space-between;
 
-        table span.path {
-            font-family: monospace;
+        .properties {
+            width: 100%;
+
+            table {
+                th {
+                    text-align: left;
+                    min-width: 70px;
+                }
+
+                td {
+                    text-align: right;
+                }
+            }
+
+            .tags {
+                padding: 0 3px;
+            }
         }
 
         a.close {

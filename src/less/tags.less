@@ -1,5 +1,5 @@
 .tags {
-    padding: 0px 5px;
+    padding: 0px 10px;
     
     .tag {
         background-color: rgba(128, 128,128, 0.6);
@@ -10,6 +10,10 @@
         box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.085);
         color: rgb(225, 225, 225);
         user-select: none;
+
+        &:first-child {
+            margin-left: 0;
+        }
     
         &.background {
             background-color: rgba(0, 60, 255, 0.6);
