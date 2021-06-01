@@ -113,7 +113,9 @@ export class WorkerAPI {
         const blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
         const url = URL.createObjectURL(blob);
 
-        setTimeout(() => URL.revokeObjectURL(url), timeout * 1000);
+        if(timeout > 0.0) {
+            setTimeout(() => URL.revokeObjectURL(url), timeout * 1000);
+        }
 
         return url;
     }

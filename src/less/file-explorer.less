@@ -8,6 +8,7 @@
     .file-tree {
         flex-grow: 1;
         max-height: 600px;
+        min-height: 300px;
         overflow-y: auto;
         scrollbar-width: thin;
         contain: layout paint;
@@ -125,6 +126,35 @@
                 background-repeat: no-repeat;
                 background-position: center;
                 vertical-align: sub;
+            }
+        }
+
+        .content-preview {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+            .image-preview {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                background-color: rgba(255, 255, 255, 0.25);
+                max-height: 300px;
+                max-width: 100%;
+                min-height: 48px;
+                min-width: 48px;
+
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    min-height: 32px;
+                    min-width: 32px;
+                }
             }
         }
     }
