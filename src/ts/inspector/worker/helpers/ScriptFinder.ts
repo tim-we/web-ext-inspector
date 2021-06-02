@@ -4,65 +4,32 @@ import { TreeFile, TreeFolder, TreeNode } from "../FileTree";
 import * as zip from "@zip.js/zip.js";
 import { extractScripts } from "../../../utils/html";
 
-export async function getBackgroundScripts(
+export async function identifyBackgroundScripts(
     root: TreeFolder,
-    manifest: Manifest,
-    tagFiles: boolean = false
-): Promise<TreeFile[]> {
+    manifest: Manifest
+): Promise<void> {
     if (!manifest.background) {
-        return [];
+        return;
     }
 
-    let scripts: TreeFile[] = [];
-    let moduleScripts: TreeFile[] = [];
-
     if (manifest.background.scripts) {
-        scripts = manifest.background.scripts
+        manifest.background.scripts
             .map((path) => root.get(cleanPath(path)))
-            .filter(isFile);
+            .filter(isFile)
+            .forEach((file) => file.addTag("background"));
     } else if (manifest.background.page) {
-        const pagePath = cleanPath(manifest.background.page);
-        const basePath = getFolder(pagePath);
-        const htmlNode = root.get(pagePath);
-        if (!isFile(htmlNode)) {
-            return [];
-        }
-        if (tagFiles) {
-            htmlNode.addTag("background");
-        }
-
-        const htmlString = await htmlNode.entry.getData!(new zip.TextWriter());
-
-        scripts = extractScripts(htmlString)
-            .filter((script) => script.type !== "module")
-            .map((script) => root.get(joinPaths(basePath, script.src)))
-            .filter(isFile);
-
-        moduleScripts = extractScripts(htmlString)
-            .filter((script) => script.type === "module")
-            .map((script) => root.get(joinPaths(basePath, script.src)))
-            .filter(isFile);
+        identifyScriptNodes(manifest.background.page, root, "background");
     } else {
         throw new Error("Unsupported background scripts.");
     }
-
-    const allScripts = scripts.concat(moduleScripts);
-
-    if (tagFiles) {
-        allScripts.forEach((file) => file.addTag("background"));
-        moduleScripts.forEach((file) => file.addTag("module"));
-    }
-
-    return allScripts;
 }
 
-export function getContentScripts(
+export function identifyContentScripts(
     root: TreeFolder,
-    manifest: Manifest,
-    tagFiles: boolean = false
-): TreeFile[] {
+    manifest: Manifest
+): void {
     if (!manifest.content_scripts) {
-        return [];
+        return;
     }
 
     const scripts = manifest.content_scripts
@@ -70,30 +37,76 @@ export function getContentScripts(
         .map((path) => root.get(cleanPath(path)))
         .filter(isFile);
 
-    if (tagFiles) {
-        scripts.forEach((script) => script.addTag("content"));
-    }
-
-    return scripts;
+    scripts.forEach((script) => script.addTag("content"));
 }
 
-export function getUserScriptAPI(
+export function identifyUserScriptAPI(
     root: TreeFolder,
-    manifest: Manifest,
-    tagFile?: boolean
-): TreeFile | undefined {
+    manifest: Manifest
+): void {
     if (manifest.user_scripts && manifest.user_scripts.api_script) {
         const node = root.get(cleanPath(manifest.user_scripts.api_script));
         if (!isFile(node)) {
             return;
         }
 
-        if (tagFile) {
-            node.addTag("user-script-api");
+        node.addTag("user-script-api");
+    }
+}
+
+export async function identifySidebarScripts(
+    root: TreeFolder,
+    manifest: Manifest
+): Promise<void> {
+    if (!manifest.sidebar_action) {
+        return;
+    }
+
+    await identifyScriptNodes(
+        manifest.sidebar_action.default_panel,
+        root,
+        "sidebar"
+    );
+}
+
+async function identifyScriptNodes(
+    pagePath: string,
+    root: TreeFolder,
+    tag?: string
+): Promise<TreeFile[]> {
+    const path = cleanPath(pagePath);
+    const basePath = getFolder(path);
+    const htmlNode = root.get(path);
+    if (!isFile(htmlNode)) {
+        return [];
+    }
+
+    if (tag) {
+        htmlNode.addTag(tag);
+    }
+
+    const html = await htmlNode.entry.getData!(new zip.TextWriter());
+    const scripts = extractScripts(html);
+    let results = [];
+
+    for (const script of scripts) {
+        const node = root.get(joinPaths(basePath, script.src));
+
+        if (!isFile(node)) {
+            continue;
         }
 
-        return node;
+        if (tag) {
+            node.addTag(tag);
+            if (script.type === "module") {
+                node.addTag("module");
+            }
+        }
+
+        results.push(node);
     }
+
+    return results;
 }
 
 const isFile = function (node: TreeNode | undefined): node is TreeFile {

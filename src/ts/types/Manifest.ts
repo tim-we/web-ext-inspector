@@ -26,10 +26,14 @@ type Manifest2 = {
     web_accessible_resources?: string[];
     content_security_policy?: string;
 
+    sidebar_action?: {
+        default_panel: string;
+        open_at_install?: boolean;
+    };
+
     // TODO
     browser_action?: any;
     page_action?: any;
-    sidebar_action?: any;
     protocol_handlers?: any[];
 };
 

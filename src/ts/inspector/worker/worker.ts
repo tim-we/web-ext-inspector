@@ -59,11 +59,11 @@ export class WorkerAPI {
             root
         ));
 
-        await ScriptFinder.getBackgroundScripts(root, manifest, true);
+        await ScriptFinder.identifyBackgroundScripts(root, manifest);
 
-        ScriptFinder.getContentScripts(root, manifest, true);
-
-        ScriptFinder.getUserScriptAPI(root, manifest, true);
+        ScriptFinder.identifyContentScripts(root, manifest);
+        ScriptFinder.identifySidebarScripts(root, manifest);
+        ScriptFinder.identifyUserScriptAPI(root, manifest);
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {
@@ -79,9 +79,11 @@ export class WorkerAPI {
         const dir = this.root.get(path);
 
         if (dir instanceof TreeFolder) {
-            const contents = Array.from(dir.children.values()).map((tn) => tn.toDTO());
-            contents.sort((a,b) => {
-                if(a.type === b.type) {
+            const contents = Array.from(dir.children.values()).map((tn) =>
+                tn.toDTO()
+            );
+            contents.sort((a, b) => {
+                if (a.type === b.type) {
                     return a.name.localeCompare(b.name);
                 } else {
                     return a.type === "folder" ? -1 : 1;
