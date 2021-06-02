@@ -23,15 +23,18 @@ class App extends Preact.Component<{}, AppState> {
     public render() {
         const extension = this.state.extension;
 
-        if (extension) {
-            return <Analyzer extId={extension} />;
-        } else {
-            return (
-                <ExtensionSelector
-                    onSelect={(ext) => this.setState({ extension: ext })}
-                />
-            );
-        }
+        return (
+            <>
+                <h2>Extension Inspector</h2>
+                {extension ? (
+                    <Analyzer extId={extension} />
+                ) : (
+                    <ExtensionSelector
+                        onSelect={(ext) => this.setState({ extension: ext })}
+                    />
+                )}
+            </>
+        );
     }
 }
 

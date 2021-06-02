@@ -30,7 +30,6 @@ export default class Analyzer extends Component<Props, State> {
         const state = this.state;
         return (
             <div>
-                <h2>Extension Inspector</h2>
                 {state.inspector ? (
                     <>
                         <ExtensionMetaData inspector={state.inspector} />
