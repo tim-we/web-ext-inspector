@@ -79,7 +79,15 @@ export class WorkerAPI {
         const dir = this.root.get(path);
 
         if (dir instanceof TreeFolder) {
-            return Array.from(dir.children.values()).map((tn) => tn.toDTO());
+            const contents = Array.from(dir.children.values()).map((tn) => tn.toDTO());
+            contents.sort((a,b) => {
+                if(a.type === b.type) {
+                    return a.name.localeCompare(b.name);
+                } else {
+                    return a.type === "folder" ? -1 : 1;
+                }
+            });
+            return contents;
         } else {
             throw new Error(`${path} is not a directory.`);
         }
