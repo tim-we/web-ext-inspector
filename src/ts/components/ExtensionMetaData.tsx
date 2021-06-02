@@ -2,6 +2,7 @@ import { Component } from "preact";
 import { Details } from "../inspector/worker/AMOAPI";
 import prettyBytes from "pretty-bytes";
 import { Inspector } from "../inspector/Inspector";
+import friendlyTime from "friendly-time";
 
 type Props = {
     inspector: Inspector;
@@ -30,6 +31,8 @@ export default class ExtensionMetaData extends Component<Props, State> {
             (f) => f.is_webextension
         )[0];
 
+        const lastUpdateTime = new Date(details.last_updated);
+
         return (
             <div class="extension-meta-data">
                 <table>
@@ -55,7 +58,7 @@ export default class ExtensionMetaData extends Component<Props, State> {
                                 <span
                                     class="last-updated"
                                     title="last updated"
-                                >{`(${details.last_updated})`}</span>
+                                >{`(${friendlyTime(lastUpdateTime)})`}</span>
                             </td>
                         </tr>
                         <tr>
