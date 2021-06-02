@@ -42,6 +42,7 @@ export default class ExtensionMetaData extends Component<Props, State> {
                             <td>Icon</td>
                             <td>
                                 <img
+                                    class="icon"
                                     src={details.icon_url}
                                     alt="extension icon"
                                 />
@@ -49,7 +50,13 @@ export default class ExtensionMetaData extends Component<Props, State> {
                         </tr>
                         <tr>
                             <td>Version</td>
-                            <td>{details.current_version.version}</td>
+                            <td>
+                                <span>{details.current_version.version}</span>
+                                <span
+                                    class="last-updated"
+                                    title="last updated"
+                                >{`(${details.last_updated})`}</span>
+                            </td>
                         </tr>
                         <tr>
                             <td>Size</td>
