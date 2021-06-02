@@ -12,7 +12,7 @@ type State = {
     status?: string;
 };
 
-export default class Analyzer extends Component<Props, State> {
+export default class ExtensionInspector extends Component<Props, State> {
     public constructor(props: Props) {
         super(props);
         this.state = {

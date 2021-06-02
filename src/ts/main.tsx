@@ -1,5 +1,5 @@
 import * as Preact from "preact";
-import Analyzer from "./components/Analyzer";
+import ExtensionInspector from "./components/ExtensionInspector";
 import ExtensionSelector from "./components/ExtensionSelector";
 
 // create styles (in <head>)
@@ -27,7 +27,7 @@ class App extends Preact.Component<{}, AppState> {
             <>
                 <h2>Extension Inspector</h2>
                 {extension ? (
-                    <Analyzer extId={extension} />
+                    <ExtensionInspector extId={extension} />
                 ) : (
                     <ExtensionSelector
                         onSelect={(ext) => this.setState({ extension: ext })}
