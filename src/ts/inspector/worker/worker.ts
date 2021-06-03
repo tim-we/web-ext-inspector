@@ -5,6 +5,7 @@ import { createFileTree, TreeFile, TreeFolder, TreeNodeDTO } from "./FileTree";
 import { Manifest } from "../../types/Manifest";
 import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
+import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
 import { extractScripts } from "../../utils/html";
 
@@ -64,6 +65,8 @@ export class WorkerAPI {
         ScriptFinder.identifyContentScripts(root, manifest);
         ScriptFinder.identifySidebarScripts(root, manifest);
         ScriptFinder.identifyUserScriptAPI(root, manifest);
+
+        ResourceLocator.identifyWebAccessibleResources(root, manifest);
     }
 
     public async getDetails(): Promise<AMOAPI.Details> {

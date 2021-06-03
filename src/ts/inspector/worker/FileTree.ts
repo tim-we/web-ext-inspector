@@ -70,6 +70,45 @@ export class TreeFolder extends TreeNode {
         }
     }
 
+    public getAll(path: string): TreeNode[] {
+        if (path === "") {
+            return [this];
+        }
+
+        let parts = path.split("/");
+        const name = parts.shift()!;
+
+        if (name === "*") {
+            const children = Array.from(this.children.values());
+            const subPath = parts.length > 0 ? parts.join("/") : "*";
+            return children.flatMap(c => {
+                if(c instanceof TreeFolder) {
+                    return c.getAll(subPath);
+                } else {
+                    return parts.length > 0 ? [] : c;
+                }
+            });
+        }
+
+        let node;
+
+        if (name === "..") {
+            node = this.parent;
+        } else if (name === ".") {
+            node = this;
+        } else {
+            node = this.children.get(name);
+        }
+
+        if (node instanceof TreeFolder && parts.length > 0) {
+            return node.getAll(parts.join("/"));
+        } else if (node) {
+            return [node];
+        } else {
+            return [];
+        }
+    }
+
     public toDTO(): TreeNodeDTO {
         return { name: this.name, type: "folder", numFiles: this.count };
     }
