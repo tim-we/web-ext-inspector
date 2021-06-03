@@ -18,7 +18,7 @@ export async function identifyBackgroundScripts(
             .filter(isFile)
             .forEach((file) => file.addTag("background"));
     } else if (manifest.background.page) {
-        identifyScriptNodes(manifest.background.page, root, "background");
+        findScriptNodes(manifest.background.page, root, "background");
     } else {
         throw new Error("Unsupported background scripts.");
     }
@@ -62,14 +62,14 @@ export async function identifySidebarScripts(
         return;
     }
 
-    await identifyScriptNodes(
+    await findScriptNodes(
         manifest.sidebar_action.default_panel,
         root,
         "sidebar"
     );
 }
 
-async function identifyScriptNodes(
+export async function findScriptNodes(
     pagePath: string,
     root: TreeFolder,
     tag?: string
@@ -77,7 +77,7 @@ async function identifyScriptNodes(
     const path = cleanPath(pagePath);
     const basePath = getFolder(path);
     const htmlNode = root.get(path);
-    if (!isFile(htmlNode)) {
+    if (!isFile(htmlNode) || !htmlNode.hasTag("html")) {
         return [];
     }
 

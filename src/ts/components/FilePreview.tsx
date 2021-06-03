@@ -13,7 +13,10 @@ type FPProps = {
     node: TreeNodeDTO;
     inspector: Inspector;
     closer: () => void;
+    onFileSelect: FileSelectListener;
 };
+
+type FileSelectListener = (path: string, file: TreeNodeDTO) => void;
 
 const FilePreview: FunctionComponent<FPProps> = (props) => {
     const node = props.node;
@@ -54,6 +57,7 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                 path={props.path}
                 file={node}
                 inspector={props.inspector}
+                onFileSelect={props.onFileSelect}
             />
             <a
                 class="download"
@@ -85,6 +89,7 @@ type CPProps = {
     path: string;
     file: TreeNodeDTO;
     inspector: Inspector;
+    onFileSelect: FileSelectListener;
 };
 
 const ContentPreview: FunctionComponent<CPProps> = (props) => {
@@ -111,6 +116,7 @@ const ContentPreview: FunctionComponent<CPProps> = (props) => {
                     path={props.path}
                     name={file.name}
                     inspector={props.inspector}
+                    onFileSelect={props.onFileSelect}
                 />
             </div>
         );

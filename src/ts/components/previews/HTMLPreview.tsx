@@ -1,15 +1,24 @@
 import { Component } from "preact";
 import { Inspector } from "../../inspector/Inspector";
+import { TreeNodeDTO } from "../../inspector/worker/FileTree";
 
 type Props = {
     path: string;
     name: string;
     inspector: Inspector;
+    onFileSelect: FileSelectListener;
 };
 
 type State = {
-    references?: string[];
+    references?: ScriptInfo[];
 };
+
+type ScriptInfo = {
+    path: string;
+    node: TreeNodeDTO;
+};
+
+type FileSelectListener = (path: string, file: TreeNodeDTO) => void;
 
 export default class HTMLPreview extends Component<Props, State> {
     componentWillMount() {
@@ -26,8 +35,20 @@ export default class HTMLPreview extends Component<Props, State> {
                 <div class="referenced-scripts">
                     <b>Scripts</b>
                     <ul>
-                        {this.state.references.map((path) => (
-                            <li key={path}>{path}</li>
+                        {this.state.references.map(({ path, node }) => (
+                            <li key={path}>
+                                <a
+                                    class="file"
+                                    href={"#/files/" + path}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        this.props.onFileSelect(path, node);
+                                    }}
+                                >
+                                    {node.name}
+                                </a>
+                            </li>
                         ))}
                     </ul>
                 </div>

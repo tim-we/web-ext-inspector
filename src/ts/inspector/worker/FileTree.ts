@@ -14,6 +14,17 @@ export abstract class TreeNode {
     }
 
     public abstract toDTO(): TreeNodeDTO;
+
+    public get path(): string {
+        if (this.parent) {
+            const parentPath = this.parent.path;
+            return parentPath ? parentPath + "/" + this.name : this.name;
+        } else if (this instanceof TreeFolder) {
+            return "";
+        } else {
+            return this.name;
+        }
+    }
 }
 
 export class TreeFolder extends TreeNode {
@@ -81,8 +92,8 @@ export class TreeFolder extends TreeNode {
         if (name === "*") {
             const children = Array.from(this.children.values());
             const subPath = parts.length > 0 ? parts.join("/") : "*";
-            return children.flatMap(c => {
-                if(c instanceof TreeFolder) {
+            return children.flatMap((c) => {
+                if (c instanceof TreeFolder) {
                     return c.getAll(subPath);
                 } else {
                     return parts.length > 0 ? [] : c;
@@ -118,7 +129,7 @@ export class TreeFile extends TreeNode {
     public entry: Entry;
     private tags: Set<string> = new Set();
 
-    public constructor(entry: Entry, name: string, parent?: TreeFolder) {
+    public constructor(entry: Entry, name: string, parent: TreeFolder) {
         super(name, parent);
         this.entry = entry;
 

@@ -1,4 +1,4 @@
-import { Component, FunctionComponent } from "preact";
+import { Component, createRef } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import prettyBytes from "pretty-bytes";
@@ -30,6 +30,28 @@ export default class FileExplorer extends Component<Props, State> {
             this.data.set(path, list);
             this.forceUpdate();
         });
+
+        this.selectFile = this.selectFile.bind(this);
+    }
+
+    private async selectFile(path: string, node: TreeNodeDTO): Promise<void> {
+        await this.loadAllParents(path);
+        this.forceUpdate();
+        this.setState({ selectedFile: { path, node } });
+    }
+
+    private async loadAllParents(path: string): Promise<void> {
+        let folders = path.split("/");
+        folders.pop();
+
+        while (folders.length > 0) {
+            let folder = folders.join("/");
+            const list = await this.props.inspector.listDirectoryContents(
+                folder
+            );
+            this.data.set(folder, list);
+            folders.pop();
+        }
     }
 
     public render() {
@@ -40,9 +62,7 @@ export default class FileExplorer extends Component<Props, State> {
                         path={this.props.path ?? ""}
                         data={this.data}
                         inspector={this.props.inspector}
-                        onFileSelect={(path, node) => {
-                            this.setState({ selectedFile: { path, node } });
-                        }}
+                        onFileSelect={this.selectFile}
                     />
                 </div>
                 {this.state.selectedFile ? (
@@ -53,6 +73,7 @@ export default class FileExplorer extends Component<Props, State> {
                         closer={() =>
                             this.setState({ selectedFile: undefined })
                         }
+                        onFileSelect={this.selectFile}
                     />
                 ) : null}
             </div>
@@ -101,6 +122,7 @@ class FolderView extends Component<FVProps> {
                                 class={isOpen ? "folder open" : "folder"}
                             >
                                 <a
+                                    class="folder"
                                     href={"#/files/" + objPath}
                                     title={
                                         isOpen
@@ -151,9 +173,18 @@ type FNVProps = {
     node: TreeNodeDTO;
     inspector: Inspector;
     onSelect: (path: string, node: TreeNodeDTO) => void;
+    scrollIntoView?: boolean;
 };
 
 class FileNodeView extends Component<FNVProps> {
+    private ref = createRef<HTMLAnchorElement>();
+
+    componentDidUpdate() {
+        if (this.props.scrollIntoView && this.ref.current) {
+            this.ref.current.scrollIntoView();
+        }
+    }
+
     public render() {
         const path = this.props.path;
         const node = this.props.node;
@@ -167,6 +198,8 @@ class FileNodeView extends Component<FNVProps> {
         return (
             <li class={classes.join(" ")}>
                 <a
+                    ref={this.ref}
+                    class="file"
                     href={"#/files/" + path}
                     onClick={(e: MouseEvent) => {
                         e.preventDefault();

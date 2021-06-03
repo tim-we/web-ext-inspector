@@ -106,17 +106,14 @@ export class WorkerAPI {
     }
 
     public async analyzeHTML(path: string) {
-        const file = this.root.get(path);
+        const scripts = await ScriptFinder.findScriptNodes(path, this.root);
 
-        if (!(file instanceof TreeFile) || !file.hasTag("html")) {
-            throw new Error(`${path} is not a HTML file.`);
-        }
-
-        const htmlString = await file.entry.getData!(new zip.TextWriter());
-
-        const scripts = extractScripts(htmlString).map((script) => script.src);
-
-        return { scripts };
+        return {
+            scripts: scripts.map((s) => ({
+                path: s.path,
+                node: s.toDTO(),
+            })),
+        };
     }
 
     public async getFileDownloadURL(
