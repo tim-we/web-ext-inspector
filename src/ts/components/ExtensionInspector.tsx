@@ -2,6 +2,7 @@ import { Component } from "preact";
 import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
 import { createInspector, Inspector } from "../inspector/Inspector";
+import ExtensionPermissions from "./Permissions";
 
 type Props = {
     extId: string;
@@ -33,6 +34,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                 {state.inspector ? (
                     <>
                         <ExtensionMetaData inspector={state.inspector} />
+                        <ExtensionPermissions inspector={state.inspector} />
                         <FileExplorer path="" inspector={state.inspector} />
                     </>
                 ) : null}

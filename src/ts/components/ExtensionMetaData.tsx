@@ -35,11 +35,7 @@ export default class ExtensionMetaData extends Component<Props, State> {
         const lastUpdateTime = new Date(details.last_updated);
 
         return (
-            <UIBox
-                title="Details"
-                collapsable={true}
-                classes={["extension-meta-data"]}
-            >
+            <UIBox title="Details" classes={["extension-meta-data"]}>
                 <table>
                     <tbody>
                         <tr>

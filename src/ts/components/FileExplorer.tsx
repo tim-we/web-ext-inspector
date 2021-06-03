@@ -61,7 +61,6 @@ export default class FileExplorer extends Component<Props, State> {
                 key="file-explorer"
                 title="File Explorer"
                 classes={["file-explorer"]}
-                collapsable={true}
             >
                 <div class="file-tree">
                     <FolderView

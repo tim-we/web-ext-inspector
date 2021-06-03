@@ -1,0 +1,27 @@
+.permission-list {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+
+    &:not(:last-child) {
+        margin-bottom: 10px;
+    }
+
+    .permission {
+        padding: 1px 7px;
+        border-radius: 20px;
+        white-space: nowrap;
+        cursor: default;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+
+        &.api {
+            background-color: rgb(200, 80, 0);
+        }
+
+        &.host {
+            background-color: rgb(0, 80, 200);
+            font-family: monospace;
+            padding: 2px 7px;
+        }
+    }
+}

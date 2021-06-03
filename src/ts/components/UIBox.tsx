@@ -14,9 +14,10 @@ export default class UIBox extends Component<Props, State> {
     state = { expanded: true };
 
     public render() {
+        const collapsable = this.props.collapsable ?? true;
         let classes = ["ui-box"];
 
-        if (this.props.collapsable) {
+        if (collapsable) {
             classes.push("collapsable");
         }
 
@@ -28,7 +29,7 @@ export default class UIBox extends Component<Props, State> {
             classes.push("collapsed");
         }
 
-        const clickHandler = this.props.collapsable
+        const clickHandler = collapsable
             ? () =>
                   this.setState(({ expanded }) => ({
                       expanded: !expanded,
