@@ -21,6 +21,14 @@ export default TagList;
 
 type TProps = { tag: string };
 
+const tagTooltips: Map<string, string> = new Map([
+    ["web", "web accessible resource"],
+    ["background", "background script or page"],
+    ["content", "content script"],
+]);
+
 const Tag: FunctionComponent<TProps> = ({ tag }) => (
-    <span class={"tag " + tag}>{tag}</span>
+    <span class={"tag " + tag} title={tagTooltips.get(tag)}>
+        {tag}
+    </span>
 );
