@@ -42,7 +42,7 @@ export default class UIBox extends Component<Props, State> {
                     {this.props.title}
                 </div>
                 {this.state.expanded ? (
-                    <div class="content">{this.props.children}</div>
+                    <div class="box-content">{this.props.children}</div>
                 ) : null}
             </div>
         );
