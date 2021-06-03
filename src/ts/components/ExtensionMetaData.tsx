@@ -3,6 +3,7 @@ import { Details } from "../inspector/worker/AMOAPI";
 import prettyBytes from "pretty-bytes";
 import { Inspector } from "../inspector/Inspector";
 import friendlyTime from "friendly-time";
+import UIBox from "./UIBox";
 
 type Props = {
     inspector: Inspector;
@@ -34,7 +35,11 @@ export default class ExtensionMetaData extends Component<Props, State> {
         const lastUpdateTime = new Date(details.last_updated);
 
         return (
-            <div class="extension-meta-data">
+            <UIBox
+                title="Details"
+                collapsable={true}
+                classes={["extension-meta-data"]}
+            >
                 <table>
                     <tbody>
                         <tr>
@@ -67,7 +72,7 @@ export default class ExtensionMetaData extends Component<Props, State> {
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </UIBox>
         );
     }
 }

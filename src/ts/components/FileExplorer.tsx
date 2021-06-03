@@ -4,6 +4,7 @@ import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import prettyBytes from "pretty-bytes";
 import FilePreview from "./FilePreview";
 import TagList from "./TagList";
+import UIBox from "./UIBox";
 
 type Props = {
     inspector: Inspector;
@@ -56,7 +57,12 @@ export default class FileExplorer extends Component<Props, State> {
 
     public render() {
         return (
-            <div class="file-explorer">
+            <UIBox
+                key="file-explorer"
+                title="File Explorer"
+                classes={["file-explorer"]}
+                collapsable={true}
+            >
                 <div class="file-tree">
                     <FolderView
                         path={this.props.path ?? ""}
@@ -76,7 +82,7 @@ export default class FileExplorer extends Component<Props, State> {
                         onFileSelect={this.selectFile}
                     />
                 ) : null}
-            </div>
+            </UIBox>
         );
     }
 }

@@ -1,8 +1,44 @@
 .ui-box {
-    padding: 10px;
     background-color: rgb(48, 48, 48);
     box-shadow: inset 0px 0px 0px 1px rgb(64, 64, 64);
     margin-bottom: 10px;
+
+    .title-bar {
+        padding: 10px;
+        user-select: none;
+        font-size: 0.85em;
+        color: rgb(200, 200, 200);
+    }
+
+    &.collapsable {
+        .title-bar {
+            cursor: pointer;
+        }
+
+        .title-bar::before {
+            content: " ";
+            display: inline-block;
+            vertical-align: sub;
+            width: 16px;
+            height: 16px;
+            background-image: url("../icons/bootstrap/caret-down.svg");
+            background-repeat: no-repeat;
+            opacity: 0.75;
+            margin-right: 5px;
+            transition: transform 0.2s;
+        }
+
+        &.collapsed {
+            .title-bar::before {
+                transform: rotate(-90deg);
+            }
+        }
+    }
+
+    .content {
+        padding: 10px;
+        padding-top: 0px;
+    }
 }
 
 span.path {
@@ -10,11 +46,13 @@ span.path {
     hyphens: none;
 }
 
-a.file, a.folder {
+a.file,
+a.folder {
     color: white;
     text-decoration: none;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
         text-decoration: underline;
     }
 }

@@ -1,4 +1,5 @@
 import { Component } from "preact";
+import UIBox from "./UIBox";
 
 type Props = {
     onSelect: (slug: string) => void;
@@ -14,7 +15,11 @@ export default class ExtensionSelector extends Component<Props, State> {
     public render() {
         const ext = this.state.extension;
         return (
-            <div class="extension-selector">
+            <UIBox
+                collapsable={false}
+                title="Select Extension"
+                classes={["extension-selector"]}
+            >
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <label for="extension-slug">Extension slug</label>
                     <input
@@ -28,7 +33,7 @@ export default class ExtensionSelector extends Component<Props, State> {
                         <button type="submit">Inspect</button>
                     ) : null}
                 </form>
-            </div>
+            </UIBox>
         );
     }
 
