@@ -4,6 +4,41 @@ body {
     font-family: sans-serif;
     background-color: rgb(32, 32, 32);
     color: white;
+    margin: 0px 8px;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#footer {
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+#view-on-github {
+    color: white;
+    text-decoration: none;
+    opacity: 0.64;
+    font-size: 0.85em;
+    line-height: 16px;
+
+    &::after {
+        content: " ";
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-left: 0.4em;
+        margin-top: -1px;
+        vertical-align: text-top;
+        background-image: url("../icons/bootstrap/github.svg");
+        background-repeat: no-repeat;
+    }
+
+    &:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
 }
 
 @import "extension-selector.less";

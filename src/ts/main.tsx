@@ -33,6 +33,15 @@ class App extends Preact.Component<{}, AppState> {
                         onSelect={(ext) => this.setState({ extension: ext })}
                     />
                 )}
+                <div class="hfill"></div>
+                <div id="footer">
+                    <a
+                        id="view-on-github"
+                        href="https://github.com/tim-we/web-ext-inspector"
+                    >
+                        View on GitHub
+                    </a>
+                </div>
             </>
         );
     }

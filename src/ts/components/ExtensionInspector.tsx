@@ -30,7 +30,7 @@ export default class ExtensionInspector extends Component<Props, State> {
     public render() {
         const state = this.state;
         return (
-            <div>
+            <>
                 {state.inspector ? (
                     <>
                         <ExtensionMetaData inspector={state.inspector} />
@@ -39,7 +39,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                     </>
                 ) : null}
                 {state.status ? <div class="status">{state.status}</div> : null}
-            </div>
+            </>
         );
     }
 }
