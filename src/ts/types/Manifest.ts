@@ -24,16 +24,17 @@ type Manifest2 = {
     };
 
     web_accessible_resources?: string[];
-    content_security_policy?: string;
 
     sidebar_action?: {
         default_panel: string;
         open_at_install?: boolean;
     };
 
+    browser_action?: BrowserOrPageAction;
+    page_action?: BrowserOrPageAction;
+
     // TODO
-    browser_action?: any;
-    page_action?: any;
+    content_security_policy?: string;
     protocol_handlers?: any[];
 };
 
@@ -62,4 +63,10 @@ type ContentScript = {
     all_frames?: boolean;
     match_about_blank?: boolean;
     run_at?: "document_start" | "document_end" | "document_idle";
+};
+
+type BrowserOrPageAction = {
+    default_popup?: string;
+    default_title?: string;
+    browser_style?: boolean;
 };

@@ -7,7 +7,6 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { extractScripts } from "../../utils/html";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
@@ -65,6 +64,7 @@ export class WorkerAPI {
         ScriptFinder.identifyContentScripts(root, manifest);
         ScriptFinder.identifySidebarScripts(root, manifest);
         ScriptFinder.identifyUserScriptAPI(root, manifest);
+        ScriptFinder.identifyActionScripts(root, manifest);
 
         ResourceLocator.identifyWebAccessibleResources(root, manifest);
     }

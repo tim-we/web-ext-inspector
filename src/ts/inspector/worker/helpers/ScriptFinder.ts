@@ -69,6 +69,27 @@ export async function identifySidebarScripts(
     );
 }
 
+export async function identifyActionScripts(
+    root: TreeFolder,
+    manifest: Manifest
+): Promise<void> {
+    if (manifest.browser_action && manifest.browser_action.default_popup) {
+        await findScriptNodes(
+            manifest.browser_action.default_popup,
+            root,
+            "browser-action"
+        );
+    }
+
+    if (manifest.page_action && manifest.page_action.default_popup) {
+        await findScriptNodes(
+            manifest.page_action.default_popup,
+            root,
+            "page-action"
+        );
+    }
+}
+
 export async function findScriptNodes(
     pagePath: string,
     root: TreeFolder,
