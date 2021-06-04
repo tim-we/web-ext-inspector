@@ -1,27 +1,48 @@
-.permission-list {
+.permissions .box-content {
     display: flex;
     flex-direction: row;
-    gap: 6px;
+    gap: 10px;
 
-    &:not(:last-child) {
-        margin-bottom: 10px;
-    }
+    .permission-list {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        flex-wrap: wrap;
+        flex-grow: 1;
+        justify-content: center;
+        padding-top: 1.75em;
+        min-width: 31%;
 
-    .permission {
-        padding: 1px 7px;
-        border-radius: 20px;
-        white-space: nowrap;
-        cursor: default;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-
-        &.api {
-            background-color: rgb(200, 80, 0);
+        .pl-title {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            text-align: center;
+            font-size: 0.85em;
+            user-select: none;
+            color: rgb(220,220,220);
         }
 
-        &.host {
-            background-color: rgb(0, 80, 200);
-            font-family: monospace;
-            padding: 2px 7px;
+        .permission {
+            padding: 1px 7px;
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: default;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            height: 20px;
+            line-height: 20px;
+
+            &.api {
+                background-color: rgb(227, 103, 12);
+            }
+
+            &.host {
+                background-color: rgb(0, 80, 200);
+                font-family: monospace;
+                padding: 2px 7px;
+            }
         }
     }
 }

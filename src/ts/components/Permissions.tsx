@@ -1,4 +1,4 @@
-import { Component } from "preact";
+import { Component, FunctionalComponent as FC } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { Manifest } from "../types/Manifest";
 import UIBox from "./UIBox";
@@ -21,42 +21,33 @@ export default class ExtensionPermissions extends Component<Props, State> {
     }
 
     public render() {
-        if (this.state.manifest === undefined) {
+        const manifest = this.state.manifest;
+        if (manifest === undefined) {
             return null;
         }
 
-        const allPermissions = this.state.manifest.permissions ?? [];
-        const apiPermissions = allPermissions.filter((p) =>
-            API_PERMISSIONS.has(p)
-        );
-        const hostPermissions = allPermissions.filter(
-            (p) => !API_PERMISSIONS.has(p)
-        );
+        const requiredPermissions = manifest.permissions ?? [];
+        const optionalPermissions = manifest.optional_permissions ?? [];
+
+        requiredPermissions.sort();
+        optionalPermissions.sort();
 
         return (
-            <UIBox key="permissions" title="Permissions">
-                {apiPermissions.length > 0 ? (
-                    <div class="permission-list">
-                        {apiPermissions.map((p) => (
-                            <Permission
-                                type="api"
-                                permission={p}
-                                optional={false}
-                            />
-                        ))}
-                    </div>
-                ) : null}
-                {hostPermissions.length > 0 ? (
-                    <div class="permission-list">
-                        {hostPermissions.map((p) => (
-                            <Permission
-                                type="host"
-                                permission={p}
-                                optional={false}
-                            />
-                        ))}
-                    </div>
-                ) : null}
+            <UIBox
+                key="permissions"
+                title="Permissions"
+                classes={["permissions"]}
+            >
+                <PermissionList required={true}>
+                    {requiredPermissions.map((p) => (
+                        <Permission permission={p} />
+                    ))}
+                </PermissionList>
+                <PermissionList required={false}>
+                    {optionalPermissions.map((p) => (
+                        <Permission permission={p} />
+                    ))}
+                </PermissionList>
             </UIBox>
         );
     }
@@ -107,17 +98,37 @@ const API_PERMISSIONS = new Set([
     "webRequestBlocking",
 ]);
 
-type PermissionProps = {
-    permission: string;
-    optional: boolean;
-    type: "api" | "host";
+type PLProps = {
+    required: boolean;
 };
 
-const Permission = (props: PermissionProps) => (
-    <div
-        class={`permission ${props.type} ${props.optional ? "optional" : ""}`}
-        title={`${props.type} permission`}
-    >
-        {props.permission}
-    </div>
-);
+const PermissionList: FC<PLProps> = (props) => {
+    if (props.children == false) {
+        return null;
+    }
+
+    return (
+        <div class="permission-list">
+            <div class="pl-title">
+                {props.required
+                    ? "Required Permissions"
+                    : "Optional Permissions"}
+            </div>
+            {props.children}
+        </div>
+    );
+};
+
+type PermissionProps = {
+    permission: string;
+};
+
+const Permission = (props: PermissionProps) => {
+    const type = API_PERMISSIONS.has(props.permission) ? "api" : "host";
+
+    return (
+        <div class={`permission ${type}`} title={`${type} permission`}>
+            {props.permission}
+        </div>
+    );
+};
