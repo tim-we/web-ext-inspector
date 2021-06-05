@@ -38,16 +38,30 @@ export default class ExtensionPermissions extends Component<Props, State> {
                 title="Permissions"
                 classes={["permissions"]}
             >
-                <PermissionList required={true}>
-                    {requiredPermissions.map((p) => (
-                        <Permission permission={p} />
-                    ))}
-                </PermissionList>
-                <PermissionList required={false}>
-                    {optionalPermissions.map((p) => (
-                        <Permission permission={p} />
-                    ))}
-                </PermissionList>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Required</th>
+                            <td>
+                                <PermissionList>
+                                    {requiredPermissions.map((p) => (
+                                        <Permission permission={p} />
+                                    ))}
+                                </PermissionList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Optional</th>
+                            <td>
+                                <PermissionList>
+                                    {optionalPermissions.map((p) => (
+                                        <Permission permission={p} />
+                                    ))}
+                                </PermissionList>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </UIBox>
         );
     }
@@ -116,25 +130,12 @@ const apiPermissions: Map<string, string | null> = new Map([
 const hostPermissionsInfo =
     mdnBaseURL + "/manifest.json/permissions#host_permissions";
 
-type PLProps = {
-    required: boolean;
-};
-
-const PermissionList: FC<PLProps> = (props) => {
-    if (props.children == false) {
-        return null;
+const PermissionList: FC<{}> = (props) => {
+    if (Array.isArray(props.children) && props.children.length > 0) {
+        return <>{props.children}</>;
+    } else {
+        return <span class="none-info">None</span>;
     }
-
-    return (
-        <div class="permission-list">
-            <div class="pl-title">
-                {props.required
-                    ? "Required Permissions"
-                    : "Optional Permissions"}
-            </div>
-            {props.children}
-        </div>
-    );
 };
 
 type PermissionProps = {
@@ -145,8 +146,8 @@ const Permission = (props: PermissionProps) => {
     const type = apiPermissions.has(props.permission) ? "api" : "host";
 
     let infoURL = hostPermissionsInfo;
-    
-    if(type === "api") {
+
+    if (type === "api") {
         const url = apiPermissions.get(props.permission);
 
         infoURL = url ? url : mdnBaseURL + "/API/" + props.permission;

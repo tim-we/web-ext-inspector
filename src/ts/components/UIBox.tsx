@@ -37,14 +37,14 @@ export default class UIBox extends Component<Props, State> {
             : () => {};
 
         return (
-            <div class={classes.join(" ")}>
-                <div class="title-bar" onClick={clickHandler}>
+            <section class={classes.join(" ")}>
+                <div class="title-bar" role="heading" onClick={clickHandler}>
                     {this.props.title}
                 </div>
                 {this.state.expanded ? (
                     <div class="box-content">{this.props.children}</div>
                 ) : null}
-            </div>
+            </section>
         );
     }
 }

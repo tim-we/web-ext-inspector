@@ -3,26 +3,32 @@
     flex-direction: row;
     gap: 10px;
 
-    .permission-list {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        gap: 6px;
-        flex-wrap: wrap;
-        flex-grow: 1;
-        justify-content: center;
-        padding-top: 1.75em;
-        min-width: 31%;
+    table {
+        width: 100%;
+        text-align: left;
+        border-collapse: separate;
+        border-spacing: 0 1em;
+        margin-bottom: -1em;
+        border: none;
 
-        .pl-title {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            right: 0px;
-            text-align: center;
+        td {
+            display: flex;
+            flex-direction: row;
+            gap: 6px;
+            flex-wrap: wrap;
+
+            .none-info {
+                color: rgb(200, 200, 200);
+                user-select: none;
+            }
+        }
+
+        th {
             font-size: 0.85em;
             user-select: none;
-            color: rgb(220, 220, 220);
+            color: rgb(200, 200, 200);
+            width: 90px;
+            font-weight: normal;
         }
 
         .permission {
