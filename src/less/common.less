@@ -51,9 +51,12 @@ a.folder {
     color: white;
     text-decoration: none;
 
-    &:hover,
-    &:active {
+    &:hover, &:active, &:focus {
         text-decoration: underline;
+    }
+
+    &:focus-visible {
+        outline: none;
     }
 }
 
