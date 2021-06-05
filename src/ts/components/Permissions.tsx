@@ -53,50 +53,68 @@ export default class ExtensionPermissions extends Component<Props, State> {
     }
 }
 
-const API_PERMISSIONS = new Set([
-    "activeTab",
-    "alarms",
-    "background",
-    "bookmarks",
-    "browserSettings",
-    "browsingData",
-    "captivePortal",
-    "clipboardRead",
-    "clipboardWrite",
-    "contentSettings",
-    "contextMenus",
-    "contextualIdentities",
-    "cookies",
-    "debugger",
-    "dns",
-    "downloads",
-    "downloads.open",
-    "find",
-    "geolocation",
-    "history",
-    "identity",
-    "idle",
-    "management",
-    "menus",
-    "menus.overrideContext",
-    "nativeMessaging",
-    "notifications",
-    "pageCapture",
-    "pkcs11",
-    "privacy",
-    "proxy",
-    "search",
-    "sessions",
-    "storage",
-    "tabHide",
-    "tabs",
-    "theme",
-    "topSites",
-    "unlimitedStorage",
-    "webNavigation",
-    "webRequest",
-    "webRequestBlocking",
+const mdnBaseURL =
+    "https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions";
+
+const apiPermissions: Map<string, string | null> = new Map([
+    [
+        "activeTab",
+        mdnBaseURL + "/manifest.json/permissions#activetab_permission",
+    ],
+    ["alarms", null],
+    ["background", null],
+    ["bookmarks", null],
+    ["browserSettings", null],
+    ["browsingData", null],
+    ["captivePortal", null],
+    [
+        "clipboardRead",
+        mdnBaseURL + "/manifest.json/permissions#clipboard_access",
+    ],
+    [
+        "clipboardWrite",
+        mdnBaseURL + "/manifest.json/permissions#clipboard_access",
+    ],
+    ["contentSettings", null],
+    ["contextMenus", null],
+    ["contextualIdentities", null],
+    ["cookies", null],
+    ["debugger", null],
+    ["dns", null],
+    ["downloads", null],
+    ["downloads.open", null],
+    ["find", null],
+    ["geolocation", null],
+    ["history", null],
+    ["identity", null],
+    ["idle", null],
+    ["management", null],
+    ["menus", null],
+    ["menus.overrideContext", null],
+    ["nativeMessaging", null],
+    ["notifications", null],
+    ["pageCapture", null],
+    ["pkcs11", null],
+    ["privacy", null],
+    ["proxy", null],
+    ["search", null],
+    ["sessions", null],
+    ["storage", null],
+    ["tabHide", mdnBaseURL + "/API/tabs/hide"],
+    ["tabs", null],
+    ["theme", null],
+    ["topSites", null],
+    [
+        "unlimitedStorage",
+        mdnBaseURL + "/manifest.json/permissions#unlimited_storage",
+    ],
+    ["webNavigation", null],
+    ["webRequest", null],
+    ["webRequestBlocking", null],
 ]);
+
+const hostPermissionsInfo =
+    mdnBaseURL + "/manifest.json/permissions#host_permissions";
 
 type PLProps = {
     required: boolean;
@@ -124,11 +142,25 @@ type PermissionProps = {
 };
 
 const Permission = (props: PermissionProps) => {
-    const type = API_PERMISSIONS.has(props.permission) ? "api" : "host";
+    const type = apiPermissions.has(props.permission) ? "api" : "host";
+
+    let infoURL = hostPermissionsInfo;
+    
+    if(type === "api") {
+        const url = apiPermissions.get(props.permission);
+
+        infoURL = url ? url : mdnBaseURL + "/API/" + props.permission;
+    }
+
+    const classes = ["permission", type];
 
     return (
-        <div class={`permission ${type}`} title={`${type} permission`}>
+        <a
+            class={classes.join(" ")}
+            href={infoURL ?? undefined}
+            target="_blank"
+        >
             {props.permission}
-        </div>
+        </a>
     );
 };
