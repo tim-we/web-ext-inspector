@@ -38,7 +38,11 @@ export default class ExtensionInspector extends Component<Props, State> {
                         <FileExplorer path="" inspector={state.inspector} />
                     </>
                 ) : null}
-                {state.status ? <div class="status">{state.status}</div> : null}
+                {state.status ? (
+                    <div class="status" role="status">
+                        {state.status}
+                    </div>
+                ) : null}
             </>
         );
     }

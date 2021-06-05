@@ -102,7 +102,7 @@ class FolderView extends Component<FVProps> {
         }
 
         return (
-            <ul>
+            <ul role="tree">
                 {data.map((node) => {
                     const objPath = (this.props.path + "/" + node.name).replace(
                         /^\//,
@@ -125,6 +125,8 @@ class FolderView extends Component<FVProps> {
                             <li
                                 key={objPath}
                                 class={isOpen ? "folder open" : "folder"}
+                                role="treeitem"
+                                aria-expanded={isOpen}
                             >
                                 <a
                                     class="folder"
@@ -201,7 +203,7 @@ class FileNodeView extends Component<FNVProps> {
         const classes = ["file"].concat(node.tags);
 
         return (
-            <li class={classes.join(" ")}>
+            <li class={classes.join(" ")} role="treeitem">
                 <a
                     ref={this.ref}
                     class="file"

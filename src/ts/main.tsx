@@ -25,7 +25,9 @@ class App extends Preact.Component<{}, AppState> {
 
         return (
             <>
-                <h2>Extension Inspector</h2>
+                <header>
+                    <h2>Extension Inspector</h2>
+                </header>
                 {extension ? (
                     <ExtensionInspector extId={extension} />
                 ) : (
@@ -34,14 +36,14 @@ class App extends Preact.Component<{}, AppState> {
                     />
                 )}
                 <div class="hfill"></div>
-                <div id="footer">
+                <footer>
                     <a
                         id="view-on-github"
                         href="https://github.com/tim-we/web-ext-inspector"
                     >
                         View on GitHub
                     </a>
-                </div>
+                </footer>
             </>
         );
     }

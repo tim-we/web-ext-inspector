@@ -10,6 +10,8 @@ type State = {
     expanded: boolean;
 };
 
+let count = 0;
+
 export default class UIBox extends Component<Props, State> {
     state = { expanded: true };
 
@@ -36,13 +38,24 @@ export default class UIBox extends Component<Props, State> {
                   }))
             : () => {};
 
+        count++;
+        const titleId = "uibox-title-bar-" + count;
+
         return (
             <section class={classes.join(" ")}>
-                <div class="title-bar" role="heading" onClick={clickHandler}>
+                <button
+                    id={titleId}
+                    class="title-bar"
+                    role="heading"
+                    onClick={clickHandler}
+                    tabIndex={collapsable ? 0 : -1}
+                >
                     {this.props.title}
-                </div>
+                </button>
                 {this.state.expanded ? (
-                    <div class="box-content">{this.props.children}</div>
+                    <div class="box-content" aria-labelledby={titleId}>
+                        {this.props.children}
+                    </div>
                 ) : null}
             </section>
         );

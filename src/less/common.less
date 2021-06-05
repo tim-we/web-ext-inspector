@@ -4,15 +4,25 @@
     margin-bottom: 10px;
 
     .title-bar {
+        display: block;
+        border: none;
+        background-color: transparent;
         padding: 10px;
         user-select: none;
         font-size: 0.85em;
+        font-family: sans-serif;
         color: rgb(200, 200, 200);
+        outline: none;
     }
 
     &.collapsable {
         .title-bar {
             cursor: pointer;
+        }
+
+        .title-bar:focus-visible {
+            color: white;
+            text-decoration: underline;
         }
 
         .title-bar::before {

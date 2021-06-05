@@ -134,7 +134,11 @@ const PermissionList: FC<{}> = (props) => {
     if (Array.isArray(props.children) && props.children.length > 0) {
         return <>{props.children}</>;
     } else {
-        return <span class="none-info">None</span>;
+        return (
+            <span class="none-info" role="note">
+                None
+            </span>
+        );
     }
 };
 
