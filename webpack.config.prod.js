@@ -28,7 +28,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.less$/i,
+                test: /\.(less|css)$/i,
                 use: [
                     { loader: "style-loader" }, //  creates style nodes from JS strings
                     { loader: "css-loader" }, //    translates CSS into a JS module (CommonJS)
