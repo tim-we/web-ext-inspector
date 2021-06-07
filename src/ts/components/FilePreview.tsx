@@ -56,7 +56,7 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                 onFileSelect={props.onFileSelect}
             />
             <div class="main-actions">
-                {node.name.endsWith(".js") ? (
+                {/\.(js|json)$/i.test(node.name) ? (
                     <a
                         class="open"
                         href={"#/files/" + props.path}
