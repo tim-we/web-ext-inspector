@@ -7,10 +7,14 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
+import hljs from "highlight.js/lib/core";
+import javascript from "highlight.js/lib/languages/javascript";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
+
+hljs.registerLanguage("javascript", javascript);
 
 export type StatusListener = (status: string) => void;
 
@@ -116,6 +120,29 @@ export class WorkerAPI {
         };
     }
 
+    public async highlightCode(path: string): Promise<HighlightedCode> {
+        const file = this.root.get(path) as TreeFile;
+
+        if (!file || file instanceof TreeFolder) {
+            throw new Error("Not a file.");
+        }
+
+        if (!file.hasTag("code")) {
+            throw new Error(`No syntax highlighting support for ${file.name}.`);
+        }
+
+        const content: string = await file.entry.getData!(new zip.TextWriter());
+
+        const html = hljs.highlight(content, {
+            language: "javascript",
+        }).value;
+
+        return {
+            language: "javascript",
+            code: html,
+        };
+    }
+
     public async getFileDownloadURL(
         path: string,
         timeout: number = 10.0
@@ -142,3 +169,8 @@ export class WorkerAPI {
 }
 
 Comlink.expose(new WorkerAPI());
+
+type HighlightedCode = {
+    language: "javascript";
+    code: string;
+};

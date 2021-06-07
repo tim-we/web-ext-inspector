@@ -1,10 +1,6 @@
 import { Component, createRef } from "preact";
 import { Inspector } from "../inspector/Inspector";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
-import hljs from "highlight.js/lib/core";
-import javascript from "highlight.js/lib/languages/javascript";
-
-hljs.registerLanguage("javascript", javascript);
 
 type Props = {
     remote: Inspector;
@@ -14,9 +10,8 @@ type Props = {
 };
 
 type State = {
-    file?: {
-        url: string;
-        content: string;
+    data?: {
+        language: string;
     };
 };
 
@@ -25,32 +20,28 @@ export default class CodeViewer extends Component<Props, State> {
 
     public constructor(props: Props) {
         super(props);
+        const remote = props.remote;
+
         (async () => {
-            const url = await props.remote.getFileDownloadURL(props.path, 0.0);
-            const response = await fetch(url);
-            const content = await response.text();
+            const result = await remote.highlightCode(props.path);
             await new Promise<void>((resolve) =>
-                this.setState({ file: { url, content } }, resolve)
+                this.setState({ data: { language: result.language } }, resolve)
             );
             if (!this.codeRef.current) {
                 throw new Error("Code block not available.");
             }
-            const html = hljs.highlight(content, {
-                language: "javascript",
-            }).value;
-            this.codeRef.current.innerHTML = html;
+            this.codeRef.current.innerHTML = result.code;
         })();
-    }
-
-    componentWillUnmount() {
-        if (this.state.file) {
-            URL.revokeObjectURL(this.state.file.url);
-        }
     }
 
     public render() {
         const props = this.props;
-        const file = this.state.file;
+        const loaded = this.state.data !== undefined;
+        const codeClasses = ["hljs"];
+
+        if (this.state.data) {
+            codeClasses.push("language-" + this.state.data.language);
+        }
 
         return (
             <div
@@ -59,7 +50,7 @@ export default class CodeViewer extends Component<Props, State> {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div class="title-bar">
-                    <h2>{file ? props.info.name : "Loading..."}</h2>
+                    <h2>{loaded ? props.info.name : "Loading..."}</h2>
                     <div class="modal-controls">
                         <button
                             class="close-file"
