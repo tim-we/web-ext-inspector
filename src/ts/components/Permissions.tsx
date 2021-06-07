@@ -162,8 +162,9 @@ const Permission = (props: PermissionProps) => {
     return (
         <a
             class={classes.join(" ")}
-            href={infoURL ?? undefined}
+            href={infoURL}
             target="_blank"
+            title="click to learn more"
         >
             {props.permission}
         </a>
