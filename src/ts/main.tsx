@@ -27,7 +27,7 @@ class App extends Preact.Component<{}, AppState> {
         return (
             <>
                 <header>
-                    <h2>Extension Inspector</h2>
+                    <h1>Extension Inspector</h1>
                 </header>
                 {extension ? (
                     <ExtensionInspector extId={extension} />
