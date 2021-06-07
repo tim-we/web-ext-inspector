@@ -7,23 +7,19 @@ import TagList from "./TagList";
 import ImagePreview from "./previews/ImagePreview";
 import HTMLPreview from "./previews/HTMLPreview";
 import { getFolder } from "../utils/paths";
+import { FileSelectListener, TreeFileDTO } from "../types/PackagedFiles";
 
 type FPProps = {
     path: string;
-    node: TreeNodeDTO;
+    node: TreeFileDTO;
     inspector: Inspector;
     closer: () => void;
     onFileSelect: FileSelectListener;
+    onFileOpen: FileSelectListener;
 };
-
-type FileSelectListener = (path: string, file: TreeNodeDTO) => void;
 
 const FilePreview: FunctionComponent<FPProps> = (props) => {
     const node = props.node;
-
-    if (node.type === "folder") {
-        return null;
-    }
 
     return (
         <div class="file-preview">
@@ -59,21 +55,32 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                 inspector={props.inspector}
                 onFileSelect={props.onFileSelect}
             />
-            <a
-                class="download"
-                title="Download file"
-                href={"#/files/" + props.path}
-                onClick={async (e: MouseEvent) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const url = await props.inspector.getFileDownloadURL(
-                        props.path
-                    );
-                    startDownload(url, node.name);
-                }}
-            >
-                Download
-            </a>
+            <div class="main-actions">
+                {node.name.endsWith(".js") ? (
+                    <a
+                        class="open"
+                        href={"#/files/" + props.path}
+                        onClick={() => props.onFileOpen(props.path, node)}
+                    >
+                        Open
+                    </a>
+                ) : null}
+                <a
+                    class="download"
+                    title="Download file"
+                    href={"#/files/" + props.path}
+                    onClick={async (e: MouseEvent) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const url = await props.inspector.getFileDownloadURL(
+                            props.path
+                        );
+                        startDownload(url, node.name);
+                    }}
+                >
+                    Download
+                </a>
+            </div>
             <a
                 class="close"
                 title="close preview"

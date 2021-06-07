@@ -3,6 +3,7 @@ import ExtensionInspector from "./components/ExtensionInspector";
 import ExtensionSelector from "./components/ExtensionSelector";
 
 // create styles (in <head>)
+import "highlight.js/styles/a11y-dark.css";
 import "../less/app.less";
 
 type AppState = {

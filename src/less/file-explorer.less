@@ -152,31 +152,39 @@
             cursor: pointer;
             opacity: 0.75;
 
-            &:hover, &:focus, &:active {
+            &:hover,
+            &:focus,
+            &:active {
                 opacity: 1;
             }
         }
 
-        a.download {
-            display: inline-block;
-            background-color: rgb(0, 75, 190);
-            text-decoration: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            &::before {
-                content: " ";
+        .main-actions {
+            a {
                 display: inline-block;
-                margin-right: 7px;
-                width: 16px;
-                height: 16px;
-                background-image: url("../icons/bootstrap/download.svg");
-                background-repeat: no-repeat;
-                background-position: center;
-                vertical-align: sub;
+                background-color: rgb(0, 75, 190);
+                text-decoration: none;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+
+                &.download::before {
+                    content: " ";
+                    display: inline-block;
+                    margin-right: 7px;
+                    width: 16px;
+                    height: 16px;
+                    background-image: url("../icons/bootstrap/download.svg");
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    vertical-align: sub;
+                }
             }
         }
 

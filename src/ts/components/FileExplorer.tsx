@@ -5,20 +5,20 @@ import prettyBytes from "pretty-bytes";
 import FilePreview from "./FilePreview";
 import TagList from "./TagList";
 import UIBox from "./UIBox";
+import { FileSelectListener, TreeFileDTO } from "../types/PackagedFiles";
 
 type Props = {
     inspector: Inspector;
     path?: string;
+    onFileOpen: FileSelectListener;
 };
 
 type State = {
     selectedFile?: {
         path: string;
-        node: TreeNodeDTO;
+        node: TreeFileDTO;
     };
 };
-
-type FileSelectHandler = (path: string, node: TreeNodeDTO) => void;
 
 export default class FileExplorer extends Component<Props, State> {
     private data: Map<string, TreeNodeDTO[]>;
@@ -35,7 +35,7 @@ export default class FileExplorer extends Component<Props, State> {
         this.selectFile = this.selectFile.bind(this);
     }
 
-    private async selectFile(path: string, node: TreeNodeDTO): Promise<void> {
+    private async selectFile(path: string, node: TreeFileDTO): Promise<void> {
         await this.loadAllParents(path);
         this.forceUpdate();
         this.setState({ selectedFile: { path, node } });
@@ -79,6 +79,7 @@ export default class FileExplorer extends Component<Props, State> {
                             this.setState({ selectedFile: undefined })
                         }
                         onFileSelect={this.selectFile}
+                        onFileOpen={this.props.onFileOpen}
                     />
                 ) : null}
             </UIBox>
@@ -90,7 +91,7 @@ type FVProps = {
     path: string;
     data: Map<string, TreeNodeDTO[]>;
     inspector: Inspector;
-    onFileSelect: FileSelectHandler;
+    onFileSelect: FileSelectListener;
 };
 
 class FolderView extends Component<FVProps> {
@@ -177,9 +178,9 @@ class FolderView extends Component<FVProps> {
 
 type FNVProps = {
     path: string;
-    node: TreeNodeDTO;
+    node: TreeFileDTO;
     inspector: Inspector;
-    onSelect: (path: string, node: TreeNodeDTO) => void;
+    onSelect: FileSelectListener;
     scrollIntoView?: boolean;
 };
 
@@ -196,6 +197,7 @@ class FileNodeView extends Component<FNVProps> {
         const path = this.props.path;
         const node = this.props.node;
 
+        //@ts-ignore
         if (node.type === "folder") {
             throw new Error(`Node ${node.name} is not a folder.`);
         }

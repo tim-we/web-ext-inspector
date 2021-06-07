@@ -1,6 +1,7 @@
 import { Component } from "preact";
 import { Inspector } from "../../inspector/Inspector";
 import { TreeNodeDTO } from "../../inspector/worker/FileTree";
+import { FileSelectListener } from "../../types/PackagedFiles";
 
 type Props = {
     path: string;
@@ -17,8 +18,6 @@ type ScriptInfo = {
     path: string;
     node: TreeNodeDTO;
 };
-
-type FileSelectListener = (path: string, file: TreeNodeDTO) => void;
 
 export default class HTMLPreview extends Component<Props, State> {
     componentWillMount() {
@@ -43,6 +42,8 @@ export default class HTMLPreview extends Component<Props, State> {
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
+                                        // TODO
+                                        //@ts-ignore
                                         this.props.onFileSelect(path, node);
                                     }}
                                 >

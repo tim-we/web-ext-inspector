@@ -3,6 +3,8 @@ import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
 import { createInspector, Inspector } from "../inspector/Inspector";
 import ExtensionPermissions from "./Permissions";
+import { TreeNodeDTO } from "../inspector/worker/FileTree";
+import CodeViewer from "./CodeViewer";
 
 type Props = {
     extId: string;
@@ -11,6 +13,10 @@ type Props = {
 type State = {
     inspector?: Inspector;
     status?: string;
+    currentFile?: {
+        path: string;
+        info: TreeNodeDTO & { type: "file" };
+    };
 };
 
 export default class ExtensionInspector extends Component<Props, State> {
@@ -35,13 +41,29 @@ export default class ExtensionInspector extends Component<Props, State> {
                     <>
                         <ExtensionMetaData inspector={state.inspector} />
                         <ExtensionPermissions inspector={state.inspector} />
-                        <FileExplorer path="" inspector={state.inspector} />
+                        <FileExplorer
+                            path=""
+                            inspector={state.inspector}
+                            onFileOpen={(path, info) =>
+                                this.setState({ currentFile: { path, info } })
+                            }
+                        />
                     </>
                 ) : null}
                 {state.status ? (
                     <div class="status" role="status">
                         {state.status}
                     </div>
+                ) : null}
+                {state.currentFile ? (
+                    <CodeViewer
+                        remote={state.inspector!}
+                        path={state.currentFile.path}
+                        info={state.currentFile.info}
+                        onClose={() =>
+                            this.setState({ currentFile: undefined })
+                        }
+                    />
                 ) : null}
             </>
         );
