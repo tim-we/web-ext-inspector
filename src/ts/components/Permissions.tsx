@@ -96,7 +96,7 @@ const apiPermissions: Map<string, string | null> = new Map([
     ["debugger", null],
     ["dns", null],
     ["downloads", null],
-    ["downloads.open", null],
+    ["downloads.open", mdnBaseURL + "/API/downloads/open"],
     ["find", null],
     ["geolocation", null],
     ["history", null],
@@ -104,7 +104,7 @@ const apiPermissions: Map<string, string | null> = new Map([
     ["idle", null],
     ["management", null],
     ["menus", null],
-    ["menus.overrideContext", null],
+    ["menus.overrideContext", mdnBaseURL + "/API/menus/overrideContext"],
     ["nativeMessaging", null],
     ["notifications", null],
     ["pageCapture", null],
@@ -124,7 +124,7 @@ const apiPermissions: Map<string, string | null> = new Map([
     ],
     ["webNavigation", null],
     ["webRequest", null],
-    ["webRequestBlocking", null],
+    ["webRequestBlocking", mdnBaseURL + "/API/webRequest"],
 ]);
 
 const hostPermissionsInfo =
