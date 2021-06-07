@@ -20,6 +20,9 @@ type FPProps = {
 
 const FilePreview: FunctionComponent<FPProps> = (props) => {
     const node = props.node;
+    const canOpen =
+        /\.(js|mjs|json|htm|html|xml)$/i.test(node.name) ||
+        node.tags.includes("text");
 
     return (
         <div class="file-preview">
@@ -56,7 +59,7 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                 onFileSelect={props.onFileSelect}
             />
             <div class="main-actions">
-                {/\.(js|json)$/i.test(node.name) ? (
+                {canOpen ? (
                     <a
                         class="open"
                         href={"#/files/" + props.path}

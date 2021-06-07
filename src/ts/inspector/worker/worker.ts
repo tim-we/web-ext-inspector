@@ -9,12 +9,16 @@ import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
 import hljs from "highlight.js/lib/core";
 import javascript from "highlight.js/lib/languages/javascript";
+import xml from "highlight.js/lib/languages/xml";
+import plaintext from "highlight.js/lib/languages/plaintext";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
 
 hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("xml", xml);
+hljs.registerLanguage("plaintext", plaintext);
 
 export type StatusListener = (status: string) => void;
 
@@ -127,18 +131,21 @@ export class WorkerAPI {
             throw new Error("Not a file.");
         }
 
-        if (!file.hasTag("code")) {
-            throw new Error(`No syntax highlighting support for ${file.name}.`);
+        const content: string = await file.entry.getData!(new zip.TextWriter());
+        let language: SyntaxLang = "plaintext";
+
+        if (/\.(htm|html|xml)$/i.test(file.name)) {
+            language = "xml";
+        } else if (/\.(js|mjs|json)$/i.test(file.name)) {
+            language = "javascript";
         }
 
-        const content: string = await file.entry.getData!(new zip.TextWriter());
-
         const html = hljs.highlight(content, {
-            language: "javascript",
+            language,
         }).value;
 
         return {
-            language: "javascript",
+            language,
             code: html,
         };
     }
@@ -170,7 +177,9 @@ export class WorkerAPI {
 
 Comlink.expose(new WorkerAPI());
 
+type SyntaxLang = "javascript" | "xml" | "plaintext";
+
 type HighlightedCode = {
-    language: "javascript";
+    language: SyntaxLang;
     code: string;
 };
