@@ -128,7 +128,7 @@ export class WorkerAPI {
         const file = this.root.get(path) as TreeFile;
 
         if (!file || file instanceof TreeFolder) {
-            throw new Error("Not a file.");
+            throw new Error(`File ${path} not found.`);
         }
 
         const content: string = await file.entry.getData!(new zip.TextWriter());

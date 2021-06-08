@@ -42,7 +42,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                         <ExtensionMetaData inspector={state.inspector} />
                         <ExtensionPermissions inspector={state.inspector} />
                         <FileExplorer
-                            path=""
+                            selected="manifest.json"
                             inspector={state.inspector}
                             onFileOpen={(path, info) =>
                                 this.setState({ currentFile: { path, info } })

@@ -9,7 +9,7 @@ import { FileSelectListener, TreeFileDTO } from "../types/PackagedFiles";
 
 type Props = {
     inspector: Inspector;
-    path?: string;
+    selected?: string;
     onFileOpen: FileSelectListener;
 };
 
@@ -26,13 +26,31 @@ export default class FileExplorer extends Component<Props, State> {
     public constructor(props: Props) {
         super(props);
         this.data = new Map();
-        const path = props.path ?? "";
-        props.inspector.listDirectoryContents(path).then((list) => {
-            this.data.set(path, list);
-            this.forceUpdate();
-        });
-
         this.selectFile = this.selectFile.bind(this);
+
+        (async () => {
+            const path = "";
+
+            const list = await props.inspector.listDirectoryContents(path);
+            this.data.set(path, list);
+            const root = this.data.get("")!;
+
+            if (props.selected) {
+                const node = root.find(
+                    (n) => n.name === props.selected && n.type === "file"
+                );
+                if (node) {
+                    this.setState({
+                        selectedFile: {
+                            path: props.selected,
+                            node: node as TreeFileDTO,
+                        },
+                    });
+                }
+            }
+
+            this.forceUpdate();
+        })();
     }
 
     private async selectFile(path: string, node: TreeFileDTO): Promise<void> {
@@ -64,7 +82,7 @@ export default class FileExplorer extends Component<Props, State> {
             >
                 <div class="file-tree">
                     <FolderView
-                        path={this.props.path ?? ""}
+                        path={""}
                         data={this.data}
                         inspector={this.props.inspector}
                         onFileSelect={this.selectFile}
