@@ -151,7 +151,11 @@ export class WorkerAPI {
             throw new Error(`"${path}" is not a file.`);
         }
 
-        const blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
+        let blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
+        if(path.endsWith(".svg")) {
+            blob = blob.slice(0, blob.size, "image/svg+xml");
+        }
+        
         const url = URL.createObjectURL(blob);
 
         if (timeout > 0.0) {
