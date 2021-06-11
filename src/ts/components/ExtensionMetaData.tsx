@@ -33,9 +33,11 @@ export default class ExtensionMetaData extends Component<Props, State> {
         )[0];
 
         const lastUpdateTime = new Date(details.last_updated);
+        const createdTime = new Date(details.created);
 
         return (
             <UIBox title="Details" classes={["extension-meta-data"]}>
+                <img class="icon" src={details.icon_url} alt="extension icon" />
                 <table>
                     <tbody>
                         <tr>
@@ -43,24 +45,27 @@ export default class ExtensionMetaData extends Component<Props, State> {
                             <td>{details.name["en-US"]}</td>
                         </tr>
                         <tr>
-                            <td>Icon</td>
                             <td>
-                                <img
-                                    class="icon"
-                                    src={details.icon_url}
-                                    alt="extension icon"
-                                />
+                                {details.authors.length > 1
+                                    ? "Authors"
+                                    : "Author"}
+                            </td>
+                            <td>
+                                {details.authors
+                                    .map((a) => a.name || a.username)
+                                    .join(", ")}
                             </td>
                         </tr>
                         <tr>
-                            <td>Version</td>
+                            <td>Last Update</td>
                             <td>
-                                <span>{details.current_version.version}</span>
-                                <span
-                                    class="last-updated"
-                                    title="last updated"
-                                >{`(${friendlyTime(lastUpdateTime)})`}</span>
+                                <span>{friendlyTime(lastUpdateTime)}</span>
+                                <span class="version-info">{`(Version ${details.current_version.version})`}</span>
                             </td>
+                        </tr>
+                        <tr>
+                            <td>Created</td>
+                            <td>{friendlyTime(createdTime)}</td>
                         </tr>
                         <tr>
                             <td>Size</td>

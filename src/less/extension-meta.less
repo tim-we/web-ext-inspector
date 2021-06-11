@@ -1,9 +1,25 @@
-.extension-meta-data {
-    .ui-box();
+.extension-meta-data .box-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    .last-updated {
+    .icon {
         margin-left: 10px;
-        font-size: 0.85em;
-        opacity: 0.5;
+        margin-right: 30px;
+    }
+
+    table {
+        td:first-child {
+            font-size: 0.9em;
+            opacity: 0.75;
+            padding-right: 20px;
+            user-select: none;
+        }
+    }
+
+    .version-info {
+        margin-left: 10px;
+        font-size: 0.9em;
+        opacity: 0.75;
     }
 }

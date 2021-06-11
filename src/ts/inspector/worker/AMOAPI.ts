@@ -2,15 +2,23 @@ const API = "https://addons.mozilla.org/api/v5";
 
 export type Details = {
     id: number;
-    authors: any[];
+    authors: ExtensionAuthor[];
     current_version: Version;
     guid: string;
     icon_url: string;
-    name: { [key: string] : string };
+    name: { [key: string]: string };
     last_updated: string;
+    created: string;
     slug: string;
     url: string;
-}
+};
+
+type ExtensionAuthor = {
+    id: number;
+    name: string;
+    url: string;
+    username: string;
+};
 
 type Version = {
     id: number;
@@ -32,9 +40,9 @@ type File = {
     size: number;
     status: string;
     url: string;
-}
+};
 
-export async function getInfo(slug: string):Promise<Details> {
+export async function getInfo(slug: string): Promise<Details> {
     const response = await fetch(`${API}/addons/addon/${slug}/`);
     return response.json();
 }
