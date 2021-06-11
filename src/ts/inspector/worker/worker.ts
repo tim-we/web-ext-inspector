@@ -7,18 +7,11 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import hljs from "highlight.js/lib/core";
-import javascript from "highlight.js/lib/languages/javascript";
-import xml from "highlight.js/lib/languages/xml";
-import plaintext from "highlight.js/lib/languages/plaintext";
+import { highlight } from "./Preprocessor";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
-
-hljs.registerLanguage("javascript", javascript);
-hljs.registerLanguage("xml", xml);
-hljs.registerLanguage("plaintext", plaintext);
 
 export type StatusListener = (status: string) => void;
 
@@ -140,9 +133,7 @@ export class WorkerAPI {
             language = "javascript";
         }
 
-        const html = hljs.highlight(content, {
-            language,
-        }).value;
+        const html = highlight(content, language);
 
         return {
             language,
