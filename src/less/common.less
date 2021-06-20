@@ -55,6 +55,26 @@
     }
 }
 
+span.info {
+    display: inline-block;
+    background-color: rgba(26, 136, 199, 0.699);
+    padding: 5px;
+    border-radius: 3px;
+    margin: 10px;
+    
+    &::before {
+        content: " ";
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        background-image: url("../icons/bootstrap/info-circle-fill.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        margin-right: 8px;
+        vertical-align: sub;
+    }
+}
+
 span.path {
     font-family: monospace;
     hyphens: none;
@@ -65,7 +85,9 @@ a.folder {
     color: white;
     text-decoration: none;
 
-    &:hover, &:active, &:focus {
+    &:hover,
+    &:active,
+    &:focus {
         text-decoration: underline;
     }
 

@@ -46,6 +46,13 @@ export default class ExtensionSelector extends Component<Props, State> {
                                     <button type="submit">Inspect</button>
                                 ) : null}
                             </form>
+                            <span class="info">
+                                You can integrate this tool into the offical add-on website with an{" "}
+                                <a href="https://addons.mozilla.org/firefox/addon/extension-inspector">
+                                    extension
+                                </a>
+                                .
+                            </span>
                         </li>
                         <li>
                             or select a local file:
