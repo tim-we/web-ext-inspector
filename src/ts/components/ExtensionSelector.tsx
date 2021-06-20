@@ -1,4 +1,4 @@
-import { Component, createRef } from "preact";
+import { Component, createRef, FunctionalComponent as FC } from "preact";
 import { ExtensionSourceInfo } from "../inspector/worker/worker";
 import UIBox from "./UIBox";
 
@@ -18,58 +18,61 @@ export default class ExtensionSelector extends Component<Props, State> {
     public render() {
         const ext = this.state.extension;
         return (
-            <UIBox
-                collapsable={false}
-                title="Select Extension"
-                classes={["extension-selector"]}
-            >
-                <ul>
-                    <li>
-                        {"from the "}
-                        <a href="https://addons.mozilla.org">
-                            official add-on website
-                        </a>
-                        :
-                        <form onSubmit={this.onAMOSubmit.bind(this)}>
-                            <label for="extension-slug">
-                                addons.mozilla.org/en-US/firefox/addon/
-                            </label>
-                            <input
-                                id="extension-slug"
-                                type="text"
-                                value={ext}
-                                placeholder="tabs-aside"
-                                onInput={this.onInput.bind(this)}
-                            />
-                            {ext.trim().length > 0 ? (
-                                <button type="submit">Inspect</button>
-                            ) : null}
-                        </form>
-                    </li>
-                    <li>
-                        or select a local file:
-                        <form onSubmit={this.onFileSubmit.bind(this)}>
-                            <input
-                                ref={this.fileRef}
-                                type="file"
-                                accept=".zip,.xpi,.crx"
-                                onChange={() =>
-                                    this.setState({
-                                        fileSelected:
-                                            this.fileRef.current!.files !==
-                                                null &&
-                                            this.fileRef.current!.files
-                                                .length === 1,
-                                    })
-                                }
-                            />
-                            {this.state.fileSelected ? (
-                                <button type="submit">Inspect</button>
-                            ) : null}
-                        </form>
-                    </li>
-                </ul>
-            </UIBox>
+            <>
+                <UIBox
+                    collapsable={false}
+                    title="Select Extension"
+                    classes={["extension-selector"]}
+                >
+                    <ul>
+                        <li>
+                            {"from the "}
+                            <a href="https://addons.mozilla.org">
+                                official add-on website
+                            </a>
+                            :
+                            <form onSubmit={this.onAMOSubmit.bind(this)}>
+                                <label for="extension-slug">
+                                    addons.mozilla.org/en-US/firefox/addon/
+                                </label>
+                                <input
+                                    id="extension-slug"
+                                    type="text"
+                                    value={ext}
+                                    placeholder="tabs-aside"
+                                    onInput={this.onInput.bind(this)}
+                                />
+                                {ext.trim().length > 0 ? (
+                                    <button type="submit">Inspect</button>
+                                ) : null}
+                            </form>
+                        </li>
+                        <li>
+                            or select a local file:
+                            <form onSubmit={this.onFileSubmit.bind(this)}>
+                                <input
+                                    ref={this.fileRef}
+                                    type="file"
+                                    accept=".zip,.xpi,.crx"
+                                    onChange={() =>
+                                        this.setState({
+                                            fileSelected:
+                                                this.fileRef.current!.files !==
+                                                    null &&
+                                                this.fileRef.current!.files
+                                                    .length === 1,
+                                        })
+                                    }
+                                />
+                                {this.state.fileSelected ? (
+                                    <button type="submit">Inspect</button>
+                                ) : null}
+                            </form>
+                        </li>
+                    </ul>
+                </UIBox>
+                <ExampleSelector onSelect={this.props.onSelect} />
+            </>
         );
     }
 
@@ -98,3 +101,42 @@ export default class ExtensionSelector extends Component<Props, State> {
         }
     }
 }
+
+type ExampleProps = Props & { name: string; id: string };
+const Example: FC<ExampleProps> = (props) => (
+    <li key={props.id}>
+        inspect{" "}
+        <a
+            href={`?extension=${props.id}`}
+            onClick={(e) => {
+                e.preventDefault();
+                props.onSelect({ type: "amo", id: props.id });
+            }}
+        >
+            {props.name}
+        </a>
+    </li>
+);
+
+const ExampleSelector: FC<Props> = (props) => (
+    <UIBox title="Examples" classes={["extension-selector"]}>
+        Select one of the examples:
+        <ul>
+            <Example
+                name="I don't care about cookies"
+                id="i-dont-care-about-cookies"
+                onSelect={props.onSelect}
+            />
+            <Example
+                name="Enhancer for YouTube™"
+                id="enhancer-for-youtube"
+                onSelect={props.onSelect}
+            />
+            <Example
+                name="Tabs Aside"
+                id="tabs-aside"
+                onSelect={props.onSelect}
+            />
+        </ul>
+    </UIBox>
+);
