@@ -15,6 +15,19 @@ header {
     h1 {
         font-size: 22px;
         margin: 10px 0;
+
+        &::before {
+            content: " ";
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            background-image: url("../icons/logo-light.svg");
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+            margin-right: 0.3em;
+            vertical-align: sub;
+        }
     }
 }
 
