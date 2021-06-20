@@ -1,10 +1,21 @@
 import * as Comlink from "comlink";
-import { StatusListener, WorkerAPI } from "./worker/worker";
+import {
+    ExtensionSourceInfo,
+    StatusListener,
+    WorkerAPI,
+} from "./worker/worker";
 
 export type Inspector = Comlink.Remote<WorkerAPI>;
 
-export async function createInspector(
+export async function createInspectorFromAMOId(
     extId: string,
+    onStatusChange?: StatusListener
+): Promise<Inspector> {
+    return createInspector({ type: "amo", id: extId }, onStatusChange);
+}
+
+async function createInspector(
+    ext: ExtensionSourceInfo,
     onStatusChange?: StatusListener
 ): Promise<Inspector> {
     const worker = Comlink.wrap<WorkerAPI>(
@@ -12,9 +23,9 @@ export async function createInspector(
     );
 
     if (onStatusChange) {
-        await worker.init(extId, Comlink.proxy(onStatusChange));
+        await worker.init(ext, Comlink.proxy(onStatusChange));
     } else {
-        await worker.init(extId);
+        await worker.init(ext);
     }
 
     return worker;

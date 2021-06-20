@@ -1,16 +1,16 @@
 import { Component } from "preact";
-import { Details } from "../inspector/worker/AMOAPI";
 import prettyBytes from "pretty-bytes";
 import { Inspector } from "../inspector/Inspector";
 import friendlyTime from "friendly-time";
 import UIBox from "./UIBox";
+import { ExtensionDetails } from "../types/ExtensionDetails";
 
 type Props = {
     inspector: Inspector;
 };
 
 type State = {
-    details?: Details;
+    details?: ExtensionDetails;
 };
 
 export default class ExtensionMetaData extends Component<Props, State> {
@@ -28,21 +28,27 @@ export default class ExtensionMetaData extends Component<Props, State> {
             return <div>loading details...</div>;
         }
 
-        const ext = details.current_version.files.filter(
-            (f) => f.is_webextension
-        )[0];
-
-        const lastUpdateTime = new Date(details.last_updated);
-        const createdTime = new Date(details.created);
+        const lastUpdateTime = details.last_updated
+            ? new Date(details.last_updated)
+            : undefined;
+        const createdTime = details.created
+            ? new Date(details.created)
+            : undefined;
 
         return (
             <UIBox title="Details" classes={["extension-meta-data"]}>
-                <img class="icon" src={details.icon_url} alt="extension icon" />
+                {details.icon_url ? (
+                    <img
+                        class="icon"
+                        src={details.icon_url}
+                        alt="extension icon"
+                    />
+                ) : null}
                 <table>
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td>{details.name["en-US"]}</td>
+                            <td>{details.name}</td>
                         </tr>
                         <tr>
                             <td>
@@ -50,26 +56,26 @@ export default class ExtensionMetaData extends Component<Props, State> {
                                     ? "Authors"
                                     : "Author"}
                             </td>
-                            <td>
-                                {details.authors
-                                    .map((a) => a.name || a.username)
-                                    .join(", ")}
-                            </td>
+                            <td>{details.authors.join(", ")}</td>
                         </tr>
-                        <tr>
-                            <td>Last Update</td>
-                            <td>
-                                <span>{friendlyTime(lastUpdateTime)}</span>
-                                <span class="version-info">{`(Version ${details.current_version.version})`}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Created</td>
-                            <td>{friendlyTime(createdTime)}</td>
-                        </tr>
+                        {lastUpdateTime ? (
+                            <tr>
+                                <td>Last Update</td>
+                                <td>
+                                    <span>{friendlyTime(lastUpdateTime)}</span>
+                                    <span class="version-info">{`(Version ${details.version})`}</span>
+                                </td>
+                            </tr>
+                        ) : null}
+                        {createdTime ? (
+                            <tr>
+                                <td>Created</td>
+                                <td>{friendlyTime(createdTime)}</td>
+                            </tr>
+                        ) : null}
                         <tr>
                             <td>Size</td>
-                            <td>{prettyBytes(ext.size)}</td>
+                            <td>{prettyBytes(details.size)}</td>
                         </tr>
                     </tbody>
                 </table>

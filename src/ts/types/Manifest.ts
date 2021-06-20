@@ -4,6 +4,7 @@ type Manifest2 = {
     manifest_version: 2;
     name: string;
     version: string;
+    author?: string;
 
     background?: {
         page: string;
@@ -32,6 +33,10 @@ type Manifest2 = {
 
     browser_action?: BrowserOrPageAction;
     page_action?: BrowserOrPageAction;
+
+    icons?: {
+        [iconSize: string]: string
+    };
 
     // TODO
     content_security_policy?: string;

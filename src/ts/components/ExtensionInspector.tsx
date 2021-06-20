@@ -1,7 +1,7 @@
 import { Component } from "preact";
 import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
-import { createInspector, Inspector } from "../inspector/Inspector";
+import { createInspectorFromAMOId, Inspector } from "../inspector/Inspector";
 import ExtensionPermissions from "./Permissions";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import CodeViewer from "./CodeViewer";
@@ -26,7 +26,7 @@ export default class ExtensionInspector extends Component<Props, State> {
             status: "loading",
         };
 
-        createInspector(props.extId, (status) => {
+        createInspectorFromAMOId(props.extId, (status) => {
             this.setState({ status });
         }).then((inspector) => {
             this.setState({ inspector });

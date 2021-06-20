@@ -8,27 +8,67 @@ import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
 import { highlight } from "./Preprocessor";
+import { ExtensionDetails } from "../../types/ExtensionDetails";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
+
+export type ExtensionSourceInfo =
+    | {
+          type: "amo";
+          id: string;
+      }
+    | { type: "url"; url: string };
 
 export type StatusListener = (status: string) => void;
 
 export class WorkerAPI {
     private statusListener: StatusListener = () => {};
     private root: TreeFolder = new TreeFolder("root");
-    private details: AMOAPI.Details | undefined;
+    private details: ExtensionDetails | undefined;
     private initialized: AsyncEvent = new AsyncEvent("WorkerInitialized");
     private manifest: Manifest | undefined;
 
     public async init(
-        extId: string,
+        ext: ExtensionSourceInfo,
         statusListener?: StatusListener
     ): Promise<void> {
         this.statusListener = statusListener ?? this.statusListener;
+
+        let httpReader: zip.HttpReader;
+
+        if (ext.type === "amo") {
+            await this.loadFromAMO(ext.id);
+            const url = this.details!.download_url;
+
+            this.setStatus("downloading & extracting");
+            //@ts-ignore
+            httpReader = new zip.HttpReader(url);
+        } else {
+            //@ts-ignore
+            httpReader = new zip.HttpReader(ext.url);
+        }
+
+        const reader = new zip.ZipReader(httpReader);
+        this.root = createFileTree(await reader.getEntries());
+        this.manifest = await ManifestExtractor.getManifest(this.root);
+
+        if (this.details === undefined) {
+            const url = ext.type === "url" ? ext.url : "";
+            this.details = await this.createDetailsFromZip(url);
+        }
+
+        await this.analyze();
+
+        this.setStatus("");
+        await reader.close();
+        this.initialized.fire();
+    }
+
+    private async loadFromAMO(extId: string): Promise<void> {
         this.setStatus("loading meta data");
-        const details = (this.details = await AMOAPI.getInfo(extId));
+        const details = await AMOAPI.getInfo(extId);
 
         const webExts = details.current_version.files.filter(
             (file) => file.is_webextension
@@ -38,27 +78,51 @@ export class WorkerAPI {
             throw new Error("No web extension files.");
         }
 
-        this.setStatus("downloading & extracting");
-        //@ts-ignore
-        const httpReader = new zip.HttpReader(webExts[0].url);
+        this.details = {
+            source: "AMO",
+            authors: details.authors.map((a) => a.name || a.username),
+            name: details.name["en-US"],
+            last_updated: details.last_updated,
+            created: details.created,
+            version: details.current_version.version,
+            size: webExts[0].size,
+            download_url: webExts[0].url,
+            icon_url: details.icon_url,
+        };
+    }
 
-        const reader = new zip.ZipReader(httpReader);
-        this.root = createFileTree(await reader.getEntries());
+    private async createDetailsFromZip(url: string): Promise<ExtensionDetails> {
+        const manifest = this.manifest;
 
-        await this.analyze();
+        if (manifest === undefined) {
+            throw new Error("Manifest undefined.");
+        }
 
-        this.setStatus("");
-        await reader.close();
-        this.initialized.fire();
+        let iconUrl: string | undefined = undefined;
+
+        if (manifest.icons && manifest.icons["48"]) {
+            iconUrl = await this.getFileDownloadURL(manifest.icons["48"]);
+        }
+
+        return {
+            source: "url",
+            authors: [manifest.author ?? "undefined"],
+            name: manifest.name,
+            version: manifest.version,
+            icon_url: iconUrl,
+            size: 0,
+            download_url: url,
+        };
     }
 
     private async analyze() {
         this.setStatus("analyzing");
         const root = this.root;
+        const manifest = this.manifest;
 
-        const manifest = (this.manifest = await ManifestExtractor.getManifest(
-            root
-        ));
+        if (manifest === undefined) {
+            throw new Error("Manifest undefined.");
+        }
 
         await ScriptFinder.identifyBackgroundScripts(root, manifest);
 
@@ -70,7 +134,7 @@ export class WorkerAPI {
         ResourceLocator.identifyWebAccessibleResources(root, manifest);
     }
 
-    public async getDetails(): Promise<AMOAPI.Details> {
+    public async getDetails(): Promise<ExtensionDetails> {
         await this.initialized.waitFor();
 
         if (this.details === undefined) {
@@ -83,7 +147,7 @@ export class WorkerAPI {
         const dir = this.root.get(path);
 
         if (dir instanceof TreeFolder) {
-            const contents = Array.from(dir.children.values()).map((tn) =>
+            const contents = Array.from(dir.children.values(), (tn) =>
                 tn.toDTO()
             );
             contents.sort((a, b) => {
@@ -152,10 +216,10 @@ export class WorkerAPI {
         }
 
         let blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
-        if(path.endsWith(".svg")) {
+        if (path.endsWith(".svg")) {
             blob = blob.slice(0, blob.size, "image/svg+xml");
         }
-        
+
         const url = URL.createObjectURL(blob);
 
         if (timeout > 0.0) {
