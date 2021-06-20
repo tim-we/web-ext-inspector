@@ -1,13 +1,14 @@
 import { Component } from "preact";
 import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
-import { createInspectorFromAMOId, Inspector } from "../inspector/Inspector";
+import { createInspector, Inspector } from "../inspector/Inspector";
 import ExtensionPermissions from "./Permissions";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import CodeViewer from "./CodeViewer";
+import { ExtensionSourceInfo } from "../inspector/worker/worker";
 
 type Props = {
-    extId: string;
+    extension: ExtensionSourceInfo;
 };
 
 type State = {
@@ -26,10 +27,14 @@ export default class ExtensionInspector extends Component<Props, State> {
             status: "loading",
         };
 
-        createInspectorFromAMOId(props.extId, (status) => {
+        createInspector(props.extension, (status) => {
             this.setState({ status });
         }).then((inspector) => {
             this.setState({ inspector });
+            
+            if (props.extension.type === "url") {
+                URL.revokeObjectURL(props.extension.url);
+            }
         });
     }
 

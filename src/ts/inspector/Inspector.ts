@@ -7,14 +7,7 @@ import {
 
 export type Inspector = Comlink.Remote<WorkerAPI>;
 
-export async function createInspectorFromAMOId(
-    extId: string,
-    onStatusChange?: StatusListener
-): Promise<Inspector> {
-    return createInspector({ type: "amo", id: extId }, onStatusChange);
-}
-
-async function createInspector(
+export async function createInspector(
     ext: ExtensionSourceInfo,
     onStatusChange?: StatusListener
 ): Promise<Inspector> {

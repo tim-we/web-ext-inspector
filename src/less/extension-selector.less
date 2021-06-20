@@ -1,5 +1,23 @@
 .extension-selector {
-    input[type=text] {
+    input {
         margin: 10px;
+    }
+
+    label[for="extension-slug"] {
+        font-family: monospace;
+        user-select: none;
+    }
+
+    #extension-slug {
+        margin-left: 0;
+    }
+
+    ul li:not(:last-of-type) {
+        margin-bottom: 1em;
+    }
+
+    input[type="file"],
+    label[for="extension-slug"] {
+        margin-left: 15px;
     }
 }

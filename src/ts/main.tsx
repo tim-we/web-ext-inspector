@@ -5,18 +5,20 @@ import ExtensionSelector from "./components/ExtensionSelector";
 // create styles (in <head>)
 import "highlight.js/styles/a11y-dark.css";
 import "../less/app.less";
+import { ExtensionSourceInfo } from "./inspector/worker/worker";
 
 type AppState = {
-    extension?: string;
+    extension?: ExtensionSourceInfo;
 };
 
 class App extends Preact.Component<{}, AppState> {
     public constructor() {
         super();
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has("extension")) {
-            if (/^[a-z0-9\-]+$/.test(urlParams.get("extension")!)) {
-                this.state = { extension: urlParams.get("extension")! };
+        const extParamValue = urlParams.get("extension");
+        if (extParamValue) {
+            if (/^[a-z0-9\-]+$/.test(extParamValue)) {
+                this.state = { extension: { type: "amo", id: extParamValue } };
             }
         }
     }
@@ -30,7 +32,7 @@ class App extends Preact.Component<{}, AppState> {
                     <h1>Extension Inspector</h1>
                 </header>
                 {extension ? (
-                    <ExtensionInspector extId={extension} />
+                    <ExtensionInspector extension={extension} />
                 ) : (
                     <ExtensionSelector
                         onSelect={(ext) => this.setState({ extension: ext })}
