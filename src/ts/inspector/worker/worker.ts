@@ -36,33 +36,35 @@ export class WorkerAPI {
     ): Promise<void> {
         this.statusListener = statusListener ?? this.statusListener;
 
-        let httpReader: zip.HttpReader;
+        let reader: zip.HttpReader | zip.BlobReader;
+        let size = 0;
 
         if (ext.type === "amo") {
             await this.loadFromAMO(ext.id);
             const url = this.details!.download_url;
 
             this.setStatus("downloading & extracting");
-            //@ts-ignore
-            httpReader = new zip.HttpReader(url);
+            reader = new zip.HttpReader(url, {});
         } else {
-            //@ts-ignore
-            httpReader = new zip.HttpReader(ext.url);
+            const response = await fetch(ext.url);
+            const blob = await response.blob();
+            size = blob.size;
+            reader = new zip.BlobReader(blob);
         }
 
-        const reader = new zip.ZipReader(httpReader);
-        this.root = createFileTree(await reader.getEntries());
+        const zipReader = new zip.ZipReader(reader);
+        this.root = createFileTree(await zipReader.getEntries());
         this.manifest = await ManifestExtractor.getManifest(this.root);
 
         if (this.details === undefined) {
             const url = ext.type === "url" ? ext.url : "";
-            this.details = await this.createDetailsFromZip(url);
+            this.details = await this.createDetailsFromZip(url, size);
         }
 
         await this.analyze();
 
         this.setStatus("");
-        await reader.close();
+        await zipReader.close();
         this.initialized.fire();
     }
 
@@ -91,7 +93,10 @@ export class WorkerAPI {
         };
     }
 
-    private async createDetailsFromZip(url: string): Promise<ExtensionDetails> {
+    private async createDetailsFromZip(
+        url: string,
+        size: number
+    ): Promise<ExtensionDetails> {
         const manifest = this.manifest;
 
         if (manifest === undefined) {
@@ -110,7 +115,7 @@ export class WorkerAPI {
             name: manifest.name,
             version: manifest.version,
             icon_url: iconUrl,
-            size: 0,
+            size,
             download_url: url,
         };
     }
