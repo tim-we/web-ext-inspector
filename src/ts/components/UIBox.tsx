@@ -47,6 +47,7 @@ export default class UIBox extends Component<Props, State> {
                     id={titleId}
                     class="title-bar"
                     role="heading"
+                    aria-level={2}
                     onClick={clickHandler}
                     tabIndex={collapsable ? 0 : -1}
                 >
