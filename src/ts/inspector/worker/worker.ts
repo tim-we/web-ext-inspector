@@ -44,7 +44,7 @@ export class WorkerAPI {
             const url = this.details!.download_url;
 
             this.setStatus("downloading & extracting");
-            reader = new zip.HttpReader(url, {});
+            reader = new zip.HttpReader(url);
         } else {
             const response = await fetch(ext.url);
             const blob = await response.blob();
