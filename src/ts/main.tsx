@@ -1,11 +1,12 @@
 import * as Preact from "preact";
 import ExtensionInspector from "./components/ExtensionInspector";
 import ExtensionSelector from "./components/ExtensionSelector";
+import { ExtensionSourceInfo } from "./inspector/worker/worker";
 
 // create styles (in <head>)
 import "highlight.js/styles/a11y-dark.css";
 import "../less/app.less";
-import { ExtensionSourceInfo } from "./inspector/worker/worker";
+
 
 type AppState = {
     extension?: ExtensionSourceInfo;

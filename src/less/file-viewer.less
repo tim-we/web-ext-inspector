@@ -1,100 +1,37 @@
-.code-viewer-modal {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    background-color: rgb(64, 64, 64);
-    border: 1px solid rgb(200, 200, 200);
+body {
+    font-family: sans-serif;
+    background: rgb(43, 43, 43);
     color: white;
-    z-index: 2;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
 
-    &::before {
-        content: " ";
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
+@controls-height: 0;//42px;
 
-    @title-bar-height: 42px;
+#controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: @controls-height;
+    background-color: rgb(90,90,90);
+    padding: 0 5px;
+    display: none; // TODO
+}
 
-    .title-bar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: @title-bar-height;
-        background-color: rgb(90,90,90);
+#file-content {
+    position: absolute;
+    top: @controls-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 10px;
 
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 0 5px;
-        padding-right: 0;
-
-        &::before {
-            content: " ";
-            display: inline-block;
-            width: 16px;
-            height: @title-bar-height;
-            background-image: url("../icons/bootstrap/file-earmark-code.svg");
-            background-repeat: no-repeat;
-            background-position: center;
-            margin-right: 5px;
-        }
-
-        h2 {
-            margin: 0;
-            padding: 0;
-            line-height: @title-bar-height;
-            font-weight: normal;
-            user-select: none;
-            font-size: 20px;
-        }
-
-        .modal-controls {
-            height: @title-bar-height;
-
-            button {
-                display: block;
-                width: @title-bar-height;
-                height: @title-bar-height;
-                background-color: transparent;
-                background-image: url("../icons/bootstrap/x-circle-fill.svg");
-                background-repeat: no-repeat;
-                background-position: center;
-                border: none;
-                cursor: pointer;
-                opacity: 0.75;
-                transition: opacity 0.25s;
-
-                &:hover {
-                    opacity: 1;
-                }
-            }
-        }
-    }
-
-    .modal-content {
-        position: absolute;
-        top: @title-bar-height;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow: auto;
-
-        .file-content {
-            background-color: rgb(43, 43, 43);
-            padding: 10px;
-
-            pre {
-                margin: 0;
-                -moz-tab-size: 4;
-                tab-size: 4;
-            }
-        }
+    pre {
+        margin: 0;
+        -moz-tab-size: 4;
+        tab-size: 4;
     }
 }
