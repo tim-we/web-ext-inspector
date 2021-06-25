@@ -7,7 +7,7 @@ import { ExtensionSourceInfo } from "./inspector/worker/worker";
 import "highlight.js/styles/a11y-dark.css";
 import "../less/app.less";
 import ConfigUI from "./components/ConfigUI";
-
+import { setPortal } from "./modal";
 
 type AppState = {
     extension?: ExtensionSourceInfo;
@@ -55,4 +55,13 @@ class App extends Preact.Component<{}, AppState> {
     }
 }
 
-Preact.render(<App />, document.body);
+const root = document.createElement("div");
+root.id = "root";
+document.body.appendChild(root);
+
+const modalPortal = document.createElement("div");
+modalPortal.id = "modalPortal";
+document.body.appendChild(modalPortal);
+setPortal(modalPortal);
+
+Preact.render(<App />, root);
