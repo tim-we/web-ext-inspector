@@ -1,0 +1,50 @@
+#config {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+
+    &.open::before {
+        content: " ";
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 2;
+    }
+
+    button {
+        border: none;
+        background-color: transparent;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        opacity: 0.75;
+
+        background-image: url("../icons/bootstrap/gear.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    #config-popup {
+        position: absolute;
+        top: 32px;
+        right: 0px;
+        border: 1px solid rgb(80, 80, 80);
+        background-color: rgb(64, 64, 64);
+        padding: 10px 8px;
+        min-width: 200px;
+        max-width: 80vw;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.32);
+        z-index: 2;
+
+        label {
+            margin-right: 0.5em;
+        }
+    }
+}

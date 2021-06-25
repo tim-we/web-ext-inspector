@@ -6,6 +6,7 @@ import { ExtensionSourceInfo } from "./inspector/worker/worker";
 // create styles (in <head>)
 import "highlight.js/styles/a11y-dark.css";
 import "../less/app.less";
+import ConfigUI from "./components/ConfigUI";
 
 
 type AppState = {
@@ -48,6 +49,7 @@ class App extends Preact.Component<{}, AppState> {
                         View on GitHub
                     </a>
                 </footer>
+                <ConfigUI />
             </>
         );
     }
