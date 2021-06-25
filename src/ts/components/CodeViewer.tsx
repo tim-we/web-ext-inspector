@@ -45,7 +45,7 @@ export default class CodeViewer extends Component<Props, State> {
 
         return (
             <div
-                class="code-viewer-modal"
+                class="modal-window file-viewer"
                 aria-modal={true}
                 onClick={(e) => e.stopPropagation()}
             >

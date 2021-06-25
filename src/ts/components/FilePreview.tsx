@@ -64,10 +64,10 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                     <a
                         class="open"
                         href={"#/files/" + props.path}
-                        //onClick={() => props.onFileOpen(props.path, node)}
-                        onClick={() =>
-                            openFileViewer(props.path, props.inspector)
-                        }
+                        onClick={() => props.onFileOpen(props.path, node)}
+                        // onClick={() =>
+                        //     openFileViewer(props.path, props.inspector)
+                        // }
                     >
                         Open
                     </a>
