@@ -13,6 +13,7 @@ module.exports = {
             "worker",
             "worker.ts"
         ),
+        viewer: path.join(__dirname, "src", "ts", "viewer", "viewer.tsx"),
     },
     target: "web",
     devtool: "eval-cheap-module-source-map",
@@ -38,8 +39,8 @@ module.exports = {
             },
             {
                 test: /\.svg/,
-                loader: "svg-url-loader"
-            }
+                loader: "svg-url-loader",
+            },
         ],
     },
     output: {

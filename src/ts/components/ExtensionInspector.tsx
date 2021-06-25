@@ -4,8 +4,9 @@ import ExtensionMetaData from "./ExtensionMetaData";
 import { createInspector, Inspector } from "../inspector/Inspector";
 import ExtensionPermissions from "./Permissions";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
-import CodeViewer from "./CodeViewer";
 import { ExtensionSourceInfo } from "../inspector/worker/worker";
+import { showModal } from "../modal";
+import { openFileViewer } from "../openViewer";
 
 type Props = {
     extension: ExtensionSourceInfo;
@@ -14,10 +15,6 @@ type Props = {
 type State = {
     inspector?: Inspector;
     status?: string;
-    currentFile?: {
-        path: string;
-        info: TreeNodeDTO & { type: "file" };
-    };
 };
 
 export default class ExtensionInspector extends Component<Props, State> {
@@ -31,7 +28,7 @@ export default class ExtensionInspector extends Component<Props, State> {
             this.setState({ status });
         }).then((inspector) => {
             this.setState({ inspector });
-            
+
             if (props.extension.type === "url") {
                 URL.revokeObjectURL(props.extension.url);
             }
@@ -50,7 +47,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                             selected="manifest.json"
                             inspector={state.inspector}
                             onFileOpen={(path, info) =>
-                                this.setState({ currentFile: { path, info } })
+                                openFileViewer(path, state.inspector!)
                             }
                         />
                     </>
@@ -59,16 +56,6 @@ export default class ExtensionInspector extends Component<Props, State> {
                     <div class="status" role="status">
                         {state.status}
                     </div>
-                ) : null}
-                {state.currentFile ? (
-                    <CodeViewer
-                        remote={state.inspector!}
-                        path={state.currentFile.path}
-                        info={state.currentFile.info}
-                        onClose={() =>
-                            this.setState({ currentFile: undefined })
-                        }
-                    />
                 ) : null}
             </>
         );

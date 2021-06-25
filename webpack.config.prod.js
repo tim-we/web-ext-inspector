@@ -13,6 +13,7 @@ module.exports = {
             "worker",
             "worker.ts"
         ),
+        viewer: path.join(__dirname, "src", "ts", "viewer", "viewer.tsx"),
     },
     target: "web",
     resolve: {
