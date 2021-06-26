@@ -1,23 +1,22 @@
 .extension-selector {
     input {
         margin: 10px;
+        margin-left: 15px;
     }
 
-    label[for="extension-slug"] {
-        font-family: monospace;
-        user-select: none;
-    }
+    form.addon-store-selector {
+        label {
+            font-family: monospace;
+            user-select: none;
+            margin-left: 15px;
+        }
 
-    #extension-slug {
-        margin-left: 0;
+        input[type="text"] {
+            margin-left: 0;
+        }
     }
 
     ul li:not(:last-of-type) {
         margin-bottom: 1em;
-    }
-
-    input[type="file"],
-    label[for="extension-slug"] {
-        margin-left: 15px;
     }
 }
