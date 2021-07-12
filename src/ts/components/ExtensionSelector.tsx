@@ -44,7 +44,7 @@ export default class ExtensionSelector extends Component<Props, State> {
                                     type="text"
                                     value={state.extAMO}
                                     placeholder="tabs-aside"
-                                    onInput={this.onInput.bind(this)}
+                                    onInput={this.onInputAMO.bind(this)}
                                 />
                                 {state.extAMO.trim().length > 0 ? (
                                     <button type="submit">Inspect</button>
@@ -59,7 +59,7 @@ export default class ExtensionSelector extends Component<Props, State> {
                             :
                             <form
                                 class="addon-store-selector"
-                                onSubmit={(e) => e.preventDefault()}
+                                onSubmit={this.onCWSSubmit.bind(this)}
                             >
                                 <label for="extension-id">
                                     chrome.google.com/webstore/detail/*/
@@ -69,9 +69,9 @@ export default class ExtensionSelector extends Component<Props, State> {
                                     type="text"
                                     value={state.extCWS}
                                     placeholder="bmnlcjabgnpnenekpadlanbbkooimhnj"
-                                    onInput={this.onInput.bind(this)}
+                                    onInput={this.onInputCWS.bind(this)}
                                 />
-                                {state.extCWS.trim().length > 0 ? (
+                                {state.extCWS.trim().length === 32 ? (
                                     <button type="submit">Inspect</button>
                                 ) : null}
                             </form>
@@ -113,9 +113,14 @@ export default class ExtensionSelector extends Component<Props, State> {
         );
     }
 
-    private onInput(e: Event) {
+    private onInputAMO(e: Event) {
         const target = e.target as HTMLInputElement;
         this.setState({ extAMO: target.value });
+    }
+
+    private onInputCWS(e: Event) {
+        const target = e.target as HTMLInputElement;
+        this.setState({ extCWS: target.value });
     }
 
     private onAMOSubmit(e: Event) {
@@ -124,6 +129,15 @@ export default class ExtensionSelector extends Component<Props, State> {
 
         if (ext) {
             this.props.onSelect({ type: "amo", id: ext });
+        }
+    }
+
+    private onCWSSubmit(e: Event) {
+        e.preventDefault();
+        const ext = this.state.extCWS.trim();
+
+        if (ext) {
+            this.props.onSelect({ type: "cws", id: ext });
         }
     }
 
