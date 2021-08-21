@@ -22,6 +22,7 @@ header {
     h1 {
         font-size: 22px;
         margin: 10px 0;
+        cursor: default;
 
         &::before {
             content: " ";
@@ -35,6 +36,10 @@ header {
             margin-right: 0.3em;
             vertical-align: sub;
         }
+    }
+
+    a > h1 {
+        cursor: pointer;
     }
 }
 
