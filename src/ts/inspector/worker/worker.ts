@@ -7,7 +7,7 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { highlight } from "./Preprocessor";
+import { highlight, LanguageWithHLJSSupport } from "./Preprocessor";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
 
 zip.configure({
@@ -194,12 +194,14 @@ export class WorkerAPI {
         }
 
         const content: string = await file.entry.getData!(new zip.TextWriter());
-        let language: SyntaxLang = "plaintext";
+        let language: LanguageWithHLJSSupport = "plaintext";
 
         if (/\.(htm|html|xml)$/i.test(file.name)) {
             language = "xml";
         } else if (/\.(js|mjs|json)$/i.test(file.name)) {
             language = "javascript";
+        } else if (/\.css$/i.test(file.name)) {
+            language = "css";
         }
 
         const html = highlight(content, language);
@@ -241,9 +243,7 @@ export class WorkerAPI {
 
 Comlink.expose(new WorkerAPI());
 
-type SyntaxLang = "javascript" | "xml" | "plaintext";
-
 type HighlightedCode = {
-    language: SyntaxLang;
+    language: LanguageWithHLJSSupport;
     code: string;
 };
