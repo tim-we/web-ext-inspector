@@ -1,6 +1,6 @@
 {
     "name": "extension-analyzer",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "",
     "private": true,
     "scripts": {
@@ -10,7 +10,7 @@
     },
     "author": "tim-we",
     "dependencies": {
-        "@zip.js/zip.js": "^2.3.6",
+        "@zip.js/zip.js": "^2.3.14",
         "comlink": "^4.3.1",
         "css-loader": "^5.2.6",
         "friendly-time": "^1.1.1",

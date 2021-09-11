@@ -4,6 +4,8 @@
 
 Inspect the contents of web extensions hosted on [addons.mozilla.org](https://addons.mozilla.org)
 
+**Available as a web-app [here](https://tim-we.github.io/web-ext-inspector/).**
+
 **Work-in-progress.**
 
 ## Examples
@@ -15,4 +17,4 @@ Inspect the contents of web extensions hosted on [addons.mozilla.org](https://ad
 ## Firefox integration
 
 - [Install web extension](https://addons.mozilla.org/en-US/firefox/addon/extension-inspector)
-- [Web Extension GitHub Repo](https://github.com/tim-we/inspector-extension)
+- [Web extension GitHub repo](https://github.com/tim-we/inspector-extension)

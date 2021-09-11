@@ -27,11 +27,22 @@ class App extends Preact.Component<{}, AppState> {
 
     public render() {
         const extension = this.state.extension;
+        const title = <h1>Extension Inspector</h1>;
 
         return (
             <>
                 <header>
-                    <h1>Extension Inspector</h1>
+                    {extension ? (
+                        <a
+                            onClick={() =>
+                                this.setState({ extension: undefined })
+                            }
+                        >
+                            {title}
+                        </a>
+                    ) : (
+                        title
+                    )}
                 </header>
                 {extension ? (
                     <ExtensionInspector extension={extension} />

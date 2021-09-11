@@ -8,7 +8,6 @@ import ImagePreview from "./previews/ImagePreview";
 import HTMLPreview from "./previews/HTMLPreview";
 import { getFolder } from "../utils/paths";
 import { FileSelectListener, TreeFileDTO } from "../types/PackagedFiles";
-import { openFileViewer } from "../openViewer";
 
 type FPProps = {
     path: string;
@@ -22,7 +21,7 @@ type FPProps = {
 const FilePreview: FunctionComponent<FPProps> = (props) => {
     const node = props.node;
     const canOpen =
-        /\.(js|mjs|json|htm|html|xml)$/i.test(node.name) ||
+        /\.(js|mjs|json|htm|html|xml|css)$/i.test(node.name) ||
         node.tags.includes("text");
 
     return (
@@ -65,9 +64,6 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                         class="open"
                         href={"#/files/" + props.path}
                         onClick={() => props.onFileOpen(props.path, node)}
-                        // onClick={() =>
-                        //     openFileViewer(props.path, props.inspector)
-                        // }
                     >
                         Open
                     </a>
