@@ -11,14 +11,14 @@ hljs.registerLanguage("plaintext", plaintext);
 
 export function highlight(
     code: string,
-    language: LanguageWithHLJSSupport
+    language: SupportedLanguage
 ): string {
     return hljs.highlight(code, {
         language,
     }).value;
 }
 
-export type LanguageWithHLJSSupport =
+export type SupportedLanguage =
     | "javascript"
     | "xml"
     | "css"

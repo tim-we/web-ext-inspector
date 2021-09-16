@@ -7,12 +7,31 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { highlight, LanguageWithHLJSSupport } from "./Preprocessor";
+import { highlight, SupportedLanguage } from "./Preprocessor";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
+import { format } from "prettier/standalone";
+import * as htmlParsers from "prettier/parser-html";
+import * as jsParser from "prettier/parser-espree";
+import * as cssParsers from "prettier/parser-postcss";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
+
+const prettierPlugins = {
+    parsers: {
+        espree: jsParser.parsers.espree,
+        css: cssParsers.parsers.css,
+        html: htmlParsers.parsers.html,
+    },
+};
+
+type PrettierParserId = "espree" | "css" | "html";
+
+const parserForLanguage = new Map<SupportedLanguage, PrettierParserId>();
+parserForLanguage.set("css", "css");
+parserForLanguage.set("javascript", "espree");
+parserForLanguage.set("xml", "html");
 
 export type ExtensionSourceInfo =
     | {
@@ -186,15 +205,15 @@ export class WorkerAPI {
         };
     }
 
-    public async highlightCode(path: string): Promise<HighlightedCode> {
+    public async getPrettyCode(path: string): Promise<HighlightedCode> {
         const file = this.root.get(path) as TreeFile;
 
         if (!file || file instanceof TreeFolder) {
             throw new Error(`File ${path} not found.`);
         }
 
-        const content: string = await file.entry.getData!(new zip.TextWriter());
-        let language: LanguageWithHLJSSupport = "plaintext";
+        let content: string = await file.entry.getData!(new zip.TextWriter());
+        let language: SupportedLanguage = "plaintext";
 
         if (/\.(htm|html|xml)$/i.test(file.name)) {
             language = "xml";
@@ -202,6 +221,13 @@ export class WorkerAPI {
             language = "javascript";
         } else if (/\.css$/i.test(file.name)) {
             language = "css";
+        }
+
+        if (parserForLanguage.has(language)) {
+            content = format(content, {
+                parser: parserForLanguage.get(language),
+                plugins: [prettierPlugins],
+            });
         }
 
         const html = highlight(content, language);
@@ -244,6 +270,6 @@ export class WorkerAPI {
 Comlink.expose(new WorkerAPI());
 
 type HighlightedCode = {
-    language: LanguageWithHLJSSupport;
+    language: SupportedLanguage;
     code: string;
 };
