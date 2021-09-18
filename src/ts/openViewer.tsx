@@ -18,7 +18,7 @@ export function openFileViewer(filePath: string, remote: Inspector): void {
 }
 
 async function openFileViewerModal(filePath: string, remote: Inspector) {
-    const result = await remote.highlightCode(filePath);
+    const result = await remote.getPrettyCode(filePath);
 
     const html = { __html: result.code };
 
@@ -60,7 +60,7 @@ function openFileViewerWindow(
             return;
         }
 
-        const result = await remote.highlightCode(filePath);
+        const result = await remote.getPrettyCode(filePath);
 
         viewer.show(getFile(filePath), result.code, result.language);
     };

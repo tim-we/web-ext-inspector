@@ -7,7 +7,7 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { highlight, LanguageWithHLJSSupport } from "./Preprocessor";
+import { format, highlight, SupportedLanguage } from "./Preprocessor";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
 
 zip.configure({
@@ -186,15 +186,15 @@ export class WorkerAPI {
         };
     }
 
-    public async highlightCode(path: string): Promise<HighlightedCode> {
+    public async getPrettyCode(path: string): Promise<HighlightedCode> {
         const file = this.root.get(path) as TreeFile;
 
         if (!file || file instanceof TreeFolder) {
             throw new Error(`File ${path} not found.`);
         }
 
-        const content: string = await file.entry.getData!(new zip.TextWriter());
-        let language: LanguageWithHLJSSupport = "plaintext";
+        let content: string = await file.entry.getData!(new zip.TextWriter());
+        let language: SupportedLanguage = "plaintext";
 
         if (/\.(htm|html|xml)$/i.test(file.name)) {
             language = "xml";
@@ -203,6 +203,8 @@ export class WorkerAPI {
         } else if (/\.css$/i.test(file.name)) {
             language = "css";
         }
+
+        content = format(content, language);
 
         const html = highlight(content, language);
 
@@ -244,6 +246,6 @@ export class WorkerAPI {
 Comlink.expose(new WorkerAPI());
 
 type HighlightedCode = {
-    language: LanguageWithHLJSSupport;
+    language: SupportedLanguage;
     code: string;
 };

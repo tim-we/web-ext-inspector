@@ -12,6 +12,7 @@
     "dependencies": {
         "@zip.js/zip.js": "^2.3.14",
         "comlink": "^4.3.1",
+        "css": "^3.0.0",
         "css-loader": "^5.2.6",
         "friendly-time": "^1.1.1",
         "highlight.js": "^11.0.1",
@@ -24,6 +25,7 @@
         "svg-url-loader": "^7.1.1"
     },
     "devDependencies": {
+        "@types/css": "^0.0.33",
         "ts-loader": "^9.2.3",
         "typescript": "^4.3.4",
         "webpack": "^5.40.0",
