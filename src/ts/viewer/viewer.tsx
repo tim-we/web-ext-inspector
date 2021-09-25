@@ -2,7 +2,7 @@ import * as Comlink from "comlink";
 import * as Preact from "preact";
 
 // create styles (in <head>)
-import "highlight.js/styles/a11y-dark.css";
+import "prismjs/themes/prism-okaidia.css";
 import "../../less/file-viewer.less";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 class FileViewer extends Preact.Component<Props> {
     public render() {
         const html = { __html: this.props.html };
-        const codeClasses = ["hljs"];
+        const codeClasses = [];
 
         if (this.props.language) {
             codeClasses.push("language-" + this.props.language);

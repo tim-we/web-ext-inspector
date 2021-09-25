@@ -4,7 +4,8 @@ import ExtensionSelector from "./components/ExtensionSelector";
 import { ExtensionSourceInfo } from "./inspector/worker/worker";
 
 // create styles (in <head>)
-import "highlight.js/styles/a11y-dark.css";
+//import "highlight.js/styles/a11y-dark.css";
+import "prismjs/themes/prism-okaidia.css";
 import "../less/app.less";
 import ConfigUI from "./components/ConfigUI";
 import { setPortal } from "./modal";

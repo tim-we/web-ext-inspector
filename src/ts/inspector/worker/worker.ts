@@ -197,7 +197,7 @@ export class WorkerAPI {
         let language: SupportedLanguage = "plaintext";
 
         if (/\.(htm|html|xml)$/i.test(file.name)) {
-            language = "xml";
+            language = "markup";
         } else if (/\.(js|mjs|json)$/i.test(file.name)) {
             language = "javascript";
         } else if (/\.css$/i.test(file.name)) {
