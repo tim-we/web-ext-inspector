@@ -27,7 +27,7 @@ async function openFileViewerModal(filePath: string, remote: Inspector) {
         ["file-viewer"],
         <pre>
             <code
-                class={"hljs language-" + result.language}
+                class={"language-" + result.language}
                 dangerouslySetInnerHTML={html}
             ></code>
         </pre>

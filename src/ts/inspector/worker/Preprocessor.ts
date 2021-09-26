@@ -1,8 +1,4 @@
-self.Prism = self.Prism || {};
-// @ts-ignore
-self.Prism.disableWorkerMessageHandler = true;
-// @ts-ignore
-self.Prism.manual = true;
+import "./helpers/PrismJSSetup";
 import Prism from "prismjs";
 
 export type SupportedLanguage = "javascript" | "markup" | "css" | "plaintext";
@@ -21,7 +17,9 @@ highlighters.set("javascript", (code) =>
 highlighters.set("css", (code) =>
     Prism.highlight(code, Prism.languages.css, "css")
 );
-highlighters.set("plaintext", (code) => Prism.highlight(code, {}, "plain"));
+highlighters.set("plaintext", (code) =>
+    Prism.highlight(code, Prism.languages.plain, "plain")
+);
 // formatters.set("css", (code) =>
 //     css.stringify(css.parse(code, { silent: true }))
 // );
