@@ -7,7 +7,7 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { format, highlight, SupportedLanguage } from "./Preprocessor";
+import { renderCode, SupportedLanguage } from "./CodeRenderer";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
 
 zip.configure({
@@ -204,9 +204,7 @@ export class WorkerAPI {
             language = "css";
         }
 
-        content = format(content, language);
-
-        const html = highlight(content, language);
+        const html = renderCode(content, language);
 
         return {
             language,

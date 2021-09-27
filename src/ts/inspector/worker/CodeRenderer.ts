@@ -1,12 +1,18 @@
 import "./helpers/PrismJSSetup";
+import {
+    cssBreakAfterComment,
+    cssBreakAfterProperty,
+    cssBreakAfterBlockStart,
+    cssBreakAfterBlockEnd,
+    cssBreakBeforeBlockEnd
+} from "prismjs-token-stream-transformer/dist/prefabs/css";
 import Prism from "prismjs";
+import { AnyToken } from "prismjs-token-stream-transformer/dist/Tokens";
 
 export type SupportedLanguage = "javascript" | "markup" | "css" | "plaintext";
 
-type CodeFormatter = (code: string) => string;
 type CodeHighlighter = (code: string) => string;
 
-const formatters = new Map<SupportedLanguage, CodeFormatter>();
 const highlighters = new Map<SupportedLanguage, CodeHighlighter>();
 highlighters.set("markup", (code) =>
     Prism.highlight(code, Prism.languages.markup, "markup")
@@ -20,20 +26,20 @@ highlighters.set("css", (code) =>
 highlighters.set("plaintext", (code) =>
     Prism.highlight(code, Prism.languages.plain, "plain")
 );
-// formatters.set("css", (code) =>
-//     css.stringify(css.parse(code, { silent: true }))
-// );
 
-export function format(code: string, language: SupportedLanguage): string {
-    const formatter = formatters.get(language);
-    if (formatter) {
-        return formatter(code);
+Prism.hooks.add("after-tokenize", (env) => {
+    const tokens = env.tokens as AnyToken[];
+
+    if (env.language === "css") {
+        cssBreakAfterComment.applyTo(tokens);
+        cssBreakAfterProperty.applyTo(tokens);
+        cssBreakAfterBlockStart.applyTo(tokens);
+        cssBreakAfterBlockEnd.applyTo(tokens);
+        cssBreakBeforeBlockEnd.applyTo(tokens);
     }
+});
 
-    return code;
-}
-
-export function highlight(code: string, language: SupportedLanguage): string {
+export function renderCode(code: string, language: SupportedLanguage): string {
     const highlighter = highlighters.get(language);
 
     if (!highlighter) {
