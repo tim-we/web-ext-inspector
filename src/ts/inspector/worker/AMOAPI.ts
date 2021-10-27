@@ -1,3 +1,8 @@
+/**
+ * API docs:
+ * https://addons-server.readthedocs.io/en/latest/topics/api/addons.html#detail
+ */
+
 const API = "https://addons.mozilla.org/api/v5";
 
 export type Details = {
@@ -23,7 +28,7 @@ type ExtensionAuthor = {
 type Version = {
     id: number;
     channel: "unlisted" | "listed";
-    files: File[];
+    file: File;
     version: string;
     compatibility: any;
 };
@@ -33,8 +38,6 @@ type File = {
     created: string;
     hash: string;
     is_mozilla_signed_extension: boolean;
-    is_restart_required: boolean;
-    is_webextension: boolean;
     optional_permissions: string[];
     permissions: string[];
     size: number;

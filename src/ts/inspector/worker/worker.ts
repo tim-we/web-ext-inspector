@@ -72,12 +72,10 @@ export class WorkerAPI {
         this.setStatus("loading meta data");
         const details = await AMOAPI.getInfo(extId);
 
-        const webExts = details.current_version.files.filter(
-            (file) => file.is_webextension
-        );
+        const webExtFile = details.current_version.file;
 
-        if (webExts.length === 0) {
-            throw new Error("No web extension files.");
+        if (!webExtFile) {
+            throw new Error("No web extension file.");
         }
 
         this.details = {
@@ -87,8 +85,8 @@ export class WorkerAPI {
             last_updated: details.last_updated,
             created: details.created,
             version: details.current_version.version,
-            size: webExts[0].size,
-            download_url: webExts[0].url,
+            size: webExtFile.size,
+            download_url: webExtFile.url,
             icon_url: details.icon_url,
         };
     }
