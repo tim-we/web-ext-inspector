@@ -9,7 +9,7 @@ import {
 import Prism from "prismjs";
 import { AnyToken } from "prismjs-token-stream-transformer/dist/Tokens";
 
-export type SupportedLanguage = "javascript" | "markup" | "css" | "plaintext";
+export type SupportedLanguage = "javascript" | "json" | "markup" | "css" | "plaintext";
 
 type CodeHighlighter = (code: string) => string;
 
@@ -18,6 +18,9 @@ highlighters.set("markup", (code) =>
     Prism.highlight(code, Prism.languages.markup, "markup")
 );
 highlighters.set("javascript", (code) =>
+    Prism.highlight(code, Prism.languages.javascript, "javascript")
+);
+highlighters.set("json", (code) =>
     Prism.highlight(code, Prism.languages.javascript, "javascript")
 );
 highlighters.set("css", (code) =>
@@ -41,6 +44,10 @@ Prism.hooks.add("after-tokenize", (env) => {
 
 export function renderCode(code: string, language: SupportedLanguage): string {
     const highlighter = highlighters.get(language);
+
+    if(language === "json") {
+        code = JSON.stringify(JSON.parse(code), null, 4);
+    }
 
     if (!highlighter) {
         return code;

@@ -196,8 +196,10 @@ export class WorkerAPI {
 
         if (/\.(htm|html|xml)$/i.test(file.name)) {
             language = "markup";
-        } else if (/\.(js|mjs|json)$/i.test(file.name)) {
+        } else if (/\.(js|mjs)$/i.test(file.name)) {
             language = "javascript";
+        } else if (/\.json$/i.test(file.name)) {
+            language = "json";
         } else if (/\.css$/i.test(file.name)) {
             language = "css";
         }
