@@ -7,7 +7,7 @@ import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { highlight, LanguageWithHLJSSupport } from "./Preprocessor";
+import { renderCode, SupportedLanguage } from "./CodeRenderer";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
 import * as CWS from "./CWS";
 
@@ -75,12 +75,10 @@ export class WorkerAPI {
         this.setStatus("loading meta data");
         const details = await AMOAPI.getInfo(extId);
 
-        const webExts = details.current_version.files.filter(
-            (file) => file.is_webextension
-        );
+        const webExtFile = details.current_version.file;
 
-        if (webExts.length === 0) {
-            throw new Error("No web extension files.");
+        if (!webExtFile) {
+            throw new Error("No web extension file.");
         }
 
         this.details = {
@@ -90,8 +88,8 @@ export class WorkerAPI {
             last_updated: details.last_updated,
             created: details.created,
             version: details.current_version.version,
-            size: webExts[0].size,
-            download_url: webExts[0].url,
+            size: webExtFile.size,
+            download_url: webExtFile.url,
             icon_url: details.icon_url,
         };
     }
@@ -189,25 +187,27 @@ export class WorkerAPI {
         };
     }
 
-    public async highlightCode(path: string): Promise<HighlightedCode> {
+    public async getPrettyCode(path: string): Promise<HighlightedCode> {
         const file = this.root.get(path) as TreeFile;
 
         if (!file || file instanceof TreeFolder) {
             throw new Error(`File ${path} not found.`);
         }
 
-        const content: string = await file.entry.getData!(new zip.TextWriter());
-        let language: LanguageWithHLJSSupport = "plaintext";
+        let content: string = await file.entry.getData!(new zip.TextWriter());
+        let language: SupportedLanguage = "plaintext";
 
         if (/\.(htm|html|xml)$/i.test(file.name)) {
-            language = "xml";
-        } else if (/\.(js|mjs|json)$/i.test(file.name)) {
+            language = "markup";
+        } else if (/\.(js|mjs)$/i.test(file.name)) {
             language = "javascript";
+        } else if (/\.json$/i.test(file.name)) {
+            language = "json";
         } else if (/\.css$/i.test(file.name)) {
             language = "css";
         }
 
-        const html = highlight(content, language);
+        const html = renderCode(content, language);
 
         return {
             language,
@@ -247,6 +247,6 @@ export class WorkerAPI {
 Comlink.expose(new WorkerAPI());
 
 type HighlightedCode = {
-    language: LanguageWithHLJSSupport;
+    language: SupportedLanguage;
     code: string;
 };
