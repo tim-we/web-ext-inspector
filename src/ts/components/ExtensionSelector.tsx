@@ -7,16 +7,17 @@ type Props = {
 };
 
 type State = {
-    extension: string;
+    extAMO: string;
+    extCWS: string;
     fileSelected: boolean;
 };
 
 export default class ExtensionSelector extends Component<Props, State> {
-    state = { extension: "", fileSelected: false };
+    state = { extAMO: "", extCWS: "", fileSelected: false };
     fileRef = createRef<HTMLInputElement>();
 
     public render() {
-        const ext = this.state.extension;
+        const state = this.state;
         return (
             <>
                 <UIBox
@@ -31,28 +32,49 @@ export default class ExtensionSelector extends Component<Props, State> {
                                 official add-on website
                             </a>
                             :
-                            <form onSubmit={this.onAMOSubmit.bind(this)}>
+                            <form
+                                class="addon-store-selector"
+                                onSubmit={this.onAMOSubmit.bind(this)}
+                            >
                                 <label for="extension-slug">
                                     addons.mozilla.org/en-US/firefox/addon/
                                 </label>
                                 <input
                                     id="extension-slug"
                                     type="text"
-                                    value={ext}
-                                    placeholder="tabs-aside"
-                                    onInput={this.onInput.bind(this)}
+                                    value={state.extAMO}
+                                    placeholder="extension id"
+                                    onInput={this.onInputAMO.bind(this)}
                                 />
-                                {ext.trim().length > 0 ? (
+                                {state.extAMO.trim().length > 0 ? (
                                     <button type="submit">Inspect</button>
                                 ) : null}
                             </form>
-                            <span class="info">
-                                You can integrate this tool into the offical add-on website with an{" "}
-                                <a href="https://addons.mozilla.org/firefox/addon/extension-inspector">
-                                    extension
-                                </a>
-                                .
-                            </span>
+                        </li>
+                        <li>
+                            {"from the "}
+                            <a href="https://chrome.google.com/webstore">
+                                Chrome Web Store
+                            </a>
+                            :
+                            <form
+                                class="addon-store-selector"
+                                onSubmit={this.onCWSSubmit.bind(this)}
+                            >
+                                <label for="extension-id">
+                                    chrome.google.com/webstore/detail/*/
+                                </label>
+                                <input
+                                    id="extension-id"
+                                    type="text"
+                                    value={state.extCWS}
+                                    placeholder="extension id"
+                                    onInput={this.onInputCWS.bind(this)}
+                                />
+                                {state.extCWS.trim().length === 32 ? (
+                                    <button type="submit">Inspect</button>
+                                ) : null}
+                            </form>
                         </li>
                         <li>
                             or select a local file:
@@ -77,23 +99,45 @@ export default class ExtensionSelector extends Component<Props, State> {
                             </form>
                         </li>
                     </ul>
+                    <span class="info">
+                        You can integrate this tool into the offical add-on
+                        website with an{" "}
+                        <a href="https://addons.mozilla.org/firefox/addon/extension-inspector">
+                            extension
+                        </a>
+                        .
+                    </span>
                 </UIBox>
                 <ExampleSelector onSelect={this.props.onSelect} />
             </>
         );
     }
 
-    private onInput(e: Event) {
+    private onInputAMO(e: Event) {
         const target = e.target as HTMLInputElement;
-        this.setState({ extension: target.value });
+        this.setState({ extAMO: target.value });
+    }
+
+    private onInputCWS(e: Event) {
+        const target = e.target as HTMLInputElement;
+        this.setState({ extCWS: target.value });
     }
 
     private onAMOSubmit(e: Event) {
         e.preventDefault();
-        const ext = this.state.extension.trim();
+        const ext = this.state.extAMO.trim();
 
         if (ext) {
             this.props.onSelect({ type: "amo", id: ext });
+        }
+    }
+
+    private onCWSSubmit(e: Event) {
+        e.preventDefault();
+        const ext = this.state.extCWS.trim();
+
+        if (ext) {
+            this.props.onSelect({ type: "cws", id: ext });
         }
     }
 

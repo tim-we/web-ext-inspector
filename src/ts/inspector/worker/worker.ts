@@ -1,6 +1,6 @@
 import * as Comlink from "comlink";
 import * as zip from "@zip.js/zip.js";
-import * as AMOAPI from "./AMOAPI";
+import * as AMOAPI from "./AMO";
 import { createFileTree, TreeFile, TreeFolder, TreeNodeDTO } from "./FileTree";
 import { Manifest } from "../../types/Manifest";
 import * as ManifestExtractor from "./helpers/ManifestExtractor";
@@ -9,16 +9,15 @@ import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
 import { renderCode, SupportedLanguage } from "./CodeRenderer";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
+import * as CWS from "./CWS";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
 
 export type ExtensionSourceInfo =
-    | {
-          type: "amo";
-          id: string;
-      }
+    | { type: "amo"; id: string }
+    | { type: "cws"; id: string }
     | { type: "url"; url: string };
 
 export type StatusListener = (status: string) => void;
@@ -42,7 +41,10 @@ export class WorkerAPI {
         if (ext.type === "amo") {
             await this.loadFromAMO(ext.id);
             const url = this.details!.download_url;
-
+            this.setStatus("downloading & extracting");
+            reader = new zip.HttpReader(url);
+        } else if (ext.type === "cws") {
+            const url = CWS.getDownloadURL(ext.id);
             this.setStatus("downloading & extracting");
             reader = new zip.HttpReader(url);
         } else {
@@ -55,6 +57,10 @@ export class WorkerAPI {
         const zipReader = new zip.ZipReader(reader);
         this.root = createFileTree(await zipReader.getEntries());
         this.manifest = await ManifestExtractor.getManifest(this.root);
+
+        if (size === 0) {
+            size = this.root.byteSize;
+        }
 
         if (this.details === undefined) {
             const url = ext.type === "url" ? ext.url : "";
@@ -109,7 +115,7 @@ export class WorkerAPI {
 
         return {
             source: "url",
-            authors: [manifest.author ?? "undefined"],
+            authors: manifest.author ? [manifest.author] : [],
             name: manifest.name,
             version: manifest.version,
             icon_url: iconUrl,

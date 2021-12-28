@@ -29,20 +29,28 @@ export abstract class TreeNode {
 
 export class TreeFolder extends TreeNode {
     public children: Map<string, TreeNode> = new Map();
-    private count: number = 0;
+    private fileCount: number = 0;
+    private uncompressedSize: number = 0;
 
     public insertEntry(entry: Entry): void {
         this.insert(entry.filename, entry);
     }
 
     private insert(relPath: string, entry: Entry): void {
-        this.count++;
+        if (entry.directory) {
+            // we extract folders from file paths
+            // some zips do not contain directory entries
+            return;
+        }
+
+        this.fileCount++;
         let parts = relPath.split("/");
         const name = parts.shift()!;
 
         if (parts.length === 0) {
             const file = new TreeFile(entry, name, this);
             this.children.set(name, file);
+            this.uncompressedSize += entry.uncompressedSize;
         } else {
             const folder =
                 (this.children.get(name) as TreeFolder) ??
@@ -53,7 +61,11 @@ export class TreeFolder extends TreeNode {
     }
 
     public get numFiles(): number {
-        return this.count;
+        return this.fileCount;
+    }
+
+    public get byteSize(): number {
+        return this.uncompressedSize;
     }
 
     public get(path: string): TreeNode | undefined {
@@ -121,7 +133,7 @@ export class TreeFolder extends TreeNode {
     }
 
     public toDTO(): TreeNodeDTO {
-        return { name: this.name, type: "folder", numFiles: this.count };
+        return { name: this.name, type: "folder", numFiles: this.fileCount };
     }
 }
 
@@ -135,6 +147,10 @@ export class TreeFile extends TreeNode {
 
         if (entry.directory) {
             throw new Error(`Entry is a directory: ${entry.filename}`);
+        }
+
+        if (entry.encrypted) {
+            this.tags.add("encrypted");
         }
 
         if (/\.(js|jsx|json)$/i.test(name)) {
