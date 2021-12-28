@@ -115,7 +115,7 @@ export class WorkerAPI {
 
         return {
             source: "url",
-            authors: [manifest.author ?? "undefined"],
+            authors: manifest.author ? [manifest.author] : [],
             name: manifest.name,
             version: manifest.version,
             icon_url: iconUrl,
