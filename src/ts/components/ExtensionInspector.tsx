@@ -3,9 +3,7 @@ import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
 import { createInspector, Inspector } from "../inspector/Inspector";
 import ExtensionPermissions from "./Permissions";
-import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import { ExtensionSourceInfo } from "../inspector/worker/worker";
-import { showModal } from "../modal";
 import { openFileViewer } from "../openViewer";
 
 type Props = {
