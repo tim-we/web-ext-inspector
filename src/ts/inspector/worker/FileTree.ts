@@ -37,6 +37,8 @@ export class TreeFolder extends TreeNode {
 
     private insert(relPath: string, entry: Entry): void {
         if (entry.directory) {
+            // we extract folders from file paths
+            // some zips do not contain directory entries
             return;
         }
 
