@@ -16,11 +16,24 @@ type AppState = {
 class App extends Preact.Component<{}, AppState> {
     public constructor() {
         super();
+
         const urlParams = new URLSearchParams(window.location.search);
-        const extParamValue = urlParams.get("extension");
-        if (extParamValue) {
-            if (/^[a-z0-9\-]+$/.test(extParamValue)) {
-                this.state = { extension: { type: "amo", id: extParamValue } };
+        const extIdParamValue = urlParams.get("extension");
+        const extStoreParamValue = urlParams.get("store") ?? "amo";
+
+        if (!["amo", "cws"].includes(extStoreParamValue)) {
+            console.error("Unknown extension store: ", extStoreParamValue);
+            return;
+        }
+
+        if (extIdParamValue) {
+            if (/^[a-z0-9\-]+$/.test(extIdParamValue)) {
+                this.state = {
+                    extension: {
+                        type: extStoreParamValue as "amo" | "cws",
+                        id: extIdParamValue,
+                    },
+                };
             }
         }
     }
