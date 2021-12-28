@@ -30,6 +30,7 @@ export abstract class TreeNode {
 export class TreeFolder extends TreeNode {
     public children: Map<string, TreeNode> = new Map();
     private fileCount: number = 0;
+    private uncompressedSize: number = 0;
 
     public insertEntry(entry: Entry): void {
         this.insert(entry.filename, entry);
@@ -49,6 +50,7 @@ export class TreeFolder extends TreeNode {
         if (parts.length === 0) {
             const file = new TreeFile(entry, name, this);
             this.children.set(name, file);
+            this.uncompressedSize += entry.uncompressedSize;
         } else {
             const folder =
                 (this.children.get(name) as TreeFolder) ??
@@ -60,6 +62,10 @@ export class TreeFolder extends TreeNode {
 
     public get numFiles(): number {
         return this.fileCount;
+    }
+
+    public get byteSize(): number {
+        return this.uncompressedSize;
     }
 
     public get(path: string): TreeNode | undefined {
@@ -141,6 +147,10 @@ export class TreeFile extends TreeNode {
 
         if (entry.directory) {
             throw new Error(`Entry is a directory: ${entry.filename}`);
+        }
+
+        if (entry.encrypted) {
+            this.tags.add("encrypted");
         }
 
         if (/\.(js|jsx|json)$/i.test(name)) {

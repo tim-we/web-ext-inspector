@@ -58,6 +58,10 @@ export class WorkerAPI {
         this.root = createFileTree(await zipReader.getEntries());
         this.manifest = await ManifestExtractor.getManifest(this.root);
 
+        if (size === 0) {
+            size = this.root.byteSize;
+        }
+
         if (this.details === undefined) {
             const url = ext.type === "url" ? ext.url : "";
             this.details = await this.createDetailsFromZip(url, size);
