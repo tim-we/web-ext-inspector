@@ -45,7 +45,6 @@ export class WorkerAPI {
             reader = new zip.HttpReader(url);
         } else if (ext.type === "cws") {
             const url = CWS.getDownloadURL(ext.id);
-            console.log(url);
             this.setStatus("downloading & extracting");
             reader = new zip.HttpReader(url);
         } else {

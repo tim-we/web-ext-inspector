@@ -43,7 +43,7 @@ export default class ExtensionSelector extends Component<Props, State> {
                                     id="extension-slug"
                                     type="text"
                                     value={state.extAMO}
-                                    placeholder="tabs-aside"
+                                    placeholder="extension id"
                                     onInput={this.onInputAMO.bind(this)}
                                 />
                                 {state.extAMO.trim().length > 0 ? (
@@ -68,7 +68,7 @@ export default class ExtensionSelector extends Component<Props, State> {
                                     id="extension-id"
                                     type="text"
                                     value={state.extCWS}
-                                    placeholder="bmnlcjabgnpnenekpadlanbbkooimhnj"
+                                    placeholder="extension id"
                                     onInput={this.onInputCWS.bind(this)}
                                 />
                                 {state.extCWS.trim().length === 32 ? (

@@ -29,14 +29,18 @@ export abstract class TreeNode {
 
 export class TreeFolder extends TreeNode {
     public children: Map<string, TreeNode> = new Map();
-    private count: number = 0;
+    private fileCount: number = 0;
 
     public insertEntry(entry: Entry): void {
         this.insert(entry.filename, entry);
     }
 
     private insert(relPath: string, entry: Entry): void {
-        this.count++;
+        if (entry.directory) {
+            return;
+        }
+
+        this.fileCount++;
         let parts = relPath.split("/");
         const name = parts.shift()!;
 
@@ -53,7 +57,7 @@ export class TreeFolder extends TreeNode {
     }
 
     public get numFiles(): number {
-        return this.count;
+        return this.fileCount;
     }
 
     public get(path: string): TreeNode | undefined {
@@ -121,7 +125,7 @@ export class TreeFolder extends TreeNode {
     }
 
     public toDTO(): TreeNodeDTO {
-        return { name: this.name, type: "folder", numFiles: this.count };
+        return { name: this.name, type: "folder", numFiles: this.fileCount };
     }
 }
 
