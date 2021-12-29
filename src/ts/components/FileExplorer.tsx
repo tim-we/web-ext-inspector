@@ -5,12 +5,16 @@ import prettyBytes from "pretty-bytes";
 import FilePreview from "./FilePreview";
 import TagList from "./TagList";
 import UIBox from "./UIBox";
-import { FileSelectListener, TreeFileDTO } from "../types/PackagedFiles";
+import {
+    FileAsyncAction,
+    FileSelectListener,
+    TreeFileDTO,
+} from "../types/PackagedFiles";
 
 type Props = {
     inspector: Inspector;
     selected?: string;
-    onFileOpen: FileSelectListener;
+    onFileOpen: FileAsyncAction;
 };
 
 type State = {

@@ -7,7 +7,12 @@ import TagList from "./TagList";
 import ImagePreview from "./previews/ImagePreview";
 import HTMLPreview from "./previews/HTMLPreview";
 import { getFolder } from "../utils/paths";
-import { FileSelectListener, TreeFileDTO } from "../types/PackagedFiles";
+import {
+    FileAsyncAction,
+    FileSelectListener,
+    TreeFileDTO,
+} from "../types/PackagedFiles";
+import AsyncButton from "./AsyncButton";
 
 type FPProps = {
     path: string;
@@ -15,7 +20,7 @@ type FPProps = {
     inspector: Inspector;
     closer: () => void;
     onFileSelect: FileSelectListener;
-    onFileOpen: FileSelectListener;
+    onFileOpen: FileAsyncAction;
 };
 
 const FilePreview: FunctionComponent<FPProps> = (props) => {
@@ -60,21 +65,17 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
             />
             <div class="main-actions">
                 {canOpen ? (
-                    <a
-                        class="open"
-                        href={"#/files/" + props.path}
+                    <AsyncButton
+                        classes={["open"]}
                         onClick={() => props.onFileOpen(props.path, node)}
                     >
                         Open
-                    </a>
+                    </AsyncButton>
                 ) : null}
-                <a
-                    class="download"
-                    title="Download file"
-                    href={"#/files/" + props.path}
-                    onClick={async (e: MouseEvent) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                <AsyncButton
+                    classes={["download"]}
+                    description="Download file"
+                    onClick={async () => {
                         const url = await props.inspector.getFileDownloadURL(
                             props.path
                         );
@@ -82,7 +83,7 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                     }}
                 >
                     Download
-                </a>
+                </AsyncButton>
             </div>
             <a
                 class="close"

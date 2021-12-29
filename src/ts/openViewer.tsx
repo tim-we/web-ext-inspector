@@ -7,13 +7,13 @@ import { showModal } from "./modal";
 
 const windowFeatures = "menubar=no,location=no,scrollbars=yes";
 
-export function openFileViewer(filePath: string, remote: Inspector): void {
+export async function openFileViewer(filePath: string, remote: Inspector): Promise<void> {
     const openIn = config.get("open-files-in");
 
     if (openIn === "popup" || openIn === "tab") {
         openFileViewerWindow(filePath, remote, openIn === "popup");
     } else if (openIn === "modal") {
-        openFileViewerModal(filePath, remote);
+        await openFileViewerModal(filePath, remote);
     }
 }
 

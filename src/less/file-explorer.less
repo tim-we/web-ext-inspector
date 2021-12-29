@@ -160,7 +160,7 @@
         }
 
         .main-actions {
-            a {
+            button {
                 display: inline-block;
                 background-color: rgb(0, 75, 190);
                 text-decoration: none;
@@ -169,9 +169,20 @@
                 border-radius: 5px;
                 box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
                 border: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 16px;
+                transition: background-color 0.25s;
 
                 &:not(:last-child) {
                     margin-right: 10px;
+                }
+
+                &:disabled {
+                    background-color: rgb(87, 88, 89);
+                    color: rgb(182, 182, 182);
+                }
+
+                &:not(:disabled) {
+                    cursor: pointer;
                 }
 
                 &.download::before {

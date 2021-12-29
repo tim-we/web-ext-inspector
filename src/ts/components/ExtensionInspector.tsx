@@ -44,7 +44,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                         <FileExplorer
                             selected="manifest.json"
                             inspector={state.inspector}
-                            onFileOpen={(path, info) =>
+                            onFileOpen={async (path, info) =>
                                 openFileViewer(path, state.inspector!)
                             }
                         />
