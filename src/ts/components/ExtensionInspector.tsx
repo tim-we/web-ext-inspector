@@ -5,6 +5,8 @@ import { createInspector, Inspector } from "../inspector/Inspector";
 import ExtensionPermissions from "./Permissions";
 import { ExtensionSourceInfo } from "../inspector/worker/worker";
 import { openFileViewer } from "../openViewer";
+import UIBox from "./UIBox";
+import { getDownloadURL as getCWSDownloadURL } from "../inspector/worker/CWS";
 
 type Props = {
     extension: ExtensionSourceInfo;
@@ -12,20 +14,22 @@ type Props = {
 
 type State = {
     inspector?: Inspector;
-    status?: string;
+    statusMessage?: string;
+    loading: boolean;
 };
 
 export default class ExtensionInspector extends Component<Props, State> {
     public constructor(props: Props) {
         super(props);
         this.state = {
-            status: "loading",
+            loading: true,
+            statusMessage: "loading",
         };
 
         createInspector(props.extension, (status) => {
-            this.setState({ status });
+            this.setState({ statusMessage: status });
         }).then((inspector) => {
-            this.setState({ inspector });
+            this.setState({ inspector, loading: false });
 
             if (props.extension.type === "url") {
                 URL.revokeObjectURL(props.extension.url);
@@ -35,6 +39,8 @@ export default class ExtensionInspector extends Component<Props, State> {
 
     public render() {
         const state = this.state;
+        const ext = this.props.extension;
+
         return (
             <>
                 {state.inspector ? (
@@ -50,10 +56,28 @@ export default class ExtensionInspector extends Component<Props, State> {
                         />
                     </>
                 ) : null}
-                {state.status ? (
-                    <div class="status" role="status">
-                        {state.status}
+                {state.statusMessage ? (
+                    <div class="status-message" role="status">
+                        {state.statusMessage}
                     </div>
+                ) : null}
+                {state.loading && ext.type === "cws" ? (
+                    <UIBox title="Information">
+                        Chrome extensions require a download proxy and could
+                        therefore take longer to load. If there is a problem
+                        with the download you can
+                        <ol>
+                            <li>
+                                <a
+                                    href={getCWSDownloadURL(ext.id)}
+                                    download={true}
+                                >
+                                    download the extension manually
+                                </a>
+                            </li>
+                            <li>upload it on the start page</li>
+                        </ol>
+                    </UIBox>
                 ) : null}
             </>
         );

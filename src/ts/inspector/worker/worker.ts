@@ -44,7 +44,7 @@ export class WorkerAPI {
             this.setStatus("downloading & extracting");
             reader = new zip.HttpReader(url);
         } else if (ext.type === "cws") {
-            const url = CWS.getDownloadURL(ext.id);
+            const url = CWS.getProxiedDownloadURL(ext.id);
             this.setStatus("downloading & extracting");
             reader = new zip.HttpReader(url);
         } else {
