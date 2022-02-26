@@ -1,10 +1,6 @@
 import { Component, createRef, FunctionalComponent as FC } from "preact";
-import { ExtensionSourceInfo } from "../inspector/worker/worker";
+import { route } from "preact-router";
 import UIBox from "./UIBox";
-
-type Props = {
-    onSelect: (ext: ExtensionSourceInfo) => void;
-};
 
 type State = {
     extAMO: string;
@@ -12,7 +8,7 @@ type State = {
     fileSelected: boolean;
 };
 
-export default class ExtensionSelector extends Component<Props, State> {
+export default class ExtensionSelector extends Component<{}, State> {
     state = { extAMO: "", extCWS: "", fileSelected: false };
     fileRef = createRef<HTMLInputElement>();
 
@@ -108,7 +104,7 @@ export default class ExtensionSelector extends Component<Props, State> {
                         .
                     </span>
                 </UIBox>
-                <ExampleSelector onSelect={this.props.onSelect} />
+                <ExampleSelector />
             </>
         );
     }
@@ -128,7 +124,7 @@ export default class ExtensionSelector extends Component<Props, State> {
         const ext = this.state.extAMO.trim();
 
         if (ext) {
-            this.props.onSelect({ type: "amo", id: ext });
+            route("/inspect/firefox/" + ext);
         }
     }
 
@@ -137,7 +133,7 @@ export default class ExtensionSelector extends Component<Props, State> {
         const ext = this.state.extCWS.trim();
 
         if (ext) {
-            this.props.onSelect({ type: "cws", id: ext });
+            route("/inspect/chrome/" + ext);
         }
     }
 
@@ -147,47 +143,31 @@ export default class ExtensionSelector extends Component<Props, State> {
         const files = this.fileRef.current!.files;
 
         if (files && files.length === 1) {
-            const url = URL.createObjectURL(files[0]);
-            this.props.onSelect({ type: "url", url });
+            const file = files[0];
+            const url = URL.createObjectURL(file);
+            route("/inspect/file/" + file.name);
+            // TODO
         }
     }
 }
 
-type ExampleProps = Props & { name: string; id: string };
-const Example: FC<ExampleProps> = (props) => (
-    <li key={props.id}>
-        inspect{" "}
-        <a
-            href={`?extension=${props.id}`}
-            onClick={(e) => {
-                e.preventDefault();
-                props.onSelect({ type: "amo", id: props.id });
-            }}
-        >
-            {props.name}
-        </a>
+type ExampleProps = { name: string; id: string };
+const Example: FC<ExampleProps> = ({ id, name }) => (
+    <li key={id}>
+        inspect <a href={`/inspect/firefox/${id}`}>{name}</a>
     </li>
 );
 
-const ExampleSelector: FC<Props> = (props) => (
+const ExampleSelector: FC = () => (
     <UIBox title="Examples" classes={["extension-selector"]}>
         Select one of the examples:
         <ul>
             <Example
                 name="I don't care about cookies"
                 id="i-dont-care-about-cookies"
-                onSelect={props.onSelect}
             />
-            <Example
-                name="Enhancer for YouTube™"
-                id="enhancer-for-youtube"
-                onSelect={props.onSelect}
-            />
-            <Example
-                name="Tabs Aside"
-                id="tabs-aside"
-                onSelect={props.onSelect}
-            />
+            <Example name="Enhancer for YouTube™" id="enhancer-for-youtube" />
+            <Example name="Tabs Aside" id="tabs-aside" />
         </ul>
     </UIBox>
 );

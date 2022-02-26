@@ -1,0 +1,10 @@
+{
+    "liveServer.settings.root": "/public/",
+    "liveServer.settings.ignoreFiles": [
+        ".vscode/**",
+        "**/*.less",
+        "**/*.ts",
+        "**/*.tsx"
+    ],
+    "liveServer.settings.file": "404.html"
+}

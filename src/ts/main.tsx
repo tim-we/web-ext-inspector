@@ -1,7 +1,8 @@
 import * as Preact from "preact";
+import { Route, Router, route } from "preact-router";
+
 import ExtensionInspector from "./components/ExtensionInspector";
 import ExtensionSelector from "./components/ExtensionSelector";
-import { ExtensionSourceInfo } from "./inspector/worker/worker";
 
 // create styles (in <head>)
 import "prismjs/themes/prism-okaidia.css";
@@ -9,61 +10,33 @@ import "../less/app.less";
 import ConfigUI from "./components/ConfigUI";
 import { setPortal } from "./modal";
 
-type AppState = {
-    extension?: ExtensionSourceInfo;
-};
+type ExtInspectorFC = Preact.FunctionalComponent<{ id: string }>;
 
-class App extends Preact.Component<{}, AppState> {
-    public constructor() {
-        super();
+const FirefoxExtensionInspector: ExtInspectorFC = ({ id }) => (
+    <ExtensionInspector extension={{ type: "amo", id }} />
+);
+const ChromeExtensionInspector: ExtInspectorFC = ({ id }) => (
+    <ExtensionInspector extension={{ type: "cws", id }} />
+);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const extIdParamValue = urlParams.get("extension");
-        const extStoreParamValue = urlParams.get("store") ?? "amo";
-
-        if (!["amo", "cws"].includes(extStoreParamValue)) {
-            console.error("Unknown extension store: ", extStoreParamValue);
-            return;
-        }
-
-        if (extIdParamValue) {
-            if (/^[a-z0-9\-]+$/.test(extIdParamValue)) {
-                this.state = {
-                    extension: {
-                        type: extStoreParamValue as "amo" | "cws",
-                        id: extIdParamValue,
-                    },
-                };
-            }
-        }
-    }
-
+class App extends Preact.Component<{}> {
     public render() {
-        const extension = this.state.extension;
-        const title = <h1>Extension Inspector</h1>;
-
         return (
             <>
                 <header>
-                    {extension ? (
-                        <a
-                            onClick={() =>
-                                this.setState({ extension: undefined })
-                            }
-                        >
-                            {title}
-                        </a>
-                    ) : (
-                        title
-                    )}
+                    <h1 onClick={() => route("/")}>Extension Inspector</h1>
                 </header>
-                {extension ? (
-                    <ExtensionInspector extension={extension} />
-                ) : (
-                    <ExtensionSelector
-                        onSelect={(ext) => this.setState({ extension: ext })}
+                <Router>
+                    <Route
+                        path="/inspect/firefox/:id"
+                        component={FirefoxExtensionInspector}
                     />
-                )}
+                    <Route
+                        path="/inspect/chrome/:id"
+                        component={ChromeExtensionInspector}
+                    />
+                    <Route path="/" component={ExtensionSelector} default />
+                </Router>
                 <div class="hfill"></div>
                 <footer>
                     <a
@@ -79,6 +52,19 @@ class App extends Preact.Component<{}, AppState> {
     }
 }
 
+// TODO <Route path="/inspect/file" component={TestProp} />
+
+/* <Route path="/" component={ExtensionSelector} />
+<Route
+    path="/inspect/firefox/:id"
+    component={ExtensionInspector}
+/>
+<Route
+    path="/inspect/chrome/:id"
+    component={ExtensionInspector}
+/>
+<div default>Not sure what to do</div> */
+
 const root = document.createElement("div");
 root.id = "root";
 document.body.appendChild(root);
@@ -89,3 +75,25 @@ document.body.appendChild(modalPortal);
 setPortal(modalPortal);
 
 Preact.render(<App />, root);
+
+(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("route")) {
+        console.log("routing to " + urlParams.get("route"));
+        route(urlParams.get("route")!, true);
+    } else if (urlParams.has("extension")) {
+        if (!/^[a-z0-9\-]+$/.test(urlParams.get("extension")!)) {
+            return;
+        }
+        const sources = new Map([
+            ["amo", "firefox"],
+            ["cws", "chrome"],
+        ]);
+        const store = urlParams.get("store");
+        const source =
+            store && sources.has(store) ? sources.get(store) : "firefox";
+        const r = "/inspect/" + source + "/" + urlParams.get("extension")!;
+        console.log("routing to " + route);
+        route(r, true);
+    }
+})();
