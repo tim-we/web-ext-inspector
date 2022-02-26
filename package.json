@@ -20,7 +20,7 @@
         "less-loader": "^9.1.0",
         "preact": "^10.6.5",
         "pretty-bytes": "^5.6.0",
-        "prismjs": "^1.26.0",
+        "prismjs": "^1.27.0",
         "prismjs-token-stream-transformer": "^0.2.0",
         "style-loader": "^2.0.0",
         "svg-url-loader": "^7.1.1"
