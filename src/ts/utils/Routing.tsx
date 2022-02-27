@@ -11,5 +11,5 @@ export function customRoute(path: string, replace: boolean = false): void {
 }
 
 export const AppLink: FunctionalComponent<{ href: string }> = (props) => (
-    <a href={base + props.href}>{props.children}</a>
+    <a href={"/" + base + props.href}>{props.children}</a>
 );
