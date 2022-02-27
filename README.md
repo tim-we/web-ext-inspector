@@ -4,7 +4,7 @@
 
 Inspect the contents of web extensions hosted on [addons.mozilla.org](https://addons.mozilla.org) or [Chrome Web Store](https://chrome.google.com/webstore).
 
-**Available as a web-app [here](https://tim-we.github.io/web-ext-inspector/).**
+**Available as a web-app [here](https://web-ext-inspector.com/).**
 
 This project is **work-in-progress**.
 
