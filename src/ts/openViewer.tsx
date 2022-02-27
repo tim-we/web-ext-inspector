@@ -40,7 +40,7 @@ function openFileViewerWindow(
     popup: boolean
 ): void {
     const fileWnd = window.open(
-        "file.html?path=" + filePath,
+        "/file.html?path=" + filePath,
         "ext-file-window",
         popup ? windowFeatures : ""
     );

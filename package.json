@@ -1,6 +1,6 @@
 {
     "name": "extension-analyzer",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "",
     "private": true,
     "scripts": {
@@ -10,7 +10,7 @@
     },
     "author": "tim-we",
     "dependencies": {
-        "@zip.js/zip.js": "^2.4.2",
+        "@zip.js/zip.js": "^2.4.5",
         "comlink": "^4.3.1",
         "css": "^3.0.0",
         "css-loader": "^5.2.7",
@@ -18,7 +18,8 @@
         "htmlparser2": "^7.2.0",
         "less": "^4.1.2",
         "less-loader": "^9.1.0",
-        "preact": "^10.6.5",
+        "preact": "^10.6.6",
+        "preact-router": "^4.0.1",
         "pretty-bytes": "^5.6.0",
         "prismjs": "^1.27.0",
         "prismjs-token-stream-transformer": "^0.2.0",
@@ -27,6 +28,7 @@
     },
     "devDependencies": {
         "@types/css": "^0.0.33",
+        "@types/history": "^4.7.11",
         "@types/prismjs": "^1.26.0",
         "ts-loader": "^9.2.6",
         "typescript": "^4.5.5",

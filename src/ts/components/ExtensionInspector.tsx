@@ -28,12 +28,16 @@ export default class ExtensionInspector extends Component<Props, State> {
 
         createInspector(props.extension, (status) => {
             this.setState({ statusMessage: status });
-        }).then((inspector) => {
+        }).then(async (inspector) => {
             this.setState({ inspector, loading: false });
 
-            if (props.extension.type === "url") {
-                URL.revokeObjectURL(props.extension.url);
-            }
+            const details = await inspector.getDetails();
+            document.title = `Inspecting ${details.name}`;
+
+
+            // if (props.extension.type === "url") {
+            //     URL.revokeObjectURL(props.extension.url);
+            // }
         });
     }
 

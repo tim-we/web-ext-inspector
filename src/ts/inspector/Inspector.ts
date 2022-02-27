@@ -12,7 +12,7 @@ export async function createInspector(
     onStatusChange?: StatusListener
 ): Promise<Inspector> {
     const worker = Comlink.wrap<WorkerAPI>(
-        new Worker("worker.bundle.js", { name: "ExtensionWorker" })
+        new Worker("/worker.bundle.js", { name: "ExtensionWorker" })
     );
 
     if (onStatusChange) {
