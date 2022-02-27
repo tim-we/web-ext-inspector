@@ -14,7 +14,7 @@ import "../less/app.less";
 class App extends Preact.Component<{}> {
     public render() {
         return (
-            <Router base="TODO">
+            <Router>
                 <header>
                     <Link href="/">
                         <h1>Extension Inspector</h1>
