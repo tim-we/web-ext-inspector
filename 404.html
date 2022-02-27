@@ -5,8 +5,9 @@
     <title>SPA Redirector</title>
     <script>
         const l = window.location;
-        const base = l.host.endsWith("github.io") ? l.pathname.split("/").filter(s => s.length > 0)[0] : "";
-        const route = window.location.pathname;
+        const parts = l.pathname.split("/").filter((s,i) => !(i === 0 && s === ""));
+        const base = l.host.endsWith("github.io") ? parts.shift() : "";
+        const route = parts.join("/");
         window.location.replace("/" + base + "?route=" + route);
     </script>
 </head>
