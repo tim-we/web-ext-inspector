@@ -110,6 +110,10 @@ export default class ExtensionSelector extends Component<{}, State> {
         );
     }
 
+    componentDidMount() {
+        document.title = "Extension Inspector";
+    }
+
     private onInputAMO(e: Event) {
         const target = e.target as HTMLInputElement;
         this.setState({ extAMO: target.value });

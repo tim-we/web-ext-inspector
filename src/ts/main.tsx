@@ -22,6 +22,7 @@ const ChromeExtensionInspector: ExtInspectorFC = ({ id }) => (
 const LocalExtensionInspector: ExtInspectorFC = ({ id }) => {
     const url = LFP.getURL(id);
     if (!url) {
+        route("/", true);
         return null;
     }
     return <ExtensionInspector extension={{ type: "url", url }} />;
