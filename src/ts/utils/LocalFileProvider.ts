@@ -1,7 +1,7 @@
 const files = new Map<string, string>();
 
-export function addFile(file: File): string {
-    files.set(file.name, URL.createObjectURL(file));
+export function addFile(file: File, id: string = file.name): string {
+    files.set(id, URL.createObjectURL(file));
     return file.name;
 }
 

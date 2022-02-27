@@ -16,7 +16,7 @@ const ExtensionSelector: FC = () => {
     const createSubmitHandler = (
         prefix: string,
         id: string,
-        before: () => void = () => {}
+        before: (id: string) => void = () => {}
     ) => {
         return (e: Event) => {
             e.preventDefault();
@@ -24,7 +24,7 @@ const ExtensionSelector: FC = () => {
             if (urlId === "") {
                 return;
             }
-            before();
+            before(urlId);
 
             if (urlId) {
                 navigate(prefix + urlId);
@@ -32,7 +32,7 @@ const ExtensionSelector: FC = () => {
         };
     };
 
-    useEffect(() => void(document.title = "Extension Inspector"));
+    useEffect(() => void (document.title = "Extension Inspector"), []);
 
     return (
         <>
@@ -101,7 +101,8 @@ const ExtensionSelector: FC = () => {
                                 onInput={(e) =>
                                     setCWSId(
                                         (e.target as HTMLInputElement).value
-                                    )}
+                                    )
+                                }
                             />
                             {cwsId.trim().length === 32 ? (
                                 <button type="submit">Inspect</button>
@@ -114,8 +115,8 @@ const ExtensionSelector: FC = () => {
                             onSubmit={createSubmitHandler(
                                 "/inspect/file/",
                                 fileSelected ? files![0].name : "",
-                                () => {
-                                    LFP.addFile(files![0]);
+                                (id) => {
+                                    LFP.addFile(files![0], id);
                                 }
                             )}
                         >
@@ -123,11 +124,12 @@ const ExtensionSelector: FC = () => {
                                 ref={fileRef}
                                 type="file"
                                 accept=".zip,.xpi,.crx"
-                                onChange={() =>
+                                onChange={() => {
                                     setFileSelected(
-                                        !!files && files.length === 1
-                                    )
-                                }
+                                        fileRef.current!.files != null &&
+                                            fileRef.current!.files.length === 1
+                                    );
+                                }}
                             />
                             {fileSelected ? (
                                 <button type="submit">Inspect</button>

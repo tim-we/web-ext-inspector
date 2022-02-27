@@ -58,7 +58,7 @@ const App: Preact.FunctionalComponent = () => {
                 <Route path="/inspect/file/:id">
                     {({ id }) => {
                         const url = LFP.getURL(id);
-                        const [, navigate] = useLocation();
+                        const navigate = useLocation()[1];
                         if (!url) {
                             navigate("/", { replace: true });
                             return null;
