@@ -1,6 +1,6 @@
 import { Component, createRef, FunctionalComponent as FC } from "preact";
 import * as LFP from "../utils/LocalFileProvider";
-import { customRoute } from "../utils/Routing";
+import { AppLink, customRoute } from "../utils/Routing";
 import UIBox from "./UIBox";
 
 type State = {
@@ -25,7 +25,7 @@ export default class ExtensionSelector extends Component<{}, State> {
                     <ul>
                         <li>
                             {"from the "}
-                            <a href="https://addons.mozilla.org">
+                            <a href="https://addons.mozilla.org" data-native>
                                 official add-on website
                             </a>
                             :
@@ -50,7 +50,10 @@ export default class ExtensionSelector extends Component<{}, State> {
                         </li>
                         <li>
                             {"from the "}
-                            <a href="https://chrome.google.com/webstore">
+                            <a
+                                href="https://chrome.google.com/webstore"
+                                data-native
+                            >
                                 Chrome Web Store
                             </a>
                             :
@@ -99,7 +102,10 @@ export default class ExtensionSelector extends Component<{}, State> {
                     <span class="info">
                         You can integrate this tool into the offical add-on
                         website with an{" "}
-                        <a href="https://addons.mozilla.org/firefox/addon/extension-inspector">
+                        <a
+                            href="https://addons.mozilla.org/firefox/addon/extension-inspector"
+                            data-native
+                        >
                             extension
                         </a>
                         .
@@ -157,7 +163,7 @@ export default class ExtensionSelector extends Component<{}, State> {
 type ExampleProps = { name: string; id: string };
 const Example: FC<ExampleProps> = ({ id, name }) => (
     <li key={id}>
-        inspect <a href={`/inspect/firefox/${id}`}>{name}</a>
+        inspect <AppLink href={`/inspect/firefox/${id}`}>{name}</AppLink>
     </li>
 );
 

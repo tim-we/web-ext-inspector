@@ -39,6 +39,7 @@ export default class HTMLPreview extends Component<Props, State> {
                                 <a
                                     class="file"
                                     href={"#/files/" + path}
+                                    data-native
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();

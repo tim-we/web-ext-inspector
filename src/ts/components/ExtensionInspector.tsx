@@ -75,6 +75,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                                 <a
                                     href={getCWSDownloadURL(ext.id)}
                                     download={true}
+                                    data-native
                                 >
                                     download the extension manually
                                 </a>

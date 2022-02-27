@@ -10,7 +10,7 @@ import * as LFP from "./utils/LocalFileProvider";
 // create styles (in <head>)
 import "prismjs/themes/prism-okaidia.css";
 import "../less/app.less";
-import { customRoute } from "./utils/Routing";
+import { AppLink, customRoute } from "./utils/Routing";
 
 type ExtInspectorFC = Preact.FunctionalComponent<{ id: string }>;
 
@@ -34,9 +34,9 @@ class App extends Preact.Component<{}> {
         return (
             <>
                 <header>
-                    <a href="/">
+                    <AppLink href="/">
                         <h1>Extension Inspector</h1>
-                    </a>
+                    </AppLink>
                 </header>
                 <Router>
                     <Route
@@ -58,6 +58,7 @@ class App extends Preact.Component<{}> {
                     <a
                         id="view-on-github"
                         href="https://github.com/tim-we/web-ext-inspector"
+                        data-native
                     >
                         View on GitHub
                     </a>

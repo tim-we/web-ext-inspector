@@ -165,6 +165,7 @@ const Permission = (props: PermissionProps) => {
             href={infoURL}
             target="_blank"
             title="click to learn more"
+            data-native
         >
             {props.permission}
         </a>

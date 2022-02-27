@@ -154,6 +154,7 @@ class FolderView extends Component<FVProps> {
                                 <a
                                     class="folder"
                                     href={"#/files/" + objPath}
+                                    data-native
                                     title={
                                         isOpen
                                             ? "click to collapse"
@@ -232,6 +233,7 @@ class FileNodeView extends Component<FNVProps> {
                     ref={this.ref}
                     class="file"
                     href={"#/files/" + path}
+                    data-native
                     onClick={(e: MouseEvent) => {
                         e.preventDefault();
                         e.stopPropagation();

@@ -89,6 +89,7 @@ const FilePreview: FunctionComponent<FPProps> = (props) => {
                 class="close"
                 title="close preview"
                 onClick={() => props.closer()}
+                data-native
             ></a>
         </div>
     );
