@@ -3,12 +3,13 @@ import { Route, Router, route } from "preact-router";
 
 import ExtensionInspector from "./components/ExtensionInspector";
 import ExtensionSelector from "./components/ExtensionSelector";
+import ConfigUI from "./components/ConfigUI";
+import { setPortal } from "./modal";
+import * as LFP from "./utils/LocalFileProvider";
 
 // create styles (in <head>)
 import "prismjs/themes/prism-okaidia.css";
 import "../less/app.less";
-import ConfigUI from "./components/ConfigUI";
-import { setPortal } from "./modal";
 
 type ExtInspectorFC = Preact.FunctionalComponent<{ id: string }>;
 
@@ -18,6 +19,13 @@ const FirefoxExtensionInspector: ExtInspectorFC = ({ id }) => (
 const ChromeExtensionInspector: ExtInspectorFC = ({ id }) => (
     <ExtensionInspector extension={{ type: "cws", id }} />
 );
+const LocalExtensionInspector: ExtInspectorFC = ({ id }) => {
+    const url = LFP.getURL(id);
+    if (!url) {
+        return null;
+    }
+    return <ExtensionInspector extension={{ type: "url", url }} />;
+};
 
 class App extends Preact.Component<{}> {
     public render() {
@@ -35,6 +43,10 @@ class App extends Preact.Component<{}> {
                         path="/inspect/chrome/:id"
                         component={ChromeExtensionInspector}
                     />
+                    <Route
+                        path="/inspect/file/:id"
+                        component={LocalExtensionInspector}
+                    />
                     <Route path="/" component={ExtensionSelector} default />
                 </Router>
                 <div class="hfill"></div>
@@ -51,19 +63,6 @@ class App extends Preact.Component<{}> {
         );
     }
 }
-
-// TODO <Route path="/inspect/file" component={TestProp} />
-
-/* <Route path="/" component={ExtensionSelector} />
-<Route
-    path="/inspect/firefox/:id"
-    component={ExtensionInspector}
-/>
-<Route
-    path="/inspect/chrome/:id"
-    component={ExtensionInspector}
-/>
-<div default>Not sure what to do</div> */
 
 const root = document.createElement("div");
 root.id = "root";

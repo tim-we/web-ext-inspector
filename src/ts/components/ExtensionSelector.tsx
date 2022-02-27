@@ -1,5 +1,6 @@
 import { Component, createRef, FunctionalComponent as FC } from "preact";
 import { route } from "preact-router";
+import * as LFP from "../utils/LocalFileProvider";
 import UIBox from "./UIBox";
 
 type State = {
@@ -143,10 +144,8 @@ export default class ExtensionSelector extends Component<{}, State> {
         const files = this.fileRef.current!.files;
 
         if (files && files.length === 1) {
-            const file = files[0];
-            const url = URL.createObjectURL(file);
-            route("/inspect/file/" + file.name);
-            // TODO
+            const fileId = LFP.addFile(files[0]);
+            route("/inspect/file/" + fileId);
         }
     }
 }
