@@ -31,9 +31,9 @@ export default class ExtensionInspector extends Component<Props, State> {
         }).then((inspector) => {
             this.setState({ inspector, loading: false });
 
-            if (props.extension.type === "url") {
-                URL.revokeObjectURL(props.extension.url);
-            }
+            // if (props.extension.type === "url") {
+            //     URL.revokeObjectURL(props.extension.url);
+            // }
         });
     }
 

@@ -32,7 +32,9 @@ class App extends Preact.Component<{}> {
         return (
             <>
                 <header>
-                    <h1 onClick={() => route("/")}>Extension Inspector</h1>
+                    <a href="/">
+                        <h1>Extension Inspector</h1>
+                    </a>
                 </header>
                 <Router>
                     <Route

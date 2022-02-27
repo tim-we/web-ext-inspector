@@ -14,4 +14,5 @@ export function free(id: string): void {
     if (url) {
         URL.revokeObjectURL(url);
     }
+    files.delete(id);
 }
