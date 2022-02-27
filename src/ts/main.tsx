@@ -40,9 +40,9 @@ const App: Preact.FunctionalComponent = () => {
     return (
         <Router base={pathBase}>
             <header>
-                <Link href="/">
-                    <h1>Extension Inspector</h1>
-                </Link>
+                <h1>
+                    <Link href="/">Extension Inspector</Link>
+                </h1>
             </header>
             <Switch>
                 <Route path="/inspect/firefox/:id">
