@@ -1,6 +1,6 @@
 import { Component, createRef, FunctionalComponent as FC } from "preact";
-import { route } from "preact-router";
 import * as LFP from "../utils/LocalFileProvider";
+import { customRoute } from "../utils/Routing";
 import UIBox from "./UIBox";
 
 type State = {
@@ -129,7 +129,7 @@ export default class ExtensionSelector extends Component<{}, State> {
         const ext = this.state.extAMO.trim();
 
         if (ext) {
-            route("/inspect/firefox/" + ext);
+            customRoute("/inspect/firefox/" + encodeURIComponent(ext));
         }
     }
 
@@ -138,7 +138,7 @@ export default class ExtensionSelector extends Component<{}, State> {
         const ext = this.state.extCWS.trim();
 
         if (ext) {
-            route("/inspect/chrome/" + ext);
+            customRoute("/inspect/chrome/" + encodeURIComponent(ext));
         }
     }
 
@@ -149,7 +149,7 @@ export default class ExtensionSelector extends Component<{}, State> {
 
         if (files && files.length === 1) {
             const fileId = LFP.addFile(files[0]);
-            route("/inspect/file/" + fileId);
+            customRoute("/inspect/file/" + fileId);
         }
     }
 }

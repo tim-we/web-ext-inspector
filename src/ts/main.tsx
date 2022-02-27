@@ -1,5 +1,5 @@
 import * as Preact from "preact";
-import { Route, Router, route } from "preact-router";
+import { Route, Router } from "preact-router";
 
 import ExtensionInspector from "./components/ExtensionInspector";
 import ExtensionSelector from "./components/ExtensionSelector";
@@ -10,6 +10,7 @@ import * as LFP from "./utils/LocalFileProvider";
 // create styles (in <head>)
 import "prismjs/themes/prism-okaidia.css";
 import "../less/app.less";
+import { customRoute } from "./utils/Routing";
 
 type ExtInspectorFC = Preact.FunctionalComponent<{ id: string }>;
 
@@ -22,7 +23,7 @@ const ChromeExtensionInspector: ExtInspectorFC = ({ id }) => (
 const LocalExtensionInspector: ExtInspectorFC = ({ id }) => {
     const url = LFP.getURL(id);
     if (!url) {
-        route("/", true);
+        customRoute("/", true);
         return null;
     }
     return <ExtensionInspector extension={{ type: "url", url }} />;
@@ -82,7 +83,7 @@ Preact.render(<App />, root);
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has("route")) {
         console.log("routing to " + urlParams.get("route"));
-        route(urlParams.get("route")!, true);
+        customRoute(urlParams.get("route")!, true);
     } else if (urlParams.has("extension")) {
         if (!/^[a-z0-9\-]+$/.test(urlParams.get("extension")!)) {
             return;
@@ -95,7 +96,6 @@ Preact.render(<App />, root);
         const source =
             store && sources.has(store) ? sources.get(store) : "firefox";
         const r = "/inspect/" + source + "/" + urlParams.get("extension")!;
-        console.log("routing to " + route);
-        route(r, true);
+        customRoute(r, true);
     }
 })();
