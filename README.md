@@ -1,12 +1,12 @@
 [![build badge](https://github.com/tim-we/web-ext-inspector/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/tim-we/web-ext-inspector/actions/workflows/gh-pages.yml)
 
-# web-ext-inspector
+# Web Extension Inspector
 
-Inspect the contents of web extensions hosted on [addons.mozilla.org](https://addons.mozilla.org)
+Inspect the contents of web extensions hosted on [addons.mozilla.org](https://addons.mozilla.org) or [Chrome Web Store](https://chrome.google.com/webstore).
 
 **Available as a web-app [here](https://tim-we.github.io/web-ext-inspector/).**
 
-**Work-in-progress.**
+This project is **work-in-progress**.
 
 ## Examples
 
