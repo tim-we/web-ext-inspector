@@ -1,6 +1,6 @@
 import { Component, createRef, FunctionalComponent as FC } from "preact";
 import * as LFP from "../utils/LocalFileProvider";
-import { AppLink, customRoute } from "../utils/Routing";
+import { Link } from "wouter-preact";
 import UIBox from "./UIBox";
 
 type State = {
@@ -163,7 +163,7 @@ export default class ExtensionSelector extends Component<{}, State> {
 type ExampleProps = { name: string; id: string };
 const Example: FC<ExampleProps> = ({ id, name }) => (
     <li key={id}>
-        inspect <AppLink href={`/inspect/firefox/${id}`}>{name}</AppLink>
+        inspect <Link href={`/inspect/firefox/${id}`}>{name}</Link>
     </li>
 );
 
