@@ -7,12 +7,19 @@ import {
 
 export type Inspector = Comlink.Remote<WorkerAPI>;
 
+const basePath = (() => {
+    if (window.location.pathname.startsWith("/web-ext-inspector/")) {
+        return "/web-ext-inspector";
+    }
+    return "";
+})();
+
 export async function createInspector(
     ext: ExtensionSourceInfo,
     onStatusChange?: StatusListener
 ): Promise<Inspector> {
     const worker = Comlink.wrap<WorkerAPI>(
-        new Worker("/worker.bundle.js", { name: "ExtensionWorker" })
+        new Worker(basePath + "/worker.bundle.js", { name: "ExtensionWorker" })
     );
 
     if (onStatusChange) {
