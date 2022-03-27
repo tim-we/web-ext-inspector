@@ -33,7 +33,8 @@ const App: Preact.FunctionalComponent = () => {
                 store && sources.has(store) ? sources.get(store) : "firefox";
             const route =
                 "/inspect/" + source + "/" + urlParams.get("extension")!;
-            navigate(route, { replace: true });
+            const prefix = pathBase ? pathBase : "";
+            navigate(prefix + route, { replace: true });
         }
     }
 
