@@ -23,7 +23,10 @@ export async function fetchWithCache(url: string): Promise<Response> {
     }
 
     const response = await fetch(url);
-    cache.put(url, response.clone());
+
+    if (response.ok) {
+        cache.put(url, response.clone());
+    }
 
     return response;
 }
