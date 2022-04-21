@@ -10,6 +10,7 @@ import AsyncEvent from "../../utils/AsyncEvent";
 import { renderCode, SupportedLanguage } from "./CodeRenderer";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
 import * as CWS from "./CWS";
+import { fetchWithCache } from "./helpers/CacheHelper";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
@@ -42,7 +43,11 @@ export class WorkerAPI {
             await this.loadFromAMO(ext.id);
             const url = this.details!.download_url;
             this.setStatus("downloading & extracting");
-            reader = new zip.HttpReader(url);
+            
+            const response = await fetchWithCache(url);
+            const blob = await response.blob();
+            size = blob.size;
+            reader = new zip.BlobReader(blob);
         } else if (ext.type === "cws") {
             const url = CWS.getProxiedDownloadURL(ext.id);
             this.setStatus("downloading & extracting");

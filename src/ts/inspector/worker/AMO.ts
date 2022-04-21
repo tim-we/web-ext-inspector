@@ -3,6 +3,8 @@
  * https://addons-server.readthedocs.io/en/latest/topics/api/addons.html#detail
  */
 
+import { fetchWithCache } from "./helpers/CacheHelper";
+
 const API = "https://addons.mozilla.org/api/v5";
 
 export type Details = {
@@ -46,6 +48,6 @@ type File = {
 };
 
 export async function getInfo(slug: string): Promise<Details> {
-    const response = await fetch(`${API}/addons/addon/${slug}/`);
+    const response = await fetchWithCache(`${API}/addons/addon/${slug}/`);
     return response.json();
 }
