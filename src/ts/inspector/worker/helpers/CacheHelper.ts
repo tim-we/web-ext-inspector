@@ -10,7 +10,7 @@ export async function fetchWithCache(url: string): Promise<Response> {
     const cache = await caches.open("extensions").catch(() => undefined);
 
     if (!cache) {
-        // Firefox: throws SecurityError when opening a cache in a non-secure context
+        // Firefox: rejects with SecurityError when opening a cache in a non-secure context
         console.info(NO_CACHE_INFO);
         return fetch(url);
     }
@@ -30,3 +30,10 @@ export async function fetchWithCache(url: string): Promise<Response> {
 
     return response;
 }
+
+// TODO:
+// - display recently inspected extensions on start screen
+// - remove old versions from cache
+// - check for new versions (automatically & manually)
+// - use idb-keyval to manage cached files
+// - cache local files?
