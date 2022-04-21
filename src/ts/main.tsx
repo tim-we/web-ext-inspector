@@ -20,9 +20,10 @@ const App: Preact.FunctionalComponent = () => {
     const navigate = useLocation()[1];
 
     if (urlParams.has("route")) {
-        console.log("routing to " + urlParams.get("route"));
+        console.info("routing to " + urlParams.get("route"));
         navigate(urlParams.get("route")!, { replace: true });
     } else if (urlParams.has("extension")) {
+        // map old URLs to new URLs
         if (/^[a-z0-9\-]+$/.test(urlParams.get("extension")!)) {
             const sources = new Map([
                 ["amo", "firefox"],
