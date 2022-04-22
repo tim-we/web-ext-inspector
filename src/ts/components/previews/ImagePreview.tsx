@@ -1,5 +1,5 @@
 import { Component } from "preact";
-import { Inspector } from "../../inspector/Inspector";
+import { Inspector } from "../../inspector/InspectorFactory";
 
 type Props = {
     path: string;

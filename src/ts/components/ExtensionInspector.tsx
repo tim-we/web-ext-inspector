@@ -1,7 +1,7 @@
 import { Component } from "preact";
 import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
-import { createInspector, Inspector } from "../inspector/Inspector";
+import { createInspector, Inspector } from "../inspector/InspectorFactory";
 import ExtensionPermissions from "./Permissions";
 import { ExtensionSourceInfo } from "../inspector/worker/worker";
 import { openFileViewer } from "../openViewer";

@@ -1,5 +1,5 @@
 import { Component, createRef } from "preact";
-import { Inspector } from "../inspector/Inspector";
+import { Inspector } from "../inspector/InspectorFactory";
 import { TreeNodeDTO } from "../inspector/worker/FileTree";
 import prettyBytes from "pretty-bytes";
 import FilePreview from "./FilePreview";

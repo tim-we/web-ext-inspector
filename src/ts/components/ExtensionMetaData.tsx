@@ -1,6 +1,6 @@
 import { Component } from "preact";
 import prettyBytes from "pretty-bytes";
-import { Inspector } from "../inspector/Inspector";
+import { Inspector } from "../inspector/InspectorFactory";
 import friendlyTime from "friendly-time";
 import UIBox from "./UIBox";
 import { ExtensionDetails } from "../types/ExtensionDetails";
