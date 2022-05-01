@@ -32,6 +32,10 @@ export default class Extension {
             manifestNode.addTag("manifest");
             // TODO: manifest.json may contain single line comments (//)
             this.manifest = JSON.parse(await manifestNode.getTextContent());
+            if(this.manifest.manifest_version !== 2) {
+                console.error(`Unsupported manifest version ${this.manifest.manifest_version}.`);
+                // TODO: add manifest v3 (currently Chrome-only) support
+            }
 
             // translations
             if (this.manifest.default_locale !== undefined) {
