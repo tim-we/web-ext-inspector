@@ -9,15 +9,15 @@ import * as ResourceLocator from "./helpers/ResourceLocator";
 import { Translations } from "../../types/Translations";
 
 export default class Extension {
-    id: ExtensionId;
-    rootDir: TreeFolder;
+    readonly id: ExtensionId;
     manifest: Manifest;
     details: ExtensionDetails;
 
-    private initialized = new AsyncEvent("extension initialized");
+    private readonly initialized = new AsyncEvent("extension initialized");
+    private rootDir: TreeFolder;
     private defaultTranslations: Translations | null = null;
 
-    public constructor(id: ExtensionId, zipData: Blob) {
+    private constructor(id: ExtensionId, zipData: Blob) {
         const zipReader = new zip.ZipReader(new zip.BlobReader(zipData));
 
         (async () => {
@@ -32,8 +32,10 @@ export default class Extension {
             manifestNode.addTag("manifest");
             // TODO: manifest.json may contain single line comments (//)
             this.manifest = JSON.parse(await manifestNode.getTextContent());
-            if(this.manifest.manifest_version !== 2) {
-                console.error(`Unsupported manifest version ${this.manifest.manifest_version}.`);
+            if (this.manifest.manifest_version !== 2) {
+                console.error(
+                    `Unsupported manifest version ${this.manifest.manifest_version}.`
+                );
                 // TODO: add manifest v3 (currently Chrome-only) support
             }
 
@@ -58,6 +60,12 @@ export default class Extension {
 
             this.initialized.fire();
         })();
+    }
+
+    public static async create(id: ExtensionId, zipData: Blob): Promise<Extension> {
+        const extension = new Extension(id, zipData);
+        await extension.initialized.waitFor();
+        return extension;
     }
 
     public async getFileDownloadURL(

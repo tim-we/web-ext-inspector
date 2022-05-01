@@ -1,13 +1,9 @@
 import { ExtensionId } from "../../types/ExtensionId";
+import Extension from "./Extension";
 import { update, get } from "idb-keyval";
 import * as AMOAPI from "./AMO";
 import * as CWS from "./CWS";
 import { fetchWithCache } from "./helpers/CacheHelper";
-
-type ExtensionData = {
-    ext: ExtensionId;
-    blob: Blob;
-};
 
 type ExtensionCacheInfo = {
     url: string;
@@ -20,11 +16,9 @@ type ExtCacheMap = Map<string, ExtensionCacheInfo>;
 
 const CACHED_EXTENSIONS_KEY = "cachedExtensions";
 
-export async function getExtension(ext: ExtensionId): Promise<ExtensionData> {
+export async function getExtension(ext: ExtensionId): Promise<Extension> {
     update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
-    const cachedExtensions = (await get<ExtCacheMap>(
-        "cachedExtensions"
-    ))!;
+    const cachedExtensions = (await get<ExtCacheMap>("cachedExtensions"))!;
     const cacheInfo = cachedExtensions.get(extKey(ext));
 
     let downloadUrl: string;
@@ -35,12 +29,6 @@ export async function getExtension(ext: ExtensionId): Promise<ExtensionData> {
         } else {
             const info = await AMOAPI.getInfo(ext.id);
             downloadUrl = info.current_version.file.url;
-            update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, m => m!.set(extKey(ext), {
-                url: downloadUrl,
-                date: new Date(),
-                version: info.current_version.version,
-                name: "TODO"
-            }))
         }
     } else if (ext.source === "chrome") {
         downloadUrl = CWS.getProxiedDownloadURL(ext.id);
@@ -50,7 +38,7 @@ export async function getExtension(ext: ExtensionId): Promise<ExtensionData> {
         throw new Error("unreachable");
     }
 
-    const response = await fetchWithCache(downloadUrl);
+    const response = await fetchWithCache(downloadUrl, "extensions");
 
     if (!response.ok) {
         return Promise.reject(
@@ -58,10 +46,18 @@ export async function getExtension(ext: ExtensionId): Promise<ExtensionData> {
         );
     }
 
-    return {
-        ext,
-        blob: await response.blob(),
-    };
+    const extension = await Extension.create(ext, await response.blob());
+
+    update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
+        m!.set(extKey(ext), {
+            url: downloadUrl,
+            date: new Date(),
+            version: extension.details.version,
+            name: extension.details.name,
+        })
+    );
+
+    return extension;
 }
 
 function extKey(id: ExtensionId): string {

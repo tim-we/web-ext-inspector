@@ -48,6 +48,6 @@ type File = {
 };
 
 export async function getInfo(slug: string): Promise<Details> {
-    const response = await fetchWithCache(`${API}/addons/addon/${slug}/`);
+    const response = await fetch(`${API}/addons/addon/${slug}/`);
     return response.json();
 }
