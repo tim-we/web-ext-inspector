@@ -50,16 +50,10 @@ export default class ExtensionMetaData extends Component<Props, State> {
                             <td>Name</td>
                             <td>{details.name}</td>
                         </tr>
-                        {details.authors.length > 0 ? (
-                            <tr>
-                                <td>
-                                    {details.authors.length === 1
-                                        ? "Author"
-                                        : "Authors"}
-                                </td>
-                                <td>{details.authors.join(", ")}</td>
-                            </tr>
-                        ) : null}
+                        <tr>
+                            <td>Author</td>
+                            <td>{details.author}</td>
+                        </tr>
                         {lastUpdateTime ? (
                             <tr>
                                 <td>Last Update</td>

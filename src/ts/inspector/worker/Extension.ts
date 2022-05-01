@@ -1,6 +1,6 @@
 import { ExtensionId } from "../../types/ExtensionId";
 import AsyncEvent from "../../utils/AsyncEvent";
-import { createFileTree, TreeFile, TreeFolder } from "./FileTree";
+import { createFileTree, TreeFile, TreeFolder, TreeNode } from "./FileTree";
 import * as zip from "@zip.js/zip.js";
 import { Manifest } from "../../types/Manifest";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
@@ -14,7 +14,7 @@ export default class Extension {
     details: ExtensionDetails;
 
     private readonly initialized = new AsyncEvent("extension initialized");
-    private rootDir: TreeFolder;
+    rootDir: TreeFolder; // TODO consider making this private
     private defaultTranslations: Translations | null = null;
 
     private constructor(id: ExtensionId, zipData: Blob) {
@@ -55,14 +55,17 @@ export default class Extension {
 
             await zipReader.close();
 
-            this.createDetails();
-            this.findScriptsAndResources();
+            await this.createDetails();
+            await this.findScriptsAndResources();
 
             this.initialized.fire();
         })();
     }
 
-    public static async create(id: ExtensionId, zipData: Blob): Promise<Extension> {
+    public static async create(
+        id: ExtensionId,
+        zipData: Blob
+    ): Promise<Extension> {
         const extension = new Extension(id, zipData);
         await extension.initialized.waitFor();
         return extension;
@@ -72,7 +75,10 @@ export default class Extension {
         path: string,
         timeout: number = 10.0
     ): Promise<string> {
-        await this.initialized.waitFor();
+        if (!this.rootDir) {
+            await this.initialized.waitFor();
+        }
+
         const fileNode = this.rootDir.get(path);
 
         if (!(fileNode instanceof TreeFile)) {
@@ -91,6 +97,18 @@ export default class Extension {
         }
 
         return url;
+    }
+
+    public async getFileOrFolder(path: string): Promise<TreeNode> {
+        await this.initialized.waitFor();
+
+        const node = this.rootDir.get(path);
+
+        if (!node) {
+            throw new Error(`No such file or folder: ${path}`);
+        }
+
+        return node;
     }
 
     private async createDetails(): Promise<void> {

@@ -54,12 +54,16 @@ const App: Preact.FunctionalComponent = () => {
             <Switch>
                 <Route path="/inspect/firefox/:id">
                     {({ id }) => (
-                        <ExtensionInspector extension={{ type: "amo", id }} />
+                        <ExtensionInspector
+                            extension={{ source: "firefox", id }}
+                        />
                     )}
                 </Route>
                 <Route path="/inspect/chrome/:id">
                     {({ id }) => (
-                        <ExtensionInspector extension={{ type: "cws", id }} />
+                        <ExtensionInspector
+                            extension={{ source: "chrome", id }}
+                        />
                     )}
                 </Route>
                 <Route path="/inspect/file/:id">
@@ -72,7 +76,7 @@ const App: Preact.FunctionalComponent = () => {
                         }
                         return (
                             <ExtensionInspector
-                                extension={{ type: "url", url }}
+                                extension={{ source: "url", url }}
                             />
                         );
                     }}
