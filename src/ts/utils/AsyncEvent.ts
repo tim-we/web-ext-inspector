@@ -16,7 +16,7 @@ export default class AsyncEvent {
             this.fired = true;
             this.resolve();
         } else {
-            console.warn(`Event ${this.name} already fired.`);
+            console.warn(`Event '${this.name}' already fired.`);
         }
     }
 
