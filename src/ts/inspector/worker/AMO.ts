@@ -3,7 +3,6 @@
  * https://addons-server.readthedocs.io/en/latest/topics/api/addons.html#detail
  */
 
-import { fetchWithCache } from "./helpers/CacheHelper";
 
 const API = "https://addons.mozilla.org/api/v5";
 

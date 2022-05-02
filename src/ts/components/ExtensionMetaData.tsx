@@ -54,15 +54,20 @@ export default class ExtensionMetaData extends Component<Props, State> {
                             <td>Author</td>
                             <td>{details.author}</td>
                         </tr>
-                        {lastUpdateTime ? (
-                            <tr>
-                                <td>Last Update</td>
-                                <td>
-                                    <span>{friendlyTime(lastUpdateTime)}</span>
-                                    <span class="version-info">{`(Version ${details.version})`}</span>
-                                </td>
-                            </tr>
-                        ) : null}
+                        <tr>
+                            <td>Version</td>
+                            <td>
+                                <span>{details.version}</span>
+                                {lastUpdateTime ? (
+                                    <span
+                                        class="version friendly-time"
+                                        title="last updated"
+                                    >
+                                        {`(${friendlyTime(lastUpdateTime)})`}
+                                    </span>
+                                ) : null}
+                            </td>
+                        </tr>
                         {createdTime ? (
                             <tr>
                                 <td>Created</td>

@@ -8,6 +8,11 @@ import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import { Translations } from "../../types/Translations";
 
+type OptionalMetaData = Partial<{
+    last_updated: string;
+    created: string;
+}>;
+
 export default class Extension {
     readonly id: ExtensionId;
     manifest: Manifest;
@@ -17,7 +22,12 @@ export default class Extension {
     rootDir: TreeFolder; // TODO consider making this private
     private defaultTranslations: Translations | null = null;
 
-    private constructor(id: ExtensionId, zipData: Blob) {
+    private constructor(
+        id: ExtensionId,
+        zipData: Blob,
+        extraInfo: OptionalMetaData
+    ) {
+        this.id = id;
         const zipReader = new zip.ZipReader(new zip.BlobReader(zipData));
 
         (async () => {
@@ -55,7 +65,7 @@ export default class Extension {
 
             await zipReader.close();
 
-            await this.createDetails();
+            await this.createDetails(extraInfo);
             await this.findScriptsAndResources();
 
             this.initialized.fire();
@@ -64,9 +74,10 @@ export default class Extension {
 
     public static async create(
         id: ExtensionId,
-        zipData: Blob
+        zipData: Blob,
+        extraInfo: OptionalMetaData = {}
     ): Promise<Extension> {
-        const extension = new Extension(id, zipData);
+        const extension = new Extension(id, zipData, extraInfo);
         await extension.initialized.waitFor();
         return extension;
     }
@@ -111,13 +122,26 @@ export default class Extension {
         return node;
     }
 
-    private async createDetails(): Promise<void> {
+    private async createDetails(extraInfo: OptionalMetaData): Promise<void> {
         const manifest = this.manifest;
 
         let iconUrl: string | undefined = undefined;
 
-        if (manifest.icons && manifest.icons["48"]) {
-            iconUrl = await this.getFileDownloadURL(manifest.icons["48"]);
+        if (manifest.icons) {
+            const sizes = Object.keys(manifest.icons).map((s) =>
+                parseInt(s, 10)
+            );
+            // sort sizes descending
+            sizes.sort((a, b) => b - a);
+
+            if (sizes.length > 0) {
+                const optimalSizes = sizes.filter((s) => s >= 48 && s <= 96);
+                const size =
+                    optimalSizes.length > 0 ? optimalSizes[0] : sizes[0];
+                iconUrl = await this.getFileDownloadURL(
+                    manifest.icons["" + size]
+                );
+            }
         }
 
         this.details = {
@@ -125,6 +149,9 @@ export default class Extension {
             version: manifest.version,
             size: this.rootDir.byteSize,
             icon_url: iconUrl,
+            author: manifest.author,
+            last_updated: extraInfo.last_updated,
+            created: extraInfo.created,
         };
     }
 

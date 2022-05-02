@@ -20,6 +20,7 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
     const cacheInfo = await getCacheData(ext);
 
     let downloadUrl: string;
+    let extraInfo;
 
     if (ext.source === "firefox") {
         if (cacheInfo) {
@@ -27,6 +28,10 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
         } else {
             const info = await AMOAPI.getInfo(ext.id);
             downloadUrl = info.current_version.file.url;
+            extraInfo = {
+                last_updated: info.last_updated,
+                created: info.created,
+            };
         }
     } else if (ext.source === "chrome") {
         downloadUrl = CWS.getProxiedDownloadURL(ext.id);
@@ -44,9 +49,13 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
         );
     }
 
-    const extension = await Extension.create(ext, await response.blob());
+    const extension = await Extension.create(
+        ext,
+        await response.blob(),
+        extraInfo
+    );
 
-    storeCacheInfo(ext, {
+    await storeCacheInfo(ext, {
         url: downloadUrl,
         date: new Date(),
         version: extension.details.version,
@@ -67,7 +76,7 @@ async function getCacheData(
 ): Promise<ExtensionCacheInfo | undefined> {
     try {
         // this will fail in FF private windows
-        update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
+        await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
     } catch (e) {
         console.error(e);
         return undefined;
@@ -77,9 +86,12 @@ async function getCacheData(
     return cachedExtensions.get(extKey(id));
 }
 
-function storeCacheInfo(id: ExtensionId, data: ExtensionCacheInfo): void {
+async function storeCacheInfo(
+    id: ExtensionId,
+    data: ExtensionCacheInfo
+): Promise<void> {
     try {
-        update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
+        await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
             m!.set(extKey(id), data)
         );
     } catch (e) {
