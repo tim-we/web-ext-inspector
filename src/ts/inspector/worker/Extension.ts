@@ -8,9 +8,10 @@ import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import { Translations } from "../../types/Translations";
 
-type OptionalMetaData = Partial<{
+export type OptionalMetaData = Partial<{
     last_updated: string;
     created: string;
+    author: string;
 }>;
 
 export default class Extension {
@@ -149,7 +150,7 @@ export default class Extension {
             version: manifest.version,
             size: this.rootDir.byteSize,
             icon_url: iconUrl,
-            author: manifest.author,
+            author: manifest.author ?? extraInfo.author,
             last_updated: extraInfo.last_updated,
             created: extraInfo.created,
         };

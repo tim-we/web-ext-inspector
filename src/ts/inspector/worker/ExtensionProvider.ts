@@ -1,5 +1,5 @@
 import { ExtensionId } from "../../types/ExtensionId";
-import Extension from "./Extension";
+import Extension, { OptionalMetaData } from "./Extension";
 import { update, get } from "idb-keyval";
 import * as AMOAPI from "./AMO";
 import * as CWS from "./CWS";
@@ -10,6 +10,7 @@ type ExtensionCacheInfo = {
     date: Date;
     version: string;
     name: string;
+    extraInfo?: OptionalMetaData;
 };
 
 type ExtCacheMap = Map<string, ExtensionCacheInfo>;
@@ -19,29 +20,28 @@ const CACHED_EXTENSIONS_KEY = "cachedExtensions";
 export async function getExtension(ext: ExtensionId): Promise<Extension> {
     const cacheInfo = await getCacheData(ext);
 
-    let downloadUrl: string;
-    let extraInfo;
+    let downloadUrl = cacheInfo?.url;
+    let extraInfo = cacheInfo?.extraInfo;
 
-    if (ext.source === "firefox") {
-        if (cacheInfo) {
-            downloadUrl = cacheInfo.url;
-        } else {
+    if(!cacheInfo) {
+        if (ext.source === "firefox") {
             const info = await AMOAPI.getInfo(ext.id);
             downloadUrl = info.current_version.file.url;
             extraInfo = {
                 last_updated: info.last_updated,
                 created: info.created,
+                author: info.authors
+                    .map((a) => a.name ?? a.username)
+                    .join(", "),
             };
+        } else if (ext.source === "chrome") {
+            downloadUrl = CWS.getProxiedDownloadURL(ext.id);
+        } else if (ext.source === "url") {
+            downloadUrl = ext.url;
         }
-    } else if (ext.source === "chrome") {
-        downloadUrl = CWS.getProxiedDownloadURL(ext.id);
-    } else if (ext.source === "url") {
-        downloadUrl = ext.url;
-    } else {
-        throw new Error("unreachable");
     }
 
-    const response = await fetchWithCache(downloadUrl, "extensions");
+    const response = await fetchWithCache(downloadUrl!, "extensions");
 
     if (!response.ok) {
         return Promise.reject(
@@ -56,10 +56,11 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
     );
 
     await storeCacheInfo(ext, {
-        url: downloadUrl,
+        url: downloadUrl!,
         date: new Date(),
         version: extension.details.version,
         name: extension.details.name,
+        extraInfo,
     });
 
     return extension;

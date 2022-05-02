@@ -3,7 +3,6 @@
  * https://addons-server.readthedocs.io/en/latest/topics/api/addons.html#detail
  */
 
-
 const API = "https://addons.mozilla.org/api/v5";
 
 export type Details = {
