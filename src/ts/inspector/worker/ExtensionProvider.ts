@@ -17,9 +17,7 @@ type ExtCacheMap = Map<string, ExtensionCacheInfo>;
 const CACHED_EXTENSIONS_KEY = "cachedExtensions";
 
 export async function getExtension(ext: ExtensionId): Promise<Extension> {
-    update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
-    const cachedExtensions = (await get<ExtCacheMap>("cachedExtensions"))!;
-    const cacheInfo = cachedExtensions.get(extKey(ext));
+    const cacheInfo = await getCacheData(ext);
 
     let downloadUrl: string;
 
@@ -48,14 +46,12 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
 
     const extension = await Extension.create(ext, await response.blob());
 
-    update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
-        m!.set(extKey(ext), {
-            url: downloadUrl,
-            date: new Date(),
-            version: extension.details.version,
-            name: extension.details.name,
-        })
-    );
+    storeCacheInfo(ext, {
+        url: downloadUrl,
+        date: new Date(),
+        version: extension.details.version,
+        name: extension.details.name,
+    });
 
     return extension;
 }
@@ -64,4 +60,29 @@ function extKey(id: ExtensionId): string {
     return id.source === "url"
         ? `${id.source}.${id.url}`
         : `${id.source}.${id.id}`;
+}
+
+async function getCacheData(
+    id: ExtensionId
+): Promise<ExtensionCacheInfo | undefined> {
+    try {
+        // this will fail in FF private windows
+        update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
+    } catch (e) {
+        console.error(e);
+        return undefined;
+    }
+
+    const cachedExtensions = (await get<ExtCacheMap>("cachedExtensions"))!;
+    return cachedExtensions.get(extKey(id));
+}
+
+function storeCacheInfo(id: ExtensionId, data: ExtensionCacheInfo): void {
+    try {
+        update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
+            m!.set(extKey(id), data)
+        );
+    } catch (e) {
+        console.error(e);
+    }
 }
