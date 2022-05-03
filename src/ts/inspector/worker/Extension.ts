@@ -140,7 +140,8 @@ export default class Extension {
                 const size =
                     optimalSizes.length > 0 ? optimalSizes[0] : sizes[0];
                 iconUrl = await this.getFileDownloadURL(
-                    manifest.icons["" + size]
+                    manifest.icons["" + size],
+                    0.0 // TODO: revoke URL before worker gets destroyed
                 );
             }
         }
