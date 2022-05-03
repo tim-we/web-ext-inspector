@@ -15,15 +15,20 @@ type ExtensionCacheInfo = {
 
 type ExtCacheMap = Map<string, ExtensionCacheInfo>;
 
+type StatusUpdater = (status: string) => void;
+
 const CACHED_EXTENSIONS_KEY = "cachedExtensions";
 
-export async function getExtension(ext: ExtensionId): Promise<Extension> {
+export async function getExtension(
+    ext: ExtensionId,
+    updateStatus: StatusUpdater
+): Promise<Extension> {
     const cacheInfo = await getCacheData(ext);
 
     let downloadUrl = cacheInfo?.url;
     let extraInfo = cacheInfo?.extraInfo;
 
-    if(!cacheInfo) {
+    if (!cacheInfo) {
         if (ext.source === "firefox") {
             const info = await AMOAPI.getInfo(ext.id);
             downloadUrl = info.current_version.file.url;
@@ -41,6 +46,7 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
         }
     }
 
+    updateStatus("downloading...");
     const response = await fetchWithCache(downloadUrl!, "extensions");
 
     if (!response.ok) {
@@ -48,6 +54,8 @@ export async function getExtension(ext: ExtensionId): Promise<Extension> {
             `Failed to download extension. ${response.statusText} (${response.status})`
         );
     }
+
+    updateStatus("extracting...")
 
     const extension = await Extension.create(
         ext,

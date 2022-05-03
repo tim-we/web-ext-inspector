@@ -27,8 +27,7 @@ export class WorkerAPI {
     ): Promise<void> {
         this.statusListener = statusListener ?? this.statusListener;
 
-        this.setStatus("downloading...");
-        this.extension = await getExtension(ext);
+        this.extension = await getExtension(ext, this.statusListener);
         this.setStatus("");
 
         this.initialized.fire();
