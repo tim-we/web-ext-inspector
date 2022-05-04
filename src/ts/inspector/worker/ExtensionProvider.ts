@@ -60,6 +60,14 @@ export async function getExtension(
 
     if (cachedResponse) {
         blob = await cachedResponse.blob();
+
+        if(cacheInfo) {
+            const age = Date.now() - cacheInfo.date.valueOf();
+            const aDay = 1000 * 60 * 60 * 24;
+            if(age > aDay) {
+                // TODO check for new version
+            }
+        }
     } else {
         updateStatus("downloading...");
         const response = await fetch(downloadUrl!);
