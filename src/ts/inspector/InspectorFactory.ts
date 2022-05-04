@@ -15,6 +15,10 @@ export async function createInspector(
     ext: ExtensionId,
     onStatusChange?: StatusListener
 ): Promise<Inspector> {
+    if (onStatusChange) {
+        onStatusChange("initializing worker...");
+    }
+
     const worker = Comlink.wrap<WorkerAPI>(
         new Worker(basePath + "/worker.bundle.js", { name: "ExtensionWorker" })
     );

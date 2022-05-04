@@ -3,7 +3,6 @@ import Extension, { OptionalMetaData } from "./Extension";
 import { update, get } from "idb-keyval";
 import * as AMOAPI from "./AMO";
 import * as CWS from "./CWS";
-import { fetchWithCache } from "./helpers/CacheHelper";
 
 type ExtensionCacheInfo = {
     url: string;
@@ -18,6 +17,16 @@ type ExtCacheMap = Map<string, ExtensionCacheInfo>;
 type StatusUpdater = (status: string) => void;
 
 const CACHED_EXTENSIONS_KEY = "cachedExtensions";
+
+const extensionCache = (async () => {
+    if (!caches) {
+        // Chrome: caches is undefined in non-secure contexts
+        return Promise.reject();
+    }
+
+    // Firefox: rejects with SecurityError when opening a cache in a non-secure context
+    return caches.open("extensions");
+})().catch(() => console.log("Extension cache not available."));
 
 export async function getExtension(
     ext: ExtensionId,
@@ -46,22 +55,42 @@ export async function getExtension(
         }
     }
 
-    updateStatus("downloading...");
-    const response = await fetchWithCache(downloadUrl!, "extensions");
+    let blob: Blob;
+    const cachedResponse = await getResponseFromCache(downloadUrl!);
 
-    if (!response.ok) {
-        return Promise.reject(
-            `Failed to download extension. ${response.statusText} (${response.status})`
-        );
+    if (cachedResponse) {
+        blob = await cachedResponse.blob();
+    } else {
+        updateStatus("downloading...");
+        const response = await fetch(downloadUrl!);
+
+        if (!response.ok) {
+            return Promise.reject(
+                `Failed to download extension. ${response.statusText} (${response.status})`
+            );
+        }
+
+        const cache = await extensionCache;
+        const { quota, usage } = await navigator.storage.estimate();
+
+        if (cache && quota! < usage!) {
+            // response can only be used once
+            blob = await response.clone().blob();
+
+            if (usage! + blob.size <= quota!) {
+                // response can only be used once
+                cache.put(downloadUrl!, response);
+            } else if (usage! > 0) {
+                // TODO remove oldest entry
+            }
+        } else {
+            blob = await response.blob();
+        }
     }
 
-    updateStatus("extracting...")
+    updateStatus("extracting...");
 
-    const extension = await Extension.create(
-        ext,
-        await response.blob(),
-        extraInfo
-    );
+    const extension = await Extension.create(ext, blob, extraInfo);
 
     await storeCacheInfo(ext, {
         url: downloadUrl!,
@@ -105,5 +134,22 @@ async function storeCacheInfo(
         );
     } catch (e) {
         console.error(e);
+    }
+}
+
+async function getResponseFromCache(
+    url: string
+): Promise<Response | undefined> {
+    const cache = await extensionCache;
+
+    if (!cache) {
+        return undefined;
+    }
+
+    const cachedResponse = await cache.match(url);
+
+    if (cachedResponse) {
+        console.info(`Loading extension from cache.`);
+        return cachedResponse;
     }
 }
