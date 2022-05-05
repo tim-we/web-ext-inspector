@@ -110,24 +110,7 @@ export class WorkerAPI {
         timeout: number = 10.0
     ): Promise<string> {
         await this.initialized.waitFor();
-        const fileNode = await this.extension.getFileOrFolder(path);
-
-        if (!(fileNode instanceof TreeFile)) {
-            throw new Error(`"${path}" is not a file.`);
-        }
-
-        let blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
-        if (path.endsWith(".svg")) {
-            blob = blob.slice(0, blob.size, "image/svg+xml");
-        }
-
-        const url = URL.createObjectURL(blob);
-
-        if (timeout > 0.0) {
-            setTimeout(() => URL.revokeObjectURL(url), timeout * 1000);
-        }
-
-        return url;
+        return this.extension.getFileDownloadURL(path, timeout);
     }
 
     private setStatus(status: string) {
