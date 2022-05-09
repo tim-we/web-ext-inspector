@@ -91,14 +91,16 @@ export async function getExtension(
 
     const extension = await Extension.create(ext, blob, extraInfo);
 
-    await storeCacheInfo(ext, {
-        id: ext,
-        url: downloadUrl!,
-        date: new Date(),
-        version: extension.details.version,
-        name: extension.details.name,
-        extraInfo,
-    });
+    if (ext.source !== "url") { // TODO
+        await storeCacheInfo(ext, {
+            id: ext,
+            url: downloadUrl!,
+            date: new Date(),
+            version: extension.details.version,
+            name: extension.details.name,
+            extraInfo,
+        });
+    }
 
     return extension;
 }
