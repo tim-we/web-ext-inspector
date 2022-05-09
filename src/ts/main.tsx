@@ -10,6 +10,7 @@ import * as LFP from "./utils/LocalFileProvider";
 // create styles (in <head>)
 import "prismjs/themes/prism-okaidia.css";
 import "../less/app.less";
+import { removeOld } from "./inspector/CacheHelper";
 
 const pathBase = window.location.host.endsWith("github.io")
     ? "/web-ext-inspector"
@@ -110,3 +111,5 @@ document.body.appendChild(modalPortal);
 setPortal(modalPortal);
 
 Preact.render(<App />, root);
+
+setTimeout(() => removeOld(), 42);
