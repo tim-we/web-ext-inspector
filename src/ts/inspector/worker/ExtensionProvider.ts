@@ -1,18 +1,9 @@
 import { ExtensionId } from "../../types/ExtensionId";
-import Extension, { OptionalMetaData } from "./Extension";
+import Extension from "./Extension";
 import { update, get } from "idb-keyval";
 import * as AMOAPI from "./AMO";
 import * as CWS from "./CWS";
-
-type ExtensionCacheInfo = {
-    url: string;
-    date: Date;
-    version: string;
-    name: string;
-    extraInfo?: OptionalMetaData;
-};
-
-type ExtCacheMap = Map<string, ExtensionCacheInfo>;
+import { ExtCacheMap, ExtensionCacheInfo } from "../../types/ExtensionCache";
 
 type StatusUpdater = (status: string) => void;
 
@@ -61,10 +52,10 @@ export async function getExtension(
     if (cachedResponse) {
         blob = await cachedResponse.blob();
 
-        if(cacheInfo) {
+        if (cacheInfo) {
             const age = Date.now() - cacheInfo.date.valueOf();
             const aDay = 1000 * 60 * 60 * 24;
-            if(age > aDay) {
+            if (age > aDay) {
                 // TODO check for new version
             }
         }
@@ -101,6 +92,7 @@ export async function getExtension(
     const extension = await Extension.create(ext, blob, extraInfo);
 
     await storeCacheInfo(ext, {
+        id: ext,
         url: downloadUrl!,
         date: new Date(),
         version: extension.details.version,
@@ -109,12 +101,6 @@ export async function getExtension(
     });
 
     return extension;
-}
-
-function extKey(id: ExtensionId): string {
-    return id.source === "url"
-        ? `${id.source}.${id.url}`
-        : `${id.source}.${id.id}`;
 }
 
 async function getCacheData(
@@ -160,4 +146,10 @@ async function getResponseFromCache(
         console.info(`Loading extension from cache.`);
         return cachedResponse;
     }
+}
+
+function extKey(id: ExtensionId): string {
+    return id.source === "url"
+        ? `${id.source}.${id.url}`
+        : `${id.source}.${id.id}`;
 }

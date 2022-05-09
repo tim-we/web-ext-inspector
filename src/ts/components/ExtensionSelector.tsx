@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "preact/hooks";
 import * as LFP from "../utils/LocalFileProvider";
 import { Link, useLocation } from "wouter-preact";
 import UIBox from "./UIBox";
+import { RecentExtensions } from "./RecentExtensions";
 
 const ExtensionSelector: FC = () => {
     const navigate = useLocation()[1];
@@ -149,6 +150,7 @@ const ExtensionSelector: FC = () => {
                     .
                 </span>
             </UIBox>
+            <RecentExtensions />
             <ExampleSelector />
         </>
     );

@@ -7,12 +7,7 @@ import { ExtensionDetails } from "../../types/ExtensionDetails";
 import * as ScriptFinder from "./helpers/ScriptFinder";
 import * as ResourceLocator from "./helpers/ResourceLocator";
 import { Translations } from "../../types/Translations";
-
-export type OptionalMetaData = Partial<{
-    last_updated: string;
-    created: string;
-    author: string;
-}>;
+import { OptionalMetaData } from "../../types/ExtensionCache";
 
 export default class Extension {
     readonly id: ExtensionId;
