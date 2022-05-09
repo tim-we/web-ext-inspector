@@ -1,11 +1,11 @@
 export type ExtensionDetails = {
-    source: "AMO" | "url";
-    authors: string[];
     name: string;
+    version: string;
+    size: number;
+    
+    author?: string;
     last_updated?: string;
     created?: string;
     icon_url?: string;
-    version: string;
-    size: number;
-    download_url: string;
+    download_url?: string;
 };

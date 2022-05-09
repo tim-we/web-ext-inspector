@@ -10,6 +10,7 @@ import * as LFP from "./utils/LocalFileProvider";
 // create styles (in <head>)
 import "prismjs/themes/prism-okaidia.css";
 import "../less/app.less";
+import { removeOld } from "./inspector/CacheHelper";
 
 const pathBase = window.location.host.endsWith("github.io")
     ? "/web-ext-inspector"
@@ -20,9 +21,10 @@ const App: Preact.FunctionalComponent = () => {
     const navigate = useLocation()[1];
 
     if (urlParams.has("route")) {
-        console.log("routing to " + urlParams.get("route"));
+        console.info("routing to " + urlParams.get("route"));
         navigate(urlParams.get("route")!, { replace: true });
     } else if (urlParams.has("extension")) {
+        // map old URLs to new URLs
         if (/^[a-z0-9\-]+$/.test(urlParams.get("extension")!)) {
             const sources = new Map([
                 ["amo", "firefox"],
@@ -53,12 +55,16 @@ const App: Preact.FunctionalComponent = () => {
             <Switch>
                 <Route path="/inspect/firefox/:id">
                     {({ id }) => (
-                        <ExtensionInspector extension={{ type: "amo", id }} />
+                        <ExtensionInspector
+                            extension={{ source: "firefox", id }}
+                        />
                     )}
                 </Route>
                 <Route path="/inspect/chrome/:id">
                     {({ id }) => (
-                        <ExtensionInspector extension={{ type: "cws", id }} />
+                        <ExtensionInspector
+                            extension={{ source: "chrome", id }}
+                        />
                     )}
                 </Route>
                 <Route path="/inspect/file/:id">
@@ -71,7 +77,7 @@ const App: Preact.FunctionalComponent = () => {
                         }
                         return (
                             <ExtensionInspector
-                                extension={{ type: "url", url }}
+                                extension={{ source: "url", url }}
                             />
                         );
                     }}
@@ -105,3 +111,5 @@ document.body.appendChild(modalPortal);
 setPortal(modalPortal);
 
 Preact.render(<App />, root);
+
+setTimeout(() => removeOld(), 42);

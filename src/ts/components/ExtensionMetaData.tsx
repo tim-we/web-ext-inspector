@@ -1,6 +1,6 @@
 import { Component } from "preact";
 import prettyBytes from "pretty-bytes";
-import { Inspector } from "../inspector/Inspector";
+import { Inspector } from "../inspector/InspectorFactory";
 import friendlyTime from "friendly-time";
 import UIBox from "./UIBox";
 import { ExtensionDetails } from "../types/ExtensionDetails";
@@ -50,25 +50,26 @@ export default class ExtensionMetaData extends Component<Props, State> {
                             <td>Name</td>
                             <td>{details.name}</td>
                         </tr>
-                        {details.authors.length > 0 ? (
+                        {details.author ? (
                             <tr>
-                                <td>
-                                    {details.authors.length === 1
-                                        ? "Author"
-                                        : "Authors"}
-                                </td>
-                                <td>{details.authors.join(", ")}</td>
+                                <td>Author</td>
+                                <td>{details.author}</td>
                             </tr>
                         ) : null}
-                        {lastUpdateTime ? (
-                            <tr>
-                                <td>Last Update</td>
-                                <td>
-                                    <span>{friendlyTime(lastUpdateTime)}</span>
-                                    <span class="version-info">{`(Version ${details.version})`}</span>
-                                </td>
-                            </tr>
-                        ) : null}
+                        <tr>
+                            <td>Version</td>
+                            <td>
+                                <span>{details.version}</span>
+                                {lastUpdateTime ? (
+                                    <span
+                                        class="version friendly-time"
+                                        title="last updated"
+                                    >
+                                        {`(${friendlyTime(lastUpdateTime)})`}
+                                    </span>
+                                ) : null}
+                            </td>
+                        </tr>
                         {createdTime ? (
                             <tr>
                                 <td>Created</td>

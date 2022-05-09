@@ -1,5 +1,5 @@
 import * as Comlink from "comlink";
-import { Inspector } from "./inspector/Inspector";
+import { Inspector } from "./inspector/InspectorFactory";
 import { getFile } from "./utils/paths";
 import { FileViewerAPI } from "./viewer/viewer";
 import * as config from "./config";

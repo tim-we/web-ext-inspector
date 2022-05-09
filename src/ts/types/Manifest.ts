@@ -5,6 +5,7 @@ type Manifest2 = {
     name: string;
     version: string;
     author?: string;
+    default_locale?: string;
 
     background?: {
         page: string;

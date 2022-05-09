@@ -1,15 +1,15 @@
 import { Component } from "preact";
 import FileExplorer from "./FileExplorer";
 import ExtensionMetaData from "./ExtensionMetaData";
-import { createInspector, Inspector } from "../inspector/Inspector";
+import { createInspector, Inspector } from "../inspector/InspectorFactory";
 import ExtensionPermissions from "./Permissions";
-import { ExtensionSourceInfo } from "../inspector/worker/worker";
 import { openFileViewer } from "../openViewer";
 import UIBox from "./UIBox";
 import { getDownloadURL as getCWSDownloadURL } from "../inspector/worker/CWS";
+import { ExtensionId } from "../types/ExtensionId";
 
 type Props = {
-    extension: ExtensionSourceInfo;
+    extension: ExtensionId;
 };
 
 type State = {
@@ -33,7 +33,6 @@ export default class ExtensionInspector extends Component<Props, State> {
 
             const details = await inspector.getDetails();
             document.title = `Inspecting ${details.name}`;
-
 
             // if (props.extension.type === "url") {
             //     URL.revokeObjectURL(props.extension.url);
@@ -65,7 +64,7 @@ export default class ExtensionInspector extends Component<Props, State> {
                         {state.statusMessage}
                     </div>
                 ) : null}
-                {state.loading && ext.type === "cws" ? (
+                {state.loading && ext.source === "chrome" ? (
                     <UIBox title="Information">
                         Chrome extensions require a download proxy and could
                         therefore take longer to load. If there is a problem

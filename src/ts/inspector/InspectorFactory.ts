@@ -1,9 +1,6 @@
 import * as Comlink from "comlink";
-import {
-    ExtensionSourceInfo,
-    StatusListener,
-    WorkerAPI,
-} from "./worker/worker";
+import { ExtensionId } from "../types/ExtensionId";
+import { StatusListener, WorkerAPI } from "./worker/worker";
 
 export type Inspector = Comlink.Remote<WorkerAPI>;
 
@@ -15,9 +12,13 @@ const basePath = (() => {
 })();
 
 export async function createInspector(
-    ext: ExtensionSourceInfo,
+    ext: ExtensionId,
     onStatusChange?: StatusListener
 ): Promise<Inspector> {
+    if (onStatusChange) {
+        onStatusChange("initializing worker...");
+    }
+
     const worker = Comlink.wrap<WorkerAPI>(
         new Worker(basePath + "/worker.bundle.js", { name: "ExtensionWorker" })
     );

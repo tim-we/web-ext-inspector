@@ -1,159 +1,45 @@
 import * as Comlink from "comlink";
 import * as zip from "@zip.js/zip.js";
-import * as AMOAPI from "./AMO";
-import { createFileTree, TreeFile, TreeFolder, TreeNodeDTO } from "./FileTree";
+import { TreeFile, TreeFolder, TreeNodeDTO } from "./FileTree";
 import { Manifest } from "../../types/Manifest";
-import * as ManifestExtractor from "./helpers/ManifestExtractor";
 import * as ScriptFinder from "./helpers/ScriptFinder";
-import * as ResourceLocator from "./helpers/ResourceLocator";
 import AsyncEvent from "../../utils/AsyncEvent";
 import { renderCode, SupportedLanguage } from "./CodeRenderer";
 import { ExtensionDetails } from "../../types/ExtensionDetails";
-import * as CWS from "./CWS";
+import Extension from "./Extension";
+import { getExtension } from "./ExtensionProvider";
+import { ExtensionId } from "../../types/ExtensionId";
 
 zip.configure({
     useWebWorkers: false, // this is already a worker
 });
 
-export type ExtensionSourceInfo =
-    | { type: "amo"; id: string }
-    | { type: "cws"; id: string }
-    | { type: "url"; url: string };
-
 export type StatusListener = (status: string) => void;
 
 export class WorkerAPI {
     private statusListener: StatusListener = () => {};
-    private root: TreeFolder = new TreeFolder("root");
-    private details: ExtensionDetails | undefined;
     private initialized: AsyncEvent = new AsyncEvent("WorkerInitialized");
-    private manifest: Manifest | undefined;
+    private extension: Extension;
 
     public async init(
-        ext: ExtensionSourceInfo,
+        ext: ExtensionId,
         statusListener?: StatusListener
     ): Promise<void> {
         this.statusListener = statusListener ?? this.statusListener;
 
-        let reader: zip.HttpReader | zip.BlobReader;
-        let size = 0;
-
-        if (ext.type === "amo") {
-            await this.loadFromAMO(ext.id);
-            const url = this.details!.download_url;
-            this.setStatus("downloading & extracting");
-            reader = new zip.HttpReader(url);
-        } else if (ext.type === "cws") {
-            const url = CWS.getProxiedDownloadURL(ext.id);
-            this.setStatus("downloading & extracting");
-            reader = new zip.HttpReader(url);
-        } else {
-            const response = await fetch(ext.url);
-            const blob = await response.blob();
-            size = blob.size;
-            reader = new zip.BlobReader(blob);
-        }
-
-        const zipReader = new zip.ZipReader(reader);
-        this.root = createFileTree(await zipReader.getEntries());
-        this.manifest = await ManifestExtractor.getManifest(this.root);
-
-        if (size === 0) {
-            size = this.root.byteSize;
-        }
-
-        if (this.details === undefined) {
-            const url = ext.type === "url" ? ext.url : "";
-            this.details = await this.createDetailsFromZip(url, size);
-        }
-
-        await this.analyze();
-
+        this.extension = await getExtension(ext, this.statusListener);
         this.setStatus("");
-        await zipReader.close();
+
         this.initialized.fire();
-    }
-
-    private async loadFromAMO(extId: string): Promise<void> {
-        this.setStatus("loading meta data");
-        const details = await AMOAPI.getInfo(extId);
-
-        const webExtFile = details.current_version.file;
-
-        if (!webExtFile) {
-            throw new Error("No web extension file.");
-        }
-
-        this.details = {
-            source: "AMO",
-            authors: details.authors.map((a) => a.name || a.username),
-            name: details.name["en-US"],
-            last_updated: details.last_updated,
-            created: details.created,
-            version: details.current_version.version,
-            size: webExtFile.size,
-            download_url: webExtFile.url,
-            icon_url: details.icon_url,
-        };
-    }
-
-    private async createDetailsFromZip(
-        url: string,
-        size: number
-    ): Promise<ExtensionDetails> {
-        const manifest = this.manifest;
-
-        if (manifest === undefined) {
-            throw new Error("Manifest undefined.");
-        }
-
-        let iconUrl: string | undefined = undefined;
-
-        if (manifest.icons && manifest.icons["48"]) {
-            iconUrl = await this.getFileDownloadURL(manifest.icons["48"]);
-        }
-
-        return {
-            source: "url",
-            authors: manifest.author ? [manifest.author] : [],
-            name: manifest.name,
-            version: manifest.version,
-            icon_url: iconUrl,
-            size,
-            download_url: url,
-        };
-    }
-
-    private async analyze() {
-        this.setStatus("analyzing");
-        const root = this.root;
-        const manifest = this.manifest;
-
-        if (manifest === undefined) {
-            throw new Error("Manifest undefined.");
-        }
-
-        await ScriptFinder.identifyBackgroundScripts(root, manifest);
-
-        ScriptFinder.identifyContentScripts(root, manifest);
-        ScriptFinder.identifySidebarScripts(root, manifest);
-        ScriptFinder.identifyUserScriptAPI(root, manifest);
-        ScriptFinder.identifyActionScripts(root, manifest);
-
-        ResourceLocator.identifyWebAccessibleResources(root, manifest);
     }
 
     public async getDetails(): Promise<ExtensionDetails> {
         await this.initialized.waitFor();
-
-        if (this.details === undefined) {
-            throw new Error("Details not available.");
-        }
-        return this.details;
+        return this.extension.details;
     }
 
-    public listDirectoryContents(path: string): TreeNodeDTO[] {
-        const dir = this.root.get(path);
+    public async listDirectoryContents(path: string): Promise<TreeNodeDTO[]> {
+        const dir = await this.extension.getFileOrFolder(path);
 
         if (dir instanceof TreeFolder) {
             const contents = Array.from(dir.children.values(), (tn) =>
@@ -172,15 +58,16 @@ export class WorkerAPI {
         }
     }
 
-    public getManifest(): Manifest {
-        if (this.manifest === undefined) {
-            throw new Error("Manifest not available.");
-        }
-        return this.manifest;
+    public async getManifest(): Promise<Manifest> {
+        await this.initialized.waitFor();
+        return this.extension.manifest;
     }
 
     public async analyzeHTML(path: string) {
-        const scripts = await ScriptFinder.findScriptNodes(path, this.root);
+        const scripts = await ScriptFinder.findScriptNodes(
+            path,
+            this.extension.rootDir
+        );
 
         return {
             scripts: scripts.map((s) => ({
@@ -191,7 +78,7 @@ export class WorkerAPI {
     }
 
     public async getPrettyCode(path: string): Promise<HighlightedCode> {
-        const file = this.root.get(path) as TreeFile;
+        const file = (await this.extension.getFileOrFolder(path)) as TreeFile;
 
         if (!file || file instanceof TreeFolder) {
             throw new Error(`File ${path} not found.`);
@@ -222,24 +109,8 @@ export class WorkerAPI {
         path: string,
         timeout: number = 10.0
     ): Promise<string> {
-        const fileNode = this.root.get(path);
-
-        if (!(fileNode instanceof TreeFile)) {
-            throw new Error(`"${path}" is not a file.`);
-        }
-
-        let blob: Blob = await fileNode.entry.getData!(new zip.BlobWriter());
-        if (path.endsWith(".svg")) {
-            blob = blob.slice(0, blob.size, "image/svg+xml");
-        }
-
-        const url = URL.createObjectURL(blob);
-
-        if (timeout > 0.0) {
-            setTimeout(() => URL.revokeObjectURL(url), timeout * 1000);
-        }
-
-        return url;
+        await this.initialized.waitFor();
+        return this.extension.getFileDownloadURL(path, timeout);
     }
 
     private setStatus(status: string) {

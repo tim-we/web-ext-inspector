@@ -1,4 +1,4 @@
-import { Entry } from "@zip.js/zip.js";
+import * as zip from "@zip.js/zip.js";
 
 export type TreeNodeDTO =
     | { name: string; type: "folder"; numFiles: number }
@@ -32,11 +32,11 @@ export class TreeFolder extends TreeNode {
     private fileCount: number = 0;
     private uncompressedSize: number = 0;
 
-    public insertEntry(entry: Entry): void {
+    public insertEntry(entry: zip.Entry): void {
         this.insert(entry.filename, entry);
     }
 
-    private insert(relPath: string, entry: Entry): void {
+    private insert(relPath: string, entry: zip.Entry): void {
         if (entry.directory) {
             // we extract folders from file paths
             // some zips do not contain directory entries
@@ -88,9 +88,9 @@ export class TreeFolder extends TreeNode {
 
         if (node instanceof TreeFolder && parts.length > 0) {
             return node.get(parts.join("/"));
-        } else {
-            return node;
         }
+
+        return node;
     }
 
     public getAll(path: string): TreeNode[] {
@@ -138,10 +138,10 @@ export class TreeFolder extends TreeNode {
 }
 
 export class TreeFile extends TreeNode {
-    public entry: Entry;
+    public entry: zip.Entry;
     private tags: Set<string> = new Set();
 
-    public constructor(entry: Entry, name: string, parent: TreeFolder) {
+    public constructor(entry: zip.Entry, name: string, parent: TreeFolder) {
         super(name, parent);
         this.entry = entry;
 
@@ -182,9 +182,13 @@ export class TreeFile extends TreeNode {
             tags: Array.from(this.tags),
         };
     }
+
+    public getTextContent(): Promise<string> {
+        return this.entry.getData!(new zip.TextWriter());
+    }
 }
 
-export function createFileTree(entries: Entry[]): TreeFolder {
+export function createFileTree(entries: zip.Entry[]): TreeFolder {
     const root = new TreeFolder("root");
     for (const entry of entries) {
         root.insertEntry(entry);

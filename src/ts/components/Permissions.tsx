@@ -1,5 +1,5 @@
 import { Component, FunctionalComponent as FC } from "preact";
-import { Inspector } from "../inspector/Inspector";
+import { Inspector } from "../inspector/InspectorFactory";
 import { Manifest } from "../types/Manifest";
 import UIBox from "./UIBox";
 
