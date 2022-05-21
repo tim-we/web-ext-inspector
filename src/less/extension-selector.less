@@ -17,6 +17,39 @@
     }
 
     ul li:not(:last-of-type) {
-        margin-bottom: 1em;
+        margin-bottom: 0.5em;
+    }
+}
+
+.recent-extension {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.2em 0.3em;
+
+    a.title {
+        flex-basis: 100%;
+    }
+
+    > :not(.title) {
+        opacity: 0.75;
+        font-size: 0.8em;
+    }
+
+    button.remove {
+        position: relative;
+        top: -1px;
+        border: none;
+        background: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    &:hover button.remove {
+        text-decoration: underline;
+    }
+
+    button:hover {
+        opacity: 1;
     }
 }

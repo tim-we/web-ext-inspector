@@ -110,6 +110,5 @@ modalPortal.id = "modalPortal";
 document.body.appendChild(modalPortal);
 setPortal(modalPortal);
 
+removeOld();
 Preact.render(<App />, root);
-
-setTimeout(() => removeOld(), 42);

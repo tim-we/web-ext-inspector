@@ -1,5 +1,6 @@
 import { update, get } from "idb-keyval";
 import { ExtCacheMap, ExtensionCacheInfo } from "../types/ExtensionCache";
+import { ExtensionId } from "../types/ExtensionId";
 
 const CACHED_EXTENSIONS_KEY = "cachedExtensions";
 
@@ -54,4 +55,54 @@ export async function getRecent(): Promise<ExtensionCacheInfo[]> {
     cachedExtensions.sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
     return cachedExtensions;
+}
+
+export async function storeCacheInfo(
+    id: ExtensionId,
+    data: ExtensionCacheInfo
+): Promise<void> {
+    try {
+        await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
+            m!.set(extKey(id), data)
+        );
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function getCacheData(
+    id: ExtensionId
+): Promise<ExtensionCacheInfo | undefined> {
+    try {
+        // this will fail in FF private windows
+        await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
+    } catch (e) {
+        console.error(e);
+        return undefined;
+    }
+
+    const cachedExtensions = (await get<ExtCacheMap>("cachedExtensions"))!;
+    return cachedExtensions.get(extKey(id));
+}
+
+export async function removeFromCache(id: ExtensionId): Promise<void> {
+    await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => {
+        if(!m) {
+            return new Map();
+        }
+
+        m.delete(extKey(id));
+
+        return m;
+    })
+}
+
+export function getExtensionCache(): Promise<Cache | void> {
+    return extensionCache;
+}
+
+function extKey(id: ExtensionId): string {
+    return id.source === "url"
+        ? `${id.source}.${id.url}`
+        : `${id.source}.${id.id}`;
 }

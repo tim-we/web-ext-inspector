@@ -1,23 +1,14 @@
 import { ExtensionId } from "../../types/ExtensionId";
 import Extension from "./Extension";
-import { update, get } from "idb-keyval";
 import * as AMOAPI from "./AMO";
 import * as CWS from "./CWS";
-import { ExtCacheMap, ExtensionCacheInfo } from "../../types/ExtensionCache";
+import {
+    getExtensionCache,
+    getCacheData,
+    storeCacheInfo,
+} from "../CacheHelper";
 
 type StatusUpdater = (status: string) => void;
-
-const CACHED_EXTENSIONS_KEY = "cachedExtensions";
-
-const extensionCache = (async () => {
-    if (!caches) {
-        // Chrome: caches is undefined in non-secure contexts
-        return Promise.reject();
-    }
-
-    // Firefox: rejects with SecurityError when opening a cache in a non-secure context
-    return caches.open("extensions");
-})().catch(() => console.log("Extension cache not available."));
 
 export async function getExtension(
     ext: ExtensionId,
@@ -69,7 +60,7 @@ export async function getExtension(
             );
         }
 
-        const cache = await extensionCache;
+        const cache = await getExtensionCache();
         const { quota, usage } = await navigator.storage.estimate();
 
         if (cache && quota! < usage!) {
@@ -91,7 +82,8 @@ export async function getExtension(
 
     const extension = await Extension.create(ext, blob, extraInfo);
 
-    if (ext.source !== "url") { // TODO
+    if (ext.source !== "url") {
+        // TODO
         await storeCacheInfo(ext, {
             id: ext,
             url: downloadUrl!,
@@ -105,38 +97,10 @@ export async function getExtension(
     return extension;
 }
 
-async function getCacheData(
-    id: ExtensionId
-): Promise<ExtensionCacheInfo | undefined> {
-    try {
-        // this will fail in FF private windows
-        await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) => m ?? new Map());
-    } catch (e) {
-        console.error(e);
-        return undefined;
-    }
-
-    const cachedExtensions = (await get<ExtCacheMap>("cachedExtensions"))!;
-    return cachedExtensions.get(extKey(id));
-}
-
-async function storeCacheInfo(
-    id: ExtensionId,
-    data: ExtensionCacheInfo
-): Promise<void> {
-    try {
-        await update<ExtCacheMap>(CACHED_EXTENSIONS_KEY, (m) =>
-            m!.set(extKey(id), data)
-        );
-    } catch (e) {
-        console.error(e);
-    }
-}
-
 async function getResponseFromCache(
     url: string
 ): Promise<Response | undefined> {
-    const cache = await extensionCache;
+    const cache = await getExtensionCache();
 
     if (!cache) {
         return undefined;
@@ -148,10 +112,4 @@ async function getResponseFromCache(
         console.info(`Loading extension from cache.`);
         return cachedResponse;
     }
-}
-
-function extKey(id: ExtensionId): string {
-    return id.source === "url"
-        ? `${id.source}.${id.url}`
-        : `${id.source}.${id.id}`;
 }
