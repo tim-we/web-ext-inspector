@@ -118,6 +118,20 @@ export default class Extension {
         return node;
     }
 
+    private fileExists(path: string): boolean {
+        if (!this.rootDir) {
+            throw new Error("File tree not initialized.");
+        }
+
+        const node = this.rootDir.get(path);
+
+        if (!node) {
+            return false;
+        }
+
+        return node instanceof TreeFile;
+    }
+
     private async createDetails(extraInfo: OptionalMetaData): Promise<void> {
         const manifest = this.manifest;
 
@@ -131,7 +145,9 @@ export default class Extension {
             sizes.sort((a, b) => b - a);
 
             if (sizes.length > 0) {
-                const optimalSizes = sizes.filter((s) => s >= 48 && s <= 96);
+                const optimalSizes = sizes
+                    .filter((s) => this.fileExists(manifest.icons!["" + s]))
+                    .filter((s) => s >= 48 && s <= 96);
                 const size =
                     optimalSizes.length > 0 ? optimalSizes[0] : sizes[0];
                 iconUrl = await this.getFileDownloadURL(
