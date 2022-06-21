@@ -74,6 +74,12 @@ export class TreeFolder extends TreeNode {
         }
 
         let parts = path.split("/");
+
+        if (parts.length > 0 && parts[0] === "") {
+            // fix paths starting with /
+            parts.shift();
+        }
+
         const name = parts.shift()!;
 
         let node;
