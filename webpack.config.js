@@ -1,8 +1,7 @@
-const webpack = require("webpack");
 const path = require("path");
 
-module.exports = {
-    mode: "development",
+module.exports = (env, {mode}) => ({
+    mode: mode ?? "development",
     entry: {
         main: path.join(__dirname, "src", "ts", "main.tsx"),
         worker: path.join(
@@ -16,7 +15,7 @@ module.exports = {
         viewer: path.join(__dirname, "src", "ts", "viewer", "viewer.tsx"),
     },
     target: "web",
-    devtool: "eval-cheap-module-source-map",
+    devtool: mode === "development" ? "eval-cheap-module-source-map" : undefined,
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
     },
@@ -50,4 +49,4 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, "public"),
     },
-};
+});
