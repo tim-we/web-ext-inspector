@@ -24,6 +24,17 @@ export async function identifyBackgroundScripts(
     }
 }
 
+export async function identifyDevtoolsScripts(
+    root: TreeFolder,
+    manifest: Manifest
+): Promise<void> {
+    if (!manifest.devtools_page) {
+        return;
+    }
+
+    findScriptNodes(manifest.devtools_page, root, "devtools");
+}
+
 export function identifyContentScripts(
     root: TreeFolder,
     manifest: Manifest

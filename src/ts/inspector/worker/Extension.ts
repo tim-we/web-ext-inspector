@@ -173,7 +173,8 @@ export default class Extension {
         const manifest = this.manifest;
 
         await ScriptFinder.identifyBackgroundScripts(root, manifest);
-
+        await ScriptFinder.identifyDevtoolsScripts(root, manifest);
+        
         ScriptFinder.identifyContentScripts(root, manifest);
         ScriptFinder.identifySidebarScripts(root, manifest);
         ScriptFinder.identifyUserScriptAPI(root, manifest);

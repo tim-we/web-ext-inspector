@@ -39,6 +39,8 @@ type Manifest2 = {
         [iconSize: string]: string
     };
 
+    devtools_page?: string,
+
     // TODO
     content_security_policy?: string;
     protocol_handlers?: any[];
