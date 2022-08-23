@@ -37,7 +37,7 @@ export async function getExtension(
         }
     }
 
-    let blob: Blob;
+    let blob: Blob | null = null;
     const cachedResponse = await getResponseFromCache(downloadUrl!);
 
     if (cachedResponse) {
@@ -60,20 +60,25 @@ export async function getExtension(
             );
         }
 
-        const cache = await getExtensionCache();
-        const { quota, usage } = await navigator.storage.estimate();
+        // navigator.storage is only available in secure contexts
+        if (navigator.storage) {
+            const cache = await getExtensionCache();
+            const { quota, usage } = await navigator.storage.estimate();
 
-        if (cache && quota! < usage!) {
-            // response can only be used once
-            blob = await response.clone().blob();
-
-            if (usage! + blob.size <= quota!) {
+            if (cache && quota! < usage!) {
                 // response can only be used once
-                cache.put(downloadUrl!, response);
-            } else if (usage! > 0) {
-                // TODO remove oldest entry
+                blob = await response.clone().blob();
+
+                if (usage! + blob.size <= quota!) {
+                    // response can only be used once
+                    cache.put(downloadUrl!, response);
+                } else if (usage! > 0) {
+                    // TODO remove oldest entry
+                }
             }
-        } else {
+        }
+
+        if (!blob) {
             blob = await response.blob();
         }
     }
