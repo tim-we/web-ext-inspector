@@ -19,7 +19,7 @@
         "pretty-bytes": "^6.0.0",
         "prismjs": "^1.29.0",
         "prismjs-token-stream-transformer": "^0.2.0",
-        "wouter-preact": "^2.8.0-alpha.2"
+        "wouter-preact": "^2.8.1"
     },
     "devDependencies": {
         "@types/css": "^0.0.33",
