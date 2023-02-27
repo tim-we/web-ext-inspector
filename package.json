@@ -15,7 +15,7 @@
         "friendly-time": "^1.1.1",
         "htmlparser2": "^8.0.1",
         "idb-keyval": "^6.1.0",
-        "preact": "^10.11.3",
+        "preact": "^10.13.0",
         "pretty-bytes": "^6.0.0",
         "prismjs": "^1.29.0",
         "prismjs-token-stream-transformer": "^0.2.0",
