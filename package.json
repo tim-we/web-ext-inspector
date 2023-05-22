@@ -10,7 +10,7 @@
     },
     "author": "tim-we",
     "dependencies": {
-        "@zip.js/zip.js": "^2.6.62",
+        "@zip.js/zip.js": "^2.7.14",
         "comlink": "^4.4.1",
         "friendly-time": "^1.1.1",
         "htmlparser2": "^8.0.1",
