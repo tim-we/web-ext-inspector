@@ -13,7 +13,7 @@
         "@zip.js/zip.js": "^2.6.62",
         "comlink": "^4.4.1",
         "friendly-time": "^1.1.1",
-        "htmlparser2": "^8.0.1",
+        "htmlparser2": "^9.0.0",
         "idb-keyval": "^6.2.1",
         "preact": "^10.15.1",
         "pretty-bytes": "^6.1.0",
