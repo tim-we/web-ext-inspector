@@ -4,9 +4,11 @@
 
 Inspect the contents of web extensions hosted on [addons.mozilla.org](https://addons.mozilla.org) or [Chrome Web Store](https://chrome.google.com/webstore).
 
+This project is **work-in-progress**. A new version (rewritten from scratch) with new features is on the dev branch. It will be merged once it reaches feature parity with the current version. 
+
 **Available as a web-app [here](https://web-ext-inspector.com/).**
 
-This project is **work-in-progress**.
+**Warning:** Automatic downloads from Chrome Web Store [are not working at the moment](https://github.com/tim-we/web-ext-inspector/issues/132). You can still manually download the extension and upload it in the web app.
 
 ## Examples
 
