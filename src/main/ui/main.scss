@@ -1,0 +1,96 @@
+@import "./variables.scss";
+@import "./common.scss";
+
+:root {
+  font-family: sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: rgb(32, 32, 32);
+  color: white;
+  margin: 0;
+  min-height: 100vh;
+}
+
+body > header {
+  padding: $base-offset;
+
+  h1 {
+    font-size: 22px;
+    margin: 10px 0;
+    cursor: default;
+
+    &::before {
+      content: " ";
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      background-image: url("../../assets/logo/logo-light.svg");
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: center;
+      margin-right: 0.3em;
+      vertical-align: sub;
+    }
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
+
+    & > h1 {
+      cursor: pointer;
+    }
+  }
+}
+
+.vfill {
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+footer {
+  margin: $base-offset;
+  text-align: center;
+
+  > a,
+  span {
+    color: white;
+    opacity: 0.64;
+    font-size: 14px;
+    line-height: 16px;
+
+    &:not(:last-child)::after {
+      content: "—";
+      margin-left: 0.5em;
+    }
+  }
+}
+
+#view-on-github {
+  text-decoration: none;
+
+  &::after {
+    content: " ";
+    display: inline-block;
+    width: 1.143em;
+    height: 1.143em;
+    margin-left: 0.4em;
+    margin-top: -1px;
+    vertical-align: text-top;
+    background-image: url("../../assets/bootstrap-icons/github.svg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center;
+  }
+
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+}

@@ -1,0 +1,144 @@
+@import "../variables.scss";
+
+.file-explorer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
+
+  font-size: 1rem;
+  color: white;
+
+  & > .folder-content {
+    flex-grow: 1;
+    min-width: 50%;
+    box-sizing: border-box;
+    padding: $base-offset;
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+
+  & > .file-preview {
+    flex-shrink: 1;
+  }
+
+  li.folder > details[open] {
+    animation: folder-opened 0.75s ease-out;
+
+    @keyframes folder-opened {
+      0% {
+        background-color: transparent;
+      }
+
+      20% {
+        background-color: rgb(64, 64, 64);
+      }
+
+      100% {
+        background-color: transparent;
+      }
+    }
+  }
+
+  li.folder > details > summary {
+    list-style: none;
+  }
+
+  li.folder > details > summary,
+  li.file {
+    white-space: nowrap;
+
+    > .name {
+      cursor: pointer;
+    }
+
+    &:hover > .name {
+      text-decoration: underline;
+    }
+
+    &::before {
+      content: " ";
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      margin-right: 0.5em;
+
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100%;
+    }
+
+    .item-info {
+      margin-left: 0.6em;
+      font-size: 0.8em;
+      opacity: 0.5;
+      user-select: none;
+      white-space: nowrap;
+    }
+  }
+
+  li.folder,
+  li.file {
+    padding: 2px;
+  }
+
+  li.folder .separator {
+    user-select: none;
+    margin-left: 1px;
+    opacity: 0.5;
+  }
+
+  li.folder > details > summary::before {
+    background-image: url("../../../assets/bootstrap-icons/folder2.svg");
+  }
+
+  li.folder > details[open] > summary::before {
+    background-image: url("../../../assets/bootstrap-icons/folder2-open.svg");
+  }
+
+  li.file::before {
+    background-image: url("../../../assets/bootstrap-icons/file-earmark.svg");
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    padding-left: 25px;
+    contain: layout paint;
+    list-style: none;
+
+    details {
+      display: inline-block;
+    }
+  }
+
+  & > ul {
+    // Only indent child content.
+    padding-left: 0;
+  }
+
+  ul ul::before {
+    content: " ";
+    position: absolute;
+    left: 7.5px;
+    top: 3px;
+    bottom: 5px;
+    width: 1px;
+    display: block;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.file-explorer {
+  li.file.code::before {
+    background-image: url("../../../assets/bootstrap-icons/file-earmark-code.svg");
+  }
+
+  li.file.image::before {
+    background-image: url("../../../assets/bootstrap-icons/file-earmark-image.svg");
+  }
+
+  li.file.text::before {
+    background-image: url("../../../assets/bootstrap-icons/file-earmark-text.svg");
+  }
+}

@@ -1,0 +1,45 @@
+button.action {
+    $button-size: 16px;
+
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: $button-size;
+
+    border-radius: 5px;
+    background-color: rgb(0, 75, 190);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    transition: background-color 0.25s;
+
+    &:not(:disabled) {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 0 2px rgba(10, 10, 10, 0.2);
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+    }
+
+    &:disabled {
+        background-color: rgb(88, 88, 88);
+    }
+
+    &.with-icon::before {
+        content: " ";
+        display: inline-block;
+        margin-right: 0.42em;
+        width: $button-size;
+        height: $button-size;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
+        vertical-align: sub;
+    }
+
+    &.with-icon:disabled::before {
+        opacity: 0.5;
+    }
+}
