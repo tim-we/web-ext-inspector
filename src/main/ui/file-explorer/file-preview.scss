@@ -1,0 +1,61 @@
+@import "../variables.scss";
+
+.file-preview {
+  position: relative;
+  box-sizing: border-box;
+  min-width: 250px;
+  max-width: 45%;
+  padding: $base-offset;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: rgba(64, 64, 64, 0.8);
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  color: #fff;
+
+  .properties {
+    width: 100%;
+
+    table {
+      th {
+        text-align: left;
+        min-width: 70px;
+      }
+
+      td {
+        text-align: right;
+      }
+    }
+
+    .tags {
+      padding: 0 3px;
+    }
+  }
+
+  .close {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: $base-offset - 1px;
+
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    background-image: url("../../../assets/bootstrap-icons/caret-right-fill.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+    opacity: 0.0;
+
+    transition: 0.2s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      opacity: 1;
+    }
+  }
+}

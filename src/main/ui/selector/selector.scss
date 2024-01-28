@@ -1,0 +1,54 @@
+@import "../variables.scss";
+
+.extension-selection {
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $base-offset;
+
+    select {
+      margin: 0 1em;
+    }
+
+    .url {
+      font-family: monospace;
+      user-select: none;
+      margin-right: 2px;
+    }
+
+    a {
+      color: white;
+    }
+
+    a.external::after {
+      content: " ";
+      display: inline-block;
+      margin-left: 0.42em;
+      width: 0.8em;
+      height: 0.8em;
+      background-image: url("../../../assets/bootstrap-icons/box-arrow-up-right.svg");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100%;
+    }
+
+    a.browse:not([href]) {
+      visibility: hidden; // avoid layout shift
+    }
+
+    button[type="submit"]::before {
+      background-image: url("../../../assets/logo/logo-light.svg");
+    }
+  }
+
+  .buttons {
+    .close {
+      background-image: url("../../../assets/bootstrap-icons/x-circle.svg");
+    }
+
+    .close:hover {
+      background-image: url("../../../assets/bootstrap-icons/x-circle-fill.svg");
+    }
+  }
+}

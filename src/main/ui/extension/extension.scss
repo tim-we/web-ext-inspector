@@ -1,0 +1,79 @@
+@import "../variables.scss";
+
+.extension {
+  --color: rgb(182, 182, 182);
+
+  padding-left: 15px;
+  padding-right: 15px;
+
+  summary {
+    .version {
+      font-size: 0.9em;
+      font-family: monospace;
+      opacity: 0.64;
+      margin-left: 0.5em;
+
+      &::before {
+        content: "v";
+      }
+    }
+  }
+
+  .tiles {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $tile-gap;
+    justify-content: center;
+    margin: 0 auto; // center horizontally
+    margin-bottom: $tile-gap - $base-offset;
+    max-width: 100vw;
+
+    @media (max-width: 1079px) {
+      width: 700px; // force wrapping after 2 tiles
+    }
+
+    .tile {
+      ul {
+        list-style: none;
+        padding: 0;
+        line-height: 1.35em;
+      }
+
+      .count {
+        font-weight: bold;
+        margin-right: 0.2em;
+      }
+    }
+  }
+
+  .buttons {
+    right: 15px;
+
+    .download {
+      background-image: url("../../../assets/bootstrap-icons/file-earmark-arrow-down-fill.svg");
+    }
+
+    .remove {
+      background-image: url("../../../assets/bootstrap-icons/trash3-fill.svg");
+    }
+  }
+
+  &::before, &::after {
+    content: " ";
+    position: absolute;
+    inset: 0;
+    display: block;
+    background-color: var(--color);
+    width: 5px;
+    box-shadow: inset 0 0 1px rgba(0,0,0,0.4);
+  }
+
+  &::before {
+    right: auto;
+  }
+
+  &::after {
+    left: auto;
+  }
+}

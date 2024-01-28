@@ -1,15 +1,13 @@
 {
     "compilerOptions": {
-        "outDir": "./public",
-        "target": "es2020",
-        "module": "es2020",
+        "target": "ES2022",
         "moduleResolution": "node",
-        "sourceMap": true,
+        "module": "ES2022",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
         "jsx": "react-jsx",
         "jsxImportSource": "preact",
         "strict": true,
-        "noImplicitAny": true,
-        "strictPropertyInitialization": false,
-        "allowSyntheticDefaultImports": true
+        "skipLibCheck": true
     }
 }

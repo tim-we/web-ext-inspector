@@ -1,0 +1,151 @@
+@import "../variables.scss";
+
+.tile {
+  position: relative;
+  box-sizing: border-box;
+  padding: $base-offset;
+  min-height: 150px;
+  min-width: 250px;
+  max-width: 320px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  text-align: left;
+  font-size: 1rem;
+
+  background-color: rgb(64, 64, 64);
+  border: 1px solid rgb(82, 82, 82);
+  border-radius: 2px;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.125);
+
+  > h3 {
+    margin: 0;
+    margin-bottom: $base-offset;
+    font-size: 0.85rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    color: rgb(200, 200, 200);
+  }
+
+  > .content {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    ul {
+      margin: 0;
+    }
+
+    color: white;
+  }
+
+  &:focus,
+  &:focus-visible {
+    box-shadow: 0 0 0 2px white;
+    outline: 2x solid rgb(42, 182, 255);
+  }
+
+  &:focus,
+  &:focus-visible,
+  &:hover {
+    border-color: rgb(120, 120, 120);
+
+    > h3 {
+      color: rgb(225, 225, 225);
+    }
+  }
+}
+
+.tile {
+  &.meta > .content {
+    flex-direction: row;
+    justify-content: space-around;
+
+    img {
+      aspect-ratio: 1;
+      flex-shrink: 1;
+      min-width: 42px;
+      min-height: 42px;
+    }
+
+    .hfill {
+      min-width: 10px;
+      flex-grow: 1;
+    }
+
+    ul {
+      flex-grow: 1;
+      min-width: 100px;
+    }
+
+    ul > li {
+      display: flex;
+      flex-direction: column;
+      line-height: 1em;
+
+      &:not(:last-child) {
+        margin-bottom: 0.35em;
+      }
+
+      span:first-child {
+        font-size: 0.8em;
+        opacity: 0.75;
+      }
+
+      span:last-child {
+        font-family: monospace;
+      }
+    }
+  }
+
+  &.permissions > .content {
+    table {
+      line-height: 2em;
+      text-transform: uppercase;
+
+      td:first-child {
+        font-weight: bold;
+        text-align: right;
+        padding-right: 0.2em;
+      }
+    }
+  }
+
+  &.files > .content {
+    table {
+      font-size: 0.9em;
+      margin-bottom: 0.5em;
+      text-transform: uppercase;
+      border: none;
+
+      tr.none {
+        opacity: 0.64;
+      }
+
+      td {
+        vertical-align: middle;
+      }
+
+      td:first-child {
+        font-size: 1.11em;
+        text-align: right;
+        padding-right: 0.15em;
+      }
+    }
+
+    .total-size {
+      font-size: 0.9em;
+    }
+  }
+
+  &.da {
+    ul {
+      line-height: 1.75em;
+    }
+  }
+}

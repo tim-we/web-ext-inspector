@@ -1,0 +1,65 @@
+@import "./variables.scss";
+
+.main-section {
+  position: relative;
+  padding: $base-offset;
+  background-color: rgb(48, 48, 48);
+  box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.13);
+  border: 1px solid rgb(60, 60, 60);
+  border-left: none;
+  border-right: none;
+
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
+  & > h2 {
+    margin-bottom: $base-offset;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  & > h2,
+  & > summary > h2 {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 0;
+  }
+
+  .buttons {
+    position: absolute;
+    right: $base-offset;
+    top: $base-offset;
+    display: flex;
+    flex-direction: row;
+    gap: $base-offset;
+
+    button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      width: 1.375em;
+      height: 1.375em;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100%;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+
+      &:hover,
+      &:focus,
+      &:focus-visible {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+details.main-section[open] > summary {
+  margin-bottom: $base-offset;
+}
