@@ -135,10 +135,9 @@ export class FSFolder extends FSNode {
     if (!(file instanceof FSFile)) {
       if (required) {
         throw new Error(`${path} is not a file.`);
-        // biome-ignore lint/style/noUselessElse: TODO biome bug
-      } else {
-        return undefined;
       }
+
+      return undefined;
     }
 
     return file;
