@@ -34,6 +34,18 @@ export abstract class FSNode {
     }
     throw new Error("FS path error.");
   }
+
+  get root(): FSFolder {
+    if (this.parent) {
+      return this.parent.root;
+    }
+
+    if (!(this instanceof FSFolder)) {
+      throw new Error();
+    }
+
+    return this;
+  }
 }
 
 export class FSFile extends FSNode {
@@ -160,7 +172,7 @@ export class FSFolder extends FSNode {
       return this;
     }
 
-    const folder = this.#getNodes(path);
+    const [folder] = this.#getNodes(path);
 
     if (!(folder instanceof FSFolder)) {
       return undefined;
@@ -186,13 +198,20 @@ export class FSFolder extends FSNode {
   }
 
   #getNodes(path: string): FSNode[] {
+    if (path.startsWith("/")) {
+      // Path is absolute.
+      return this.root.#getNodes(path.slice(1));
+    }
+
+    // Path is relative.
     const [childName, ...rest] = paths.segments(path);
 
+    // Handle wildcards:
     if (childName === "*") {
       const children = [...this.children.values()];
 
       if (rest.length === 0) {
-        return children.filter((node) => node instanceof FSFile);
+        return children;
       }
 
       const restPath = rest.join("/");
@@ -201,8 +220,9 @@ export class FSFolder extends FSNode {
         .flatMap((node) => (node as FSFolder).#getNodes(restPath));
     }
 
+    // First path segment is not a wildcard
+    // but there are still some special segments we need to check:
     let node: FSNode | undefined;
-
     if (childName === "..") {
       node = this.parent;
     } else if (childName === ".") {
@@ -215,6 +235,7 @@ export class FSFolder extends FSNode {
       if (!(node instanceof FSFolder)) {
         return [];
       }
+      // Recursive lookup:
       return node.#getNodes(rest.join("/"));
     }
 
