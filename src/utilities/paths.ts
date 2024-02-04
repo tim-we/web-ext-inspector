@@ -29,3 +29,11 @@ export function dirname(path: string): string {
 
   return prefix + parts.join("/");
 }
+
+export function segments(path: string): string[] {
+  return path.replace(/^\//, "").split("/");
+}
+
+export function normalize(path: string): string {
+  return path; // TODO
+}

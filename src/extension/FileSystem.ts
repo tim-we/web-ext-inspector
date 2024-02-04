@@ -1,5 +1,6 @@
 import * as zip from "@zip.js/zip.js";
 import prettyBytes from "pretty-bytes";
+import * as paths from "../utilities/paths";
 
 export type FSNodeDTO = { name: string; size: string } & (
   | { type: "folder"; numFiles: number }
@@ -126,11 +127,17 @@ export class FSFolder extends FSNode {
   getFile(path: string, required: true): FSFile;
   getFile(path: string, required: false): FSFile | undefined;
   getFile(path: string, required = true): FSFile | undefined {
-    const file = this.#getNode(path);
+    if (path.includes("*")) {
+      throw new Error(`Path "${path}" to file contains unexpected "*".`);
+    }
 
-    if (required && file === undefined) {
+    const files = this.#getNodes(path);
+
+    if (required && files.length === 0) {
       throw new Error(`File ${path} not found.`);
     }
+
+    const [file] = files;
 
     if (!(file instanceof FSFile)) {
       if (required) {
@@ -143,12 +150,17 @@ export class FSFolder extends FSNode {
     return file;
   }
 
+  getFiles(path: string): FSFile[] {
+    const nodes = this.#getNodes(paths.normalize(path));
+    return nodes.filter((node) => node instanceof FSFile) as FSFile[];
+  }
+
   getFolder(path: string): FSFolder | undefined {
     if (path === "/" && this.parent === undefined) {
       return this;
     }
 
-    const folder = this.#getNode(path);
+    const folder = this.#getNodes(path);
 
     if (!(folder instanceof FSFolder)) {
       return undefined;
@@ -173,8 +185,21 @@ export class FSFolder extends FSNode {
     return count;
   }
 
-  #getNode(path: string): FSNode | undefined {
-    const [childName, ...rest] = path.replace(/^\//, "").split("/");
+  #getNodes(path: string): FSNode[] {
+    const [childName, ...rest] = paths.segments(path);
+
+    if (childName === "*") {
+      const children = [...this.children.values()];
+
+      if (rest.length === 0) {
+        return children.filter((node) => node instanceof FSFile);
+      }
+
+      const restPath = rest.join("/");
+      return children
+        .filter((node) => node instanceof FSFolder)
+        .flatMap((node) => (node as FSFolder).#getNodes(restPath));
+    }
 
     let node: FSNode | undefined;
 
@@ -188,12 +213,12 @@ export class FSFolder extends FSNode {
 
     if (rest.length > 0) {
       if (!(node instanceof FSFolder)) {
-        return undefined;
+        return [];
       }
-      return node.#getNode(rest.join("/"));
+      return node.#getNodes(rest.join("/"));
     }
 
-    return node;
+    return node ? [node] : [];
   }
 }
 
