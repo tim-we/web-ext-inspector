@@ -1,8 +1,10 @@
+import * as Comlink from "comlink";
 import type { BackgroundWorkerApi } from "./background";
 
-import * as Comlink from "comlink";
-
-const worker = new Worker("js/worker/background.js", { name: "Background" });
+const worker = new Worker(new URL("./background", import.meta.url), {
+  name: "Background",
+  type: "module"
+});
 
 const wrappedWorker = Comlink.wrap<BackgroundWorkerApi>(worker);
 
