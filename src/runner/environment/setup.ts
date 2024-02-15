@@ -2,7 +2,7 @@
 /// <reference lib="webworker" />
 declare const self: WorkerGlobalScope["self"];
 
-import createBrowserApi from "./api";
+import createBrowserApi from "./ext-api";
 
 globalThis.browser = createBrowserApi(self);
 
@@ -21,6 +21,7 @@ globalThis.window = {
     querySelectorAll: () => []
   }
 };
+globalThis.window.self = globalThis.window;
 
 globalThis.importScripts = (...args) => {
   throw new Error(`Attempt to import scripts ${args.join(", ")}`);
