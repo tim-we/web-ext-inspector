@@ -57,6 +57,7 @@ export default class Runner {
     const manifest = extension.manifest;
     const setupScriptURL = URL.createObjectURL(await setupScriptPromise);
     const extensionScriptURLs = await Promise.all(
+      // TODO: add timeout
       manifest.background!.scripts.map((script) => extension.getFileURL(script, 0))
     );
 

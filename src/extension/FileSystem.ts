@@ -2,19 +2,21 @@ import * as zip from "@zip.js/zip.js";
 import prettyBytes from "pretty-bytes";
 import * as paths from "../utilities/paths";
 
-export type FSNodeDTO = { name: string; size: string } & (
+export type FSNodeDTO = { name: string; size: string; path: string } & (
   | { type: "folder"; numFiles: number }
-  | { type: "file"; tags: string[] }
+  | { type: "file"; tags: FileTypeTags[] }
 );
 
 export abstract class FSNode {
   readonly name: string;
+  readonly absolutePath: string;
   protected readonly parent: FSFolder | undefined;
   protected byteSize = 0;
 
-  constructor(name: string, parent?: FSFolder) {
+  constructor(name: string, path: string, parent?: FSFolder) {
     this.name = name;
     this.parent = parent;
+    this.absolutePath = path;
   }
 
   abstract asJSON(): FSNodeDTO;
@@ -52,11 +54,12 @@ export class FSFile extends FSNode {
   readonly #zipEntry: zip.Entry;
   readonly #references = new Set<FSFile>();
   readonly #usages = new Set<FSFile>();
-  readonly #tags = new Set<string>();
+  readonly #tags = new Set<FileTypeTags>();
   readonly mimeType: string | undefined;
 
   constructor(entry: zip.Entry, name: string, parent: FSFolder) {
-    super(name, parent);
+    // TODO: absolutePath ok?
+    super(name, entry.filename, parent);
     this.#zipEntry = entry;
     this.byteSize = entry.uncompressedSize;
 
@@ -75,7 +78,7 @@ export class FSFile extends FSNode {
     return this.#zipEntry.getData!(new zip.TextWriter()); // TODO #6
   }
 
-  addTag(tag: string): void {
+  addTag(tag: FileTypeTags): void {
     this.#tags.add(tag);
   }
 
@@ -83,6 +86,7 @@ export class FSFile extends FSNode {
     return {
       type: "file",
       name: this.name,
+      path: this.absolutePath,
       size: prettyBytes(this.byteSize),
       tags: Array.from(this.#tags)
     };
@@ -105,6 +109,7 @@ export class FSFolder extends FSNode {
     return {
       type: "folder",
       name: this.name,
+      path: this.absolutePath,
       size: prettyBytes(this.byteSize),
       numFiles: this.#files
     };
@@ -128,7 +133,7 @@ export class FSFolder extends FSNode {
     let folder = this.children.get(name) as FSFolder | undefined;
 
     if (!folder) {
-      folder = new FSFolder(name, this);
+      folder = new FSFolder(name, paths.join(this.absolutePath, name), this);
       this.children.set(name, folder);
     }
 
@@ -272,6 +277,7 @@ const knownFileExtensions: Record<string, FileTypeInfo> = {
   oga: { tag: "audio", mime: "audio/ogg" },
   ogg: { tag: "audio", mime: "audio/ogg" },
   weba: { tag: "audio", mime: "audio/webm" },
+  wav: { tag: "audio", mime: "audio/wav" },
   mp4: { mime: "video/mp4" },
   // Documents
   pdf: { mime: "application/pdf" },
@@ -289,7 +295,7 @@ const knownFileNames: Record<string, FileTypeInfo> = {
 export async function createFileSystem(
   entries: AsyncGenerator<zip.Entry, boolean>
 ): Promise<FSFolder> {
-  const root = new FSFolder("root");
+  const root = new FSFolder("root", "");
   for await (const entry of entries) {
     if (entry.directory) {
       // We extract folders from file paths because some zip files
@@ -303,6 +309,8 @@ export async function createFileSystem(
 }
 
 type FileTypeInfo = {
-  tag?: "text" | "code" | "image" | "font" | "audio";
+  tag?: FileTypeTags;
   mime: string;
 };
+
+type FileTypeTags = "text" | "code" | "image" | "font" | "audio";

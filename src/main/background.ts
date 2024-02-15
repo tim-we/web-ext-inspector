@@ -93,6 +93,11 @@ const exposedMethods = {
     const { extension } = sessions.get(sessionId)!;
 
     return extension.getPermissions();
+  },
+
+  getFileDownloadUrl(sessionId: string, path: string): Promise<string> {
+    const extension = sessions.get(sessionId)!.extension!;
+    return extension.getFileURL(path);
   }
 };
 

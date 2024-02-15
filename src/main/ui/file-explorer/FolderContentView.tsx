@@ -34,7 +34,7 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, onFileSelecte
   const jsxContent = (
     <ul class="folder-content" role="tree">
       {folders.map((folder) => (
-        <FolderView key={folder.name} path={paths.join(path, folder.name)} {...folder} />
+        <FolderView key={folder.name} {...folder} />
       ))}
       {files.map((file) => (
         <FileView key={file.name} path={paths.join(path, file.name)} node={file} />

@@ -1,29 +1,28 @@
 import type { FunctionComponent } from "preact";
-import { useRef } from "preact/hooks";
+import { useContext, useRef } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import * as paths from "../../../utilities/paths";
-
+import wrappedWorker from "../../MainWorkerRef";
 import TagList from "./TagList";
+import ExtensionIdContext from "../contexts/ExtensionIdContext";
+
 import "./file-preview.scss";
 
-type Props = {
-  path: string;
-  node: FSNodeDTO & { type: "file" };
-  onClose?: () => void;
-};
+const closeAnimationKeyframes: Keyframe[] = [
+  { opacity: 1, transform: "translateX(0)" },
+  { opacity: 0, transform: "translateX(200px)" }
+];
 
-const FilePreview: FunctionComponent<Props> = ({ path, node, onClose }) => {
+const FilePreview: FunctionComponent<FilePreviewProps> = ({ path, node, onClose }) => {
   const folder = paths.dirname(path);
   const elementRef = useRef<HTMLElement>(null);
 
   const closeFn = async () => {
-    await elementRef.current!.animate(
-      [
-        { opacity: 1, transform: "translateX(0)" },
-        { opacity: 0, transform: "translateX(200px)" }
-      ],
-      { duration: 125, easing: "ease-in", fill: "forwards" }
-    ).finished;
+    await elementRef.current!.animate(closeAnimationKeyframes, {
+      duration: 125,
+      easing: "ease-in",
+      fill: "forwards"
+    }).finished;
     onClose?.();
   };
 
@@ -50,6 +49,7 @@ const FilePreview: FunctionComponent<Props> = ({ path, node, onClose }) => {
         </table>
         <TagList tags={node.tags} showAll={true} />
       </section>
+      <PreviewButtons node={node} />
       {onClose ? (
         <button onClick={closeFn} class="close" title="hide preview" type="button" />
       ) : null}
@@ -58,3 +58,34 @@ const FilePreview: FunctionComponent<Props> = ({ path, node, onClose }) => {
 };
 
 export default FilePreview;
+
+const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
+  const extId = useContext(ExtensionIdContext)!;
+  const isAudio = node.tags.includes("audio");
+
+  const playFn = async () => {
+    const url = await wrappedWorker.getFileDownloadUrl(extId, node.path);
+    const audio = new Audio(url);
+    audio.play();
+  };
+
+  return (
+    <section class="buttons">
+      {isAudio ? (
+        <button type="button" title={`play ${node.name}`} onClick={playFn}>
+          Play
+        </button>
+      ) : null}
+    </section>
+  );
+};
+
+type FilePreviewProps = {
+  path: string;
+  node: FileNode;
+  onClose?: () => void;
+};
+
+type PreviewButtonsProps = Pick<FilePreviewProps, "node">;
+
+type FileNode = FSNodeDTO & { type: "file" };
