@@ -110,7 +110,7 @@ export class FSFolder extends FSNode {
     };
   }
 
-  insertFile(relativePath: string, entry: zip.Entry): FSFile {
+  insertZipEntryAsFile(relativePath: string, entry: zip.Entry): FSFile {
     if (entry.directory) {
       throw new Error("Cannot insert directory");
     }
@@ -132,7 +132,7 @@ export class FSFolder extends FSNode {
       this.children.set(name, folder);
     }
 
-    return folder.insertFile(rest.join("/"), entry);
+    return folder.insertZipEntryAsFile(rest.join("/"), entry);
   }
 
   getFile(path: string): FSFile;
@@ -244,27 +244,40 @@ export class FSFolder extends FSNode {
 }
 
 const knownFileExtensions: Record<string, FileTypeInfo> = {
+  // JavaScript
   js: { tag: "code", mime: "text/javascript" },
   mjs: { tag: "code", mime: "text/javascript" },
-  json: { tag: "code", mime: "application/json" },
+  // XML & HTML
   xml: { tag: "code", mime: "application/xml" },
   html: { tag: "code", mime: "text/html" },
   htm: { tag: "code", mime: "text/html" },
+  // Fonts
   ttf: { tag: "font", mime: "font/ttf" },
   woff: { tag: "font", mime: "font/woff" },
   woff2: { tag: "font", mime: "font/woff2" },
+  // Images
   svg: { tag: "image", mime: "image/svg+xml" },
   png: { tag: "image", mime: "image/png" },
   jpg: { tag: "image", mime: "image/jpeg" },
   jpeg: { tag: "image", mime: "image/jpeg" },
   gif: { tag: "image", mime: "image/gif" },
   webp: { tag: "image", mime: "image/webp" },
+  // JSON & CSV
+  json: { tag: "code", mime: "application/json" },
   csv: { tag: "text", mime: "text/csv" },
+  // CSS
   css: { tag: "code", mime: "text/css" },
+  // Audio & Video
+  mp3: { tag: "audio", mime: "audio/mpeg" },
+  oga: { tag: "audio", mime: "audio/ogg" },
+  ogg: { tag: "audio", mime: "audio/ogg" },
+  weba: { tag: "audio", mime: "audio/webm" },
   mp4: { mime: "video/mp4" },
+  // Documents
   pdf: { mime: "application/pdf" },
   txt: { tag: "text", mime: "text/plain" },
   md: { tag: "text", mime: "text/plain" },
+  // WASM
   wasm: { mime: "application/wasm" }
 };
 
@@ -284,9 +297,12 @@ export async function createFileSystem(
       continue;
     }
 
-    root.insertFile(entry.filename, entry);
+    root.insertZipEntryAsFile(entry.filename, entry);
   }
   return root;
 }
 
-type FileTypeInfo = { tag?: "text" | "code" | "image" | "font"; mime: string };
+type FileTypeInfo = {
+  tag?: "text" | "code" | "image" | "font" | "audio";
+  mime: string;
+};
