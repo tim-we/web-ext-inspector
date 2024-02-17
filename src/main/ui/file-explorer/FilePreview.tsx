@@ -7,6 +7,7 @@ import TagList from "./TagList";
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
 
 import "./file-preview.scss";
+import ActionButton from "../common/ActionButton";
 
 const closeAnimationKeyframes: Keyframe[] = [
   { opacity: 1, transform: "translateX(0)" },
@@ -79,13 +80,23 @@ const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
 
   const isPlaying = audioElement && !audioElement.ended;
 
+  const downloadFn = async () => {
+    const a = document.createElement("a");
+    a.href = await wrappedWorker.getFileDownloadUrl(extId, node.path);
+    a.download = node.name;
+    a.click();
+  };
+
   return (
     <section class="buttons">
       {isAudio ? (
-        <button type="button" title={`play ${node.name}`} onClick={isPlaying ? stopFn : playFn}>
-          Play
-        </button>
+        <ActionButton title={`play ${node.name}`} action={isPlaying ? stopFn : playFn}>
+          {isPlaying ? "Pause" : "Play"}
+        </ActionButton>
       ) : null}
+      <ActionButton title={`download ${node.name}`} action={downloadFn}>
+        Download
+      </ActionButton>
     </section>
   );
 };
