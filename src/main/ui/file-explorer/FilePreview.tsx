@@ -1,5 +1,5 @@
 import type { FunctionComponent } from "preact";
-import { useContext, useRef } from "preact/hooks";
+import { useContext, useRef, useState } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
@@ -62,17 +62,27 @@ export default FilePreview;
 const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
   const extId = useContext(ExtensionIdContext)!;
   const isAudio = node.tags.includes("audio");
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   const playFn = async () => {
     const url = await wrappedWorker.getFileDownloadUrl(extId, node.path);
     const audio = new Audio(url);
-    audio.play();
+    await audio.play();
+    setAudioElement(audio);
+    audio.addEventListener("ended", () => setAudioElement(null), { once: true });
   };
+
+  const stopFn = () => {
+    audioElement?.pause();
+    setAudioElement(null);
+  };
+
+  const isPlaying = audioElement && !audioElement.ended;
 
   return (
     <section class="buttons">
       {isAudio ? (
-        <button type="button" title={`play ${node.name}`} onClick={playFn}>
+        <button type="button" title={`play ${node.name}`} onClick={isPlaying ? stopFn : playFn}>
           Play
         </button>
       ) : null}
