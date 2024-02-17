@@ -39,7 +39,8 @@
     "rimraf": "^5.0.5",
     "strip-json-comments": "^5.0.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "^5.0.12",
+    "vitest": "^1.2.2"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
@@ -53,6 +54,7 @@
     "domhandler": "^5.0.3",
     "domutils": "^3.1.0",
     "htmlparser2": "^9.1.0",
+    "postcss": "^8.4.33",
     "preact": "^10.19.3",
     "pretty-bytes": "^6.1.1",
     "prismjs": "^1.29.0"
