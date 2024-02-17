@@ -3,11 +3,11 @@ import { useContext, useRef, useState } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
-import TagList from "./TagList";
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
+import TagList from "./TagList";
 
-import "./file-preview.scss";
 import ActionButton from "../common/ActionButton";
+import "./file-preview.scss";
 
 const closeAnimationKeyframes: Keyframe[] = [
   { opacity: 1, transform: "translateX(0)" },
@@ -90,11 +90,11 @@ const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
   return (
     <section class="buttons">
       {isAudio ? (
-        <ActionButton title={`play ${node.name}`} action={isPlaying ? stopFn : playFn}>
+        <ActionButton tooltip={`play ${node.name}`} action={isPlaying ? stopFn : playFn}>
           {isPlaying ? "Pause" : "Play"}
         </ActionButton>
       ) : null}
-      <ActionButton title={`download ${node.name}`} action={downloadFn}>
+      <ActionButton tooltip={`download ${node.name}`} action={downloadFn}>
         Download
       </ActionButton>
     </section>

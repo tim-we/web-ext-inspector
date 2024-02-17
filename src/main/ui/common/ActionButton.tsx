@@ -1,7 +1,14 @@
 import { FunctionComponent } from "preact";
 import { useState } from "preact/hooks";
 
-const ActionButton: FunctionComponent<Props> = ({ action, title, children }) => {
+const ActionButton: FunctionComponent<Props> = ({
+  action,
+  disabled,
+  submit,
+  tooltip,
+  icon,
+  children
+}) => {
   const [active, setActive] = useState<boolean>(false);
   const onClick = async () => {
     const maybePromise = action();
@@ -14,7 +21,13 @@ const ActionButton: FunctionComponent<Props> = ({ action, title, children }) => 
   };
 
   return (
-    <button type="button" class="action" disabled={active} onClick={onClick} title={title}>
+    <button
+      type={submit ? "submit" : "button"}
+      class={icon ? "action with-icon" : "action"}
+      disabled={disabled || active}
+      onClick={onClick}
+      title={tooltip}
+    >
       {children}
     </button>
   );
@@ -24,5 +37,8 @@ export default ActionButton;
 
 type Props = {
   action: () => Promise<unknown> | unknown;
-  title?: string;
+  tooltip?: string;
+  submit?: boolean;
+  disabled?: boolean;
+  icon?: string | boolean;
 };

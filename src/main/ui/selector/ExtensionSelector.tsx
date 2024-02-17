@@ -1,6 +1,7 @@
 import type { FunctionComponent } from "preact";
 import { useId, useRef, useState } from "preact/hooks";
 
+import ActionButton from "../common/ActionButton";
 import "../main-section.scss";
 import "./selector.scss";
 
@@ -92,13 +93,14 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
           </div>
         ) : null}
         <div class="row">
-          <button
-            type="submit"
-            class="action with-icon"
+          <ActionButton
+            action={() => 42}
             disabled={!canSubmit(source, extensionId, fileInputRef.current)}
+            icon
+            submit
           >
             Inspect
-          </button>
+          </ActionButton>
         </div>
       </form>
     </article>
