@@ -31,15 +31,14 @@
     "@mdn/browser-compat-data": "^5.5.8",
     "@types/node": "^20.11.10",
     "@types/prismjs": "^1.26.3",
-    "esbuild-sass-plugin": "^2.6.0",
     "glob": "^10.3.10",
     "html-entities": "^2.4.0",
     "json-stable-stringify": "^1.1.1",
     "rimraf": "^5.0.5",
     "strip-json-comments": "^5.0.0",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.12",
-    "vitest": "^1.2.2"
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
