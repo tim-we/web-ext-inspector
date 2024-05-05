@@ -2,7 +2,7 @@ import type { FunctionComponent } from "preact";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 
 import { createContext } from "preact";
-import { useContext, useEffect, useState } from "preact/hooks";
+import { useContext, useEffect, useId, useState } from "preact/hooks";
 
 import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
@@ -13,7 +13,7 @@ import TagList from "./TagList";
 const noop = () => undefined;
 const FSHContext = createContext<FileSelectedHandler>(noop);
 
-const FolderContentView: FunctionComponent<FolderProps> = ({ path, onFileSelected }) => {
+const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFileSelected }) => {
   const extId = useContext(ExtensionIdContext)!;
   const [contents, setContents] = useState<FSNodeDTO[] | undefined>(undefined);
 
@@ -30,9 +30,14 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, onFileSelecte
 
   const folders = contents.filter((node) => node.type === "folder") as FolderDTO[];
   const files = contents.filter((node) => node.type === "file") as FileDTO[];
+  const isRoot = path === "/";
 
   const jsxContent = (
-    <ul class="folder-content" role="tree">
+    <ul
+      class="folder-content"
+      role={isRoot ? "tree" : "group"}
+      aria-label={isRoot ? label : undefined}
+    >
       {folders.map((folder) => (
         <FolderView key={folder.name} {...folder} />
       ))}
@@ -54,15 +59,16 @@ export default FolderContentView;
 const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, path }) => {
   const onSelect = useContext(FSHContext);
   const extId = useContext(ExtensionIdContext)!;
+  const labelId = useId();
 
   const clickHandler = onSelect ? () => onSelect(node, path) : undefined;
   const isCodeOrText = node.tags.includes("code") || node.tags.includes("text");
   const dblClickHanlder = isCodeOrText ? () => openCodeViewer(extId, path) : undefined;
 
   return (
-    <li class={["file", ...node.tags].join(" ")} role="treeitem">
+    <li class={["file", ...node.tags].join(" ")} role="treeitem" aria-labelledby={labelId}>
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: TODO */}
-      <span class="name" onClick={clickHandler} onDblClick={dblClickHanlder}>
+      <span id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHanlder}>
         {node.name}
       </span>
       <span class="item-info">{node.size}</span>
@@ -73,20 +79,26 @@ const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, pa
 
 const FolderView: FunctionComponent<FolderDTO & { path: string }> = ({ name, path }) => {
   const [renderContent, setRenderContent] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const labelId = useId();
 
-  const toggleHandler = renderContent
-    ? undefined
-    : (e: Event) => {
-        if ((e.target as HTMLDetailsElement).open) {
-          setRenderContent(true);
-        }
-      };
+  const toggleHandler = (e: Event) => {
+    setExpanded(!expanded);
+    if (renderContent) {
+      return;
+    }
+    if ((e.target as HTMLDetailsElement).open) {
+      setRenderContent(true);
+    }
+  };
 
   return (
-    <li class="folder" role="treeitem">
+    <li class="folder" role="treeitem" aria-expanded={expanded} aria-labelledby={labelId}>
       <details onToggle={toggleHandler}>
         <summary>
-          <span class="name">{name}</span>
+          <span id={labelId} class="name">
+            {name}
+          </span>
           <span class="separator" aria-hidden={true}>
             /
           </span>
@@ -113,6 +125,7 @@ type FolderDTO = FSNodeDTO & { type: "folder" };
 
 type FolderProps = {
   path: string;
+  label?: string;
   onFileSelected?: FileSelectedHandler;
 };
 

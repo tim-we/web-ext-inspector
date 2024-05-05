@@ -21,6 +21,7 @@ const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
       <div class="file-explorer">
         <FolderContentView
           path="/"
+          label="file explorer"
           onFileSelected={(node, path) => setSelectedFile({ node, path })}
         />
         {selectedFile ? (
