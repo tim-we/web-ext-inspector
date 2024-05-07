@@ -27,7 +27,7 @@
     "last 2 Firefox versions, last 2 Chrome versions"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^1.5.3",
+    "@biomejs/biome": "^1.7.3",
     "@mdn/browser-compat-data": "^5.5.8",
     "@types/node": "^20.11.10",
     "@types/prismjs": "^1.26.3",

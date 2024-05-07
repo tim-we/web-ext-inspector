@@ -2,7 +2,7 @@ import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
-import { ModalWindowOptions, showModalWindow } from "../modals/ModalWindow";
+import { type ModalWindowOptions, showModalWindow } from "../modals/ModalWindow";
 
 import { useContext, useState } from "preact/hooks";
 import ExtensionColorContext from "../contexts/ExtensionColorContext";

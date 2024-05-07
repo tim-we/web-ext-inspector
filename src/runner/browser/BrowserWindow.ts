@@ -1,4 +1,4 @@
-import BrowserTab from "./BrowserTab";
+import type BrowserTab from "./BrowserTab";
 
 export default class BrowserWindow {
   tabs: BrowserTab[] = [];

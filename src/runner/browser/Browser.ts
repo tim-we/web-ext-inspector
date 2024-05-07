@@ -1,6 +1,6 @@
-import BrowserAction from "./BrowserAction";
+import type BrowserAction from "./BrowserAction";
 import BrowserBookmarks from "./BrowserBookmarks";
-import BrowserWindow from "./BrowserWindow";
+import type BrowserWindow from "./BrowserWindow";
 
 export default class Browser {
   windows: BrowserWindow[] = [];

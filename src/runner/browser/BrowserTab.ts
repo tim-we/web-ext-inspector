@@ -1,4 +1,4 @@
-import BrowserWindow from "./BrowserWindow";
+import type BrowserWindow from "./BrowserWindow";
 
 export default class BrowserTab {
   window: BrowserWindow;

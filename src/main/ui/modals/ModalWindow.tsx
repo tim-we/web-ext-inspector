@@ -1,7 +1,7 @@
 import type { ComponentChildren, FunctionComponent } from "preact";
 
 import * as Preact from "preact";
-import { ExtensionData } from "../../../extension/types/ExtensionData";
+import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
 import "./modal-window.scss";
 
@@ -163,8 +163,8 @@ window.addEventListener("resize", () => {
   for (const modal of allWindows) {
     // Move windows s.t. they stay in the viewbox if possible.
     const rect = modal.getBoundingClientRect();
-    const x = parseInt(modal.style.left, 10);
-    const y = parseInt(modal.style.top, 10);
+    const x = Number.parseInt(modal.style.left, 10);
+    const y = Number.parseInt(modal.style.top, 10);
     updateModalPosition(modal, rect, x, y);
   }
 });

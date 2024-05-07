@@ -5,7 +5,7 @@ import type { ExtensionData } from "../extension/types/ExtensionData";
 import * as zip from "@zip.js/zip.js";
 import * as Comlink from "comlink";
 
-import Extension, { PermissionsInfo } from "../extension/Extension";
+import Extension, { type PermissionsInfo } from "../extension/Extension";
 import Runner from "../runner/Runner";
 
 // TODO: consider dynamically importing this (code splitting)

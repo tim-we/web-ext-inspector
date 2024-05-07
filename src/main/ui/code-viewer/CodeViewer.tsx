@@ -24,7 +24,7 @@ const CodeViewer: FunctionComponent<Props> = ({ extId, path }) => {
 
   useEffect(() => {
     wrappedWorker.getPrettyCode(extId, path).then(setContent, (e) => console.error(e));
-  }, []);
+  }, [extId, path]);
 
   if (content === undefined) {
     return <span>Loading...</span>;

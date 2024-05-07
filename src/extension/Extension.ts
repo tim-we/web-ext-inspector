@@ -214,7 +214,7 @@ function getIconPath(manifest: Manifest, root: FSFolder): string | undefined {
   }
 
   const sizes = Object.entries(manifest.icons).map(([size, path]) => ({
-    size: parseInt(size, 10),
+    size: Number.parseInt(size, 10),
     path
   }));
 

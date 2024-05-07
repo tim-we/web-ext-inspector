@@ -29,7 +29,7 @@ const App: Preact.FunctionComponent = () => {
     <>
       {showSelector && <ExtensionSelector closable={extensions.length > 0} />}
       {extensions.map((data) => (
-        <ExtensionView data={data} />
+        <ExtensionView key={data.id} data={data} />
       ))}
     </>
   );
