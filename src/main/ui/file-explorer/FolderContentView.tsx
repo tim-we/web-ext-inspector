@@ -2,7 +2,7 @@ import type { FunctionComponent } from "preact";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 
 import { createContext } from "preact";
-import { useContext, useEffect, useId, useState } from "preact/hooks";
+import { useContext, useEffect, useId, useRef, useState } from "preact/hooks";
 
 import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
@@ -13,9 +13,16 @@ import TagList from "./TagList";
 const noop = () => undefined;
 const FSHContext = createContext<FileSelectedHandler>(noop);
 
-const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFileSelected }) => {
+const FolderContentView: FunctionComponent<FolderProps> = ({
+  path,
+  label,
+  hasSelection,
+  onFileSelected
+}) => {
   const extId = useContext(ExtensionIdContext)!;
   const [contents, setContents] = useState<FSNodeDTO[] | undefined>(undefined);
+  const [selectedIndex, setSelectedIndex] = useState<number>(hasSelection ? 0 : -1);
+  const ulRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     wrappedWorker
@@ -30,15 +37,19 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFile
 
   const folders = contents.filter((node) => node.type === "folder") as FolderDTO[];
   const files = contents.filter((node) => node.type === "file") as FileDTO[];
-  const isRoot = path === "/";
+  const isRoot = path === "/" || path === "";
+
+  // TODO: keydown listener
 
   const jsxContent = (
     <ul
+      ref={ulRef}
       class="folder-content"
       role={isRoot ? "tree" : "group"}
       aria-label={isRoot ? label : undefined}
+      tabindex={0}
     >
-      {folders.map((folder) => (
+      {folders.map((folder, i) => (
         <FolderView key={folder.name} {...folder} />
       ))}
       {files.map((file) => (
@@ -56,7 +67,11 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFile
 
 export default FolderContentView;
 
-const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, path }) => {
+const FileView: FunctionComponent<{ node: FileDTO; path: string; selected?: boolean }> = ({
+  node,
+  path,
+  selected = false
+}) => {
   const onSelect = useContext(FSHContext);
   const extId = useContext(ExtensionIdContext)!;
   const labelId = useId();
@@ -66,18 +81,27 @@ const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, pa
   const dblClickHanlder = isCodeOrText ? () => openCodeViewer(extId, path) : undefined;
 
   return (
-    <li class={["file", ...node.tags].join(" ")} role="treeitem" aria-labelledby={labelId}>
+    <li
+      class={["file", ...node.tags].join(" ")}
+      role="treeitem"
+      aria-labelledby={labelId}
+      aria-selected={selected}
+    >
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: TODO */}
-      <span id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHanlder}>
+      <a id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHanlder} tabindex={0}>
         {node.name}
-      </span>
+      </a>
       <span class="item-info">{node.size}</span>
       <TagList tags={node.tags} />
     </li>
   );
 };
 
-const FolderView: FunctionComponent<FolderDTO & { path: string }> = ({ name, path }) => {
+const FolderView: FunctionComponent<FolderDTO & { path: string; selected?: boolean }> = ({
+  name,
+  path,
+  selected = false
+}) => {
   const [renderContent, setRenderContent] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const labelId = useId();
@@ -92,8 +116,15 @@ const FolderView: FunctionComponent<FolderDTO & { path: string }> = ({ name, pat
     }
   };
 
+  // TODO: hasSelection
   return (
-    <li class="folder" role="treeitem" aria-expanded={expanded} aria-labelledby={labelId}>
+    <li
+      class="folder"
+      role="treeitem"
+      aria-expanded={expanded}
+      aria-labelledby={labelId}
+      aria-selected={selected}
+    >
       <details onToggle={toggleHandler}>
         <summary>
           <span id={labelId} class="name">
@@ -103,7 +134,7 @@ const FolderView: FunctionComponent<FolderDTO & { path: string }> = ({ name, pat
             /
           </span>
         </summary>
-        {renderContent ? <FolderContentView path={path} /> : null}
+        {renderContent ? <FolderContentView path={path} hasSelection={false} /> : null}
       </details>
     </li>
   );
@@ -126,6 +157,7 @@ type FolderDTO = FSNodeDTO & { type: "folder" };
 type FolderProps = {
   path: string;
   label?: string;
+  hasSelection: boolean;
   onFileSelected?: FileSelectedHandler;
 };
 

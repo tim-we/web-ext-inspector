@@ -4,6 +4,7 @@ import * as Preact from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
 import "./modal-window.scss";
+import { useRef } from "preact/hooks";
 
 export const modalRoot = document.createElement("div");
 modalRoot.id = "modal-root";
@@ -119,6 +120,9 @@ export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions)
     modal.style.top = `${y}px`;
     modal.style.left = `${x}px`;
     modal.style.removeProperty("visibility");
+
+    // Move focus to modal window.
+    setTimeout(() => modal.focus(), 1000); // TODO: doesn't work
   });
 }
 
@@ -130,16 +134,32 @@ const InnerModal: FunctionComponent<IMProps> = ({
   resizeStartFn,
   children
 }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const focusHandler = () => {
+    if (contentRef.current === null) {
+      return;
+    }
+    const modal = contentRef.current.parentElement!;
+    const focused = document.activeElement;
+    if (modal.contains(focused)) {
+      return;
+    }
+    contentRef.current.focus();
+  };
+
   return (
     <>
-      <header onMouseDown={moveStartFn}>
+      <header onMouseDown={moveStartFn} onClick={focusHandler}>
         {icon ? <div class={`icon mw-icon-${icon}`} /> : null}
         <h1>{title}</h1>
         <div class="buttons" onMouseDown={(e) => e.stopPropagation()}>
           <button type="button" class="close" title="close window" onClick={closeFn} />
         </div>
       </header>
-      <div class="content">{children}</div>
+      <div class="content" ref={contentRef}>
+        {children}
+      </div>
       <div class="resize-handle" aria-hidden={true} title="resize" onMouseDown={resizeStartFn} />
     </>
   );
