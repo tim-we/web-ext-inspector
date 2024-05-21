@@ -8,20 +8,15 @@ import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
 import { openCodeViewer } from "../code-viewer/CodeViewer";
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
+import SelectedFSNodeContext from "../contexts/SelectedFSNodeContext";
 import TagList from "./TagList";
 
 const noop = () => undefined;
 const FSHContext = createContext<FileSelectedHandler>(noop);
 
-const FolderContentView: FunctionComponent<FolderProps> = ({
-  path,
-  label,
-  hasSelection,
-  onFileSelected
-}) => {
+const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFileSelected }) => {
   const extId = useContext(ExtensionIdContext)!;
   const [contents, setContents] = useState<FSNodeDTO[] | undefined>(undefined);
-  const [selectedIndex, setSelectedIndex] = useState<number>(hasSelection ? 0 : -1);
   const ulRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -67,15 +62,13 @@ const FolderContentView: FunctionComponent<FolderProps> = ({
 
 export default FolderContentView;
 
-const FileView: FunctionComponent<{ node: FileDTO; path: string; selected?: boolean }> = ({
-  node,
-  path,
-  selected = false
-}) => {
+const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, path }) => {
   const onSelect = useContext(FSHContext);
   const extId = useContext(ExtensionIdContext)!;
+  const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
 
+  const selected = selectedPath === path;
   const clickHandler = onSelect ? () => onSelect(node, path) : undefined;
   const isCodeOrText = node.tags.includes("code") || node.tags.includes("text");
   const dblClickHanlder = isCodeOrText ? () => openCodeViewer(extId, path) : undefined;
@@ -87,7 +80,6 @@ const FileView: FunctionComponent<{ node: FileDTO; path: string; selected?: bool
       aria-labelledby={labelId}
       aria-selected={selected}
     >
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: TODO */}
       <a id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHanlder} tabindex={0}>
         {node.name}
       </a>
@@ -97,14 +89,13 @@ const FileView: FunctionComponent<{ node: FileDTO; path: string; selected?: bool
   );
 };
 
-const FolderView: FunctionComponent<FolderDTO & { path: string; selected?: boolean }> = ({
-  name,
-  path,
-  selected = false
-}) => {
+const FolderView: FunctionComponent<FolderDTO & { path: string }> = ({ name, path }) => {
   const [renderContent, setRenderContent] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
+
+  const selected = selectedPath === path;
 
   const toggleHandler = (e: Event) => {
     setExpanded(!expanded);
@@ -134,7 +125,7 @@ const FolderView: FunctionComponent<FolderDTO & { path: string; selected?: boole
             /
           </span>
         </summary>
-        {renderContent ? <FolderContentView path={path} hasSelection={false} /> : null}
+        {renderContent ? <FolderContentView path={path} /> : null}
       </details>
     </li>
   );
@@ -157,7 +148,6 @@ type FolderDTO = FSNodeDTO & { type: "folder" };
 type FolderProps = {
   path: string;
   label?: string;
-  hasSelection: boolean;
   onFileSelected?: FileSelectedHandler;
 };
 

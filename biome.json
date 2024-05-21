@@ -11,7 +11,8 @@
         "noNonNullAssertion": "off"
       },
       "a11y": {
-        "useButtonType": "warn"
+        "useButtonType": "warn",
+        "useKeyWithClickEvents": "warn"
       },
       "complexity": {
 				"noForEach": "off"

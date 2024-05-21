@@ -80,6 +80,10 @@
   li.folder,
   li.file {
     padding: 2px;
+
+    &[aria-selected=true] {
+      background-color: rgba(128,128,128,0.25);
+    }
   }
 
   li.folder .separator {
