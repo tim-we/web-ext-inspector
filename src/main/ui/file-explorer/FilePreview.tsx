@@ -14,7 +14,8 @@ const closeAnimationKeyframes: Keyframe[] = [
   { opacity: 0, transform: "translateX(200px)" }
 ];
 
-const FilePreview: FunctionComponent<FilePreviewProps> = ({ path, node, onClose }) => {
+const FilePreview: FunctionComponent<FilePreviewProps> = ({ node, onClose }) => {
+  const path = node.path;
   const folder = paths.dirname(path);
   const elementRef = useRef<HTMLElement>(null);
 
@@ -102,7 +103,6 @@ const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
 };
 
 type FilePreviewProps = {
-  path: string;
   node: FileNode;
   onClose?: () => void;
 };

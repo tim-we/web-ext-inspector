@@ -12,10 +12,16 @@ import SelectedFSNodeContext from "../contexts/SelectedFSNodeContext";
 import TagList from "./TagList";
 
 const noop = () => undefined;
-const FSHContext = createContext<FileSelectedHandler>(noop);
+const FSHContext = createContext<FSNodeSelectionHandler>(noop);
 
-const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFileSelected }) => {
+const FolderContentView: FunctionComponent<FCVProps> = ({
+  path,
+  label,
+  showFilePreview,
+  selectFSNode
+}) => {
   const extId = useContext(ExtensionIdContext)!;
+  const selectedPath = useContext(SelectedFSNodeContext);
   const [contents, setContents] = useState<FSNodeDTO[] | undefined>(undefined);
   const ulRef = useRef<HTMLUListElement>(null);
 
@@ -30,11 +36,52 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFile
     return <span class="folder-content">...</span>;
   }
 
+  const selectionDirname = selectedPath === undefined ? undefined : paths.dirname(selectedPath);
   const folders = contents.filter((node) => node.type === "folder") as FolderDTO[];
   const files = contents.filter((node) => node.type === "file") as FileDTO[];
   const isRoot = path === "/" || path === "";
 
-  // TODO: keydown listener
+  const keydownListener = (e: KeyboardEvent) => {
+    if (selectionDirname !== path) {
+      return;
+    }
+
+    if (e.key !== "Enter" && !arrowKeys.has(e.key)) {
+      return;
+    }
+
+    const index = contents.findIndex((node) => node.path === selectedPath);
+
+    if (index < 0) {
+      // TODO folder paths start with '/', file paths don't. Why? FIX!
+      return;
+    }
+
+    if (e.key === "Enter") {
+      e.stopPropagation();
+      const node = contents[index];
+      if (node.type === "file") {
+        showFilePreview?.(node);
+      }
+      return;
+    }
+
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      const direction = e.key === "ArrowDown" ? 1 : -1;
+      const nextNode = contents[index + direction];
+      if (nextNode === undefined) {
+        console.log("next node not found", direction, contents.length, index);
+        // TODO
+        return;
+      }
+      console.log("action");
+      e.stopPropagation();
+      selectFSNode?.(nextNode.path);
+      return;
+    }
+
+    // TODO: scroll selected node into view
+  };
 
   const jsxContent = (
     <ul
@@ -43,18 +90,19 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFile
       role={isRoot ? "tree" : "group"}
       aria-label={isRoot ? label : undefined}
       tabindex={0}
+      onKeyDown={keydownListener}
     >
       {folders.map((folder, i) => (
         <FolderView key={folder.name} {...folder} />
       ))}
       {files.map((file) => (
-        <FileView key={file.name} path={paths.join(path, file.name)} node={file} />
+        <FileView key={file.name} node={file} />
       ))}
     </ul>
   );
 
-  if (onFileSelected) {
-    return <FSHContext.Provider value={onFileSelected}>{jsxContent}</FSHContext.Provider>;
+  if (showFilePreview) {
+    return <FSHContext.Provider value={showFilePreview}>{jsxContent}</FSHContext.Provider>;
   }
 
   return jsxContent;
@@ -62,16 +110,24 @@ const FolderContentView: FunctionComponent<FolderProps> = ({ path, label, onFile
 
 export default FolderContentView;
 
-const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, path }) => {
+const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
   const onSelect = useContext(FSHContext);
   const extId = useContext(ExtensionIdContext)!;
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
 
+  const path = node.path;
   const selected = selectedPath === path;
   const clickHandler = onSelect ? () => onSelect(node, path) : undefined;
   const isCodeOrText = node.tags.includes("code") || node.tags.includes("text");
-  const dblClickHanlder = isCodeOrText ? () => openCodeViewer(extId, path) : undefined;
+  const dblClickHanlder = isCodeOrText
+    ? () => {
+        // Clear accidental selection.
+        window.getSelection()?.empty();
+        // Open file.
+        openCodeViewer(extId, path);
+      }
+    : undefined;
 
   return (
     <li
@@ -89,7 +145,7 @@ const FileView: FunctionComponent<{ node: FileDTO; path: string }> = ({ node, pa
   );
 };
 
-const FolderView: FunctionComponent<FolderDTO & { path: string }> = ({ name, path }) => {
+const FolderView: FunctionComponent<FolderDTO> = ({ name, path }) => {
   const [renderContent, setRenderContent] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const selectedPath = useContext(SelectedFSNodeContext);
@@ -142,13 +198,16 @@ function compareFSNodes(a: FSNodeDTO, b: FSNodeDTO) {
   return collator.compare(a.name, b.name);
 }
 
+const arrowKeys = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]);
+
 type FileDTO = FSNodeDTO & { type: "file" };
 type FolderDTO = FSNodeDTO & { type: "folder" };
 
-type FolderProps = {
+type FCVProps = {
   path: string;
   label?: string;
-  onFileSelected?: FileSelectedHandler;
+  showFilePreview?: (file: FileDTO) => unknown;
+  selectFSNode?: (path: FSNodeDTO["path"]) => unknown;
 };
 
-type FileSelectedHandler = (node: FileDTO, path: string) => void;
+type FSNodeSelectionHandler = (node: FileDTO, path: string) => void;

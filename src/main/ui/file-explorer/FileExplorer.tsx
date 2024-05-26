@@ -1,7 +1,7 @@
 import type { FunctionComponent } from "preact";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 
-import { StateUpdater, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
 import FilePreview from "./FilePreview";
@@ -15,21 +15,26 @@ type ExplorerProps = {
 };
 
 const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
-  const [previewFile, setPreviewFile] = useState<SelectedFile | undefined>(undefined);
+  const [previewFile, setPreviewFile] = useState<FileNodeDTO | undefined>(undefined);
   const [selectedFSNode, setSelectedFSNode] = useState<string | undefined>(undefined);
 
-  const fileSelectionHandler = (node: SelectedFile["node"], path: string) => {
-    setPreviewFile({ node, path });
-    setSelectedFSNode(path);
+  const fileSelectionHandler = (node: FileNodeDTO) => {
+    setPreviewFile(node);
+    setSelectedFSNode(node.path);
   };
 
   return (
     <ExtensionIdContext.Provider value={extensionId}>
       <SelectedFSNodeContext.Provider value={selectedFSNode}>
         <div class="file-explorer">
-          <FolderContentView path="/" label="file explorer" onFileSelected={fileSelectionHandler} />
+          <FolderContentView
+            path="/"
+            label="file explorer"
+            showFilePreview={fileSelectionHandler}
+            selectFSNode={setSelectedFSNode}
+          />
           {previewFile ? (
-            <FilePreview {...previewFile} onClose={() => setPreviewFile(undefined)} />
+            <FilePreview node={previewFile} onClose={() => setPreviewFile(undefined)} />
           ) : null}
         </div>
       </SelectedFSNodeContext.Provider>
@@ -39,7 +44,4 @@ const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
 
 export default FileExplorer;
 
-type SelectedFile = {
-  node: FSNodeDTO & { type: "file" };
-  path: string;
-};
+type FileNodeDTO = FSNodeDTO & { type: "file" };
