@@ -148,7 +148,10 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
   );
 };
 
-const FolderView: FunctionComponent<{node: FolderDTO, selectFSNode?: FSNodeSelector}> = ({ node, selectFSNode }) => {
+const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSelector }> = ({
+  node,
+  selectFSNode
+}) => {
   const [renderContent, setRenderContent] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const selectedPath = useContext(SelectedFSNodeContext);
@@ -185,7 +188,7 @@ const FolderView: FunctionComponent<{node: FolderDTO, selectFSNode?: FSNodeSelec
             /
           </span>
         </summary>
-        {renderContent ? <FolderContentView path={node.path} selectFSNode={selectFSNode}/> : null}
+        {renderContent ? <FolderContentView path={node.path} selectFSNode={selectFSNode} /> : null}
       </details>
     </li>
   );
