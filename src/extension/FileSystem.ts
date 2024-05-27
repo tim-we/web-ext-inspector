@@ -13,10 +13,10 @@ export abstract class FSNode {
   protected readonly parent: FSFolder | undefined;
   protected byteSize = 0;
 
-  constructor(name: string, path: string, parent?: FSFolder) {
+  constructor(name: string, parent?: FSFolder) {
     this.name = name;
     this.parent = parent;
-    this.absolutePath = path;
+    this.absolutePath = parent ? paths.join(parent.absolutePath, name) : "";
   }
 
   abstract asJSON(): FSNodeDTO;
@@ -59,7 +59,7 @@ export class FSFile extends FSNode {
 
   constructor(entry: zip.Entry, name: string, parent: FSFolder) {
     // TODO: absolutePath ok?
-    super(name, entry.filename, parent);
+    super(name, parent);
     this.#zipEntry = entry;
     this.byteSize = entry.uncompressedSize;
 
@@ -133,7 +133,7 @@ export class FSFolder extends FSNode {
     let folder = this.children.get(name) as FSFolder | undefined;
 
     if (!folder) {
-      folder = new FSFolder(name, paths.join(this.absolutePath, name), this);
+      folder = new FSFolder(name, this);
       this.children.set(name, folder);
     }
 
@@ -295,7 +295,7 @@ const knownFileNames: Record<string, FileTypeInfo> = {
 export async function createFileSystem(
   entries: AsyncGenerator<zip.Entry, boolean>
 ): Promise<FSFolder> {
-  const root = new FSFolder("root", "");
+  const root = new FSFolder("root", undefined);
   for await (const entry of entries) {
     if (entry.directory) {
       // We extract folders from file paths because some zip files

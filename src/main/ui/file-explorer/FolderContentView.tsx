@@ -50,6 +50,9 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       return;
     }
 
+    // Prevent scrolling.
+    e.preventDefault();
+
     const index = contents.findIndex((node) => node.path === selectedPath);
 
     if (index < 0) {
@@ -74,7 +77,6 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
         // TODO
         return;
       }
-      console.log("action");
       e.stopPropagation();
       selectFSNode?.(nextNode.path);
       return;
@@ -93,7 +95,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       onKeyDown={keydownListener}
     >
       {folders.map((folder, i) => (
-        <FolderView key={folder.name} {...folder} />
+        <FolderView key={folder.name} node={folder} selectFSNode={selectFSNode} />
       ))}
       {files.map((file) => (
         <FileView key={file.name} node={file} />
@@ -135,6 +137,7 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
       role="treeitem"
       aria-labelledby={labelId}
       aria-selected={selected}
+      data-path={path}
     >
       <a id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHanlder} tabindex={0}>
         {node.name}
@@ -145,13 +148,13 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
   );
 };
 
-const FolderView: FunctionComponent<FolderDTO> = ({ name, path }) => {
+const FolderView: FunctionComponent<{node: FolderDTO, selectFSNode?: FSNodeSelector}> = ({ node, selectFSNode }) => {
   const [renderContent, setRenderContent] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
 
-  const selected = selectedPath === path;
+  const selected = selectedPath === node.path;
 
   const toggleHandler = (e: Event) => {
     setExpanded(!expanded);
@@ -171,17 +174,18 @@ const FolderView: FunctionComponent<FolderDTO> = ({ name, path }) => {
       aria-expanded={expanded}
       aria-labelledby={labelId}
       aria-selected={selected}
+      data-path={node.path}
     >
       <details onToggle={toggleHandler}>
         <summary>
           <span id={labelId} class="name">
-            {name}
+            {node.name}
           </span>
           <span class="separator" aria-hidden={true}>
             /
           </span>
         </summary>
-        {renderContent ? <FolderContentView path={path} /> : null}
+        {renderContent ? <FolderContentView path={node.path} selectFSNode={selectFSNode}/> : null}
       </details>
     </li>
   );
@@ -207,7 +211,8 @@ type FCVProps = {
   path: string;
   label?: string;
   showFilePreview?: (file: FileDTO) => unknown;
-  selectFSNode?: (path: FSNodeDTO["path"]) => unknown;
+  selectFSNode?: FSNodeSelector;
 };
 
+type FSNodeSelector = (path: FSNodeDTO["path"]) => unknown;
 type FSNodeSelectionHandler = (node: FileDTO, path: string) => void;
