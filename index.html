@@ -10,13 +10,23 @@
     <title>Extension Inspector</title>
     <link rel="icon" href="src/assets/favicon.ico" />
     
-    <style>
+    <!-- Temporary style to reduce FOUC, will be removed by JS. -->
+    <style id="temporary-style">
       body {
+        font-family: sans-serif;
         color: white;
         background-color: rgb(32, 32, 32);
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      a {
+        color: white;
       }
     </style>
-    <script src="src/main/index.tsx" type="module"></script>
+    <script src="src/main/index.tsx" type="module" defer></script>
   </head>
   <body>
     <header>

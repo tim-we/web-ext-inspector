@@ -37,6 +37,10 @@ const App: Preact.FunctionComponent = () => {
 
 Preact.render(<App />, root);
 
+// Remove temporary style sheet because when this (deferred) script runs
+// the proper CSS has been loaded already.
+document.querySelector<HTMLLinkElement>("#temporary-style")!.remove();
+
 (async () => {
   const data = await wrappedWorker.loadExtension("/test/extension.xpi");
 
@@ -48,8 +52,8 @@ Preact.render(<App />, root);
     root
   );
 
-  if (data.dynamicAnalysis.supported) {
-    console.log("running extension...");
-    await wrappedWorker.run(data.id);
-  }
+  // if (data.dynamicAnalysis.supported) {
+  //   console.log("running extension...");
+  //   await wrappedWorker.run(data.id);
+  // }
 })();
