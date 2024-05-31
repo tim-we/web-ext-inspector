@@ -10,6 +10,7 @@ import { openCodeViewer } from "../code-viewer/CodeViewer";
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
 import SelectedFSNodeContext from "../contexts/SelectedFSNodeContext";
 import TagList from "./TagList";
+import { scrollIntoViewIfNeeded } from "../../../utilities/dom";
 
 const noop = () => undefined;
 const FSHContext = createContext<FSNodeSelectionHandler>(noop);
@@ -41,7 +42,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
   const files = contents.filter((node) => node.type === "file") as FileDTO[];
   const isRoot = path === "/" || path === "";
 
-  const keydownListener = (e: KeyboardEvent) => {
+  const keydownListener = async (e: KeyboardEvent) => {
     if (selectionDirname !== path) {
       return;
     }
@@ -59,6 +60,8 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       // TODO folder paths start with '/', file paths don't. Why? FIX!
       return;
     }
+
+    const currentNode = contents[index];
 
     if (e.key === "Enter") {
       e.stopPropagation();
@@ -80,6 +83,11 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       e.stopPropagation();
       selectFSNode?.(nextNode.path);
       return;
+    } else if (e.key === "ArrowLeft" && !isRoot) {
+      selectFSNode?.(path);
+    } else if (e.key === "ArrowRight" && currentNode.type === "folder") {
+      const folderContents = await wrappedWorker.getDirectoryContents(extId, currentNode.path);
+      selectFSNode?.(folderContents[0].path);
     }
 
     // TODO: scroll selected node into view
@@ -117,6 +125,7 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
   const extId = useContext(ExtensionIdContext)!;
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
+  const liRef = useRef<HTMLLIElement>(null);
 
   const path = node.path;
   const selected = selectedPath === path;
@@ -131,8 +140,15 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
       }
     : undefined;
 
+  useEffect(() => {
+    if (selected) {
+      scrollIntoViewIfNeeded(liRef.current!);
+    }
+  }, [selected, liRef.current]);
+
   return (
     <li
+      ref={liRef}
       class={["file", ...node.tags].join(" ")}
       role="treeitem"
       aria-labelledby={labelId}
@@ -156,6 +172,7 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
   const [expanded, setExpanded] = useState(false);
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
+  const liRef = useRef<HTMLLIElement>(null);
 
   const selected = selectedPath === node.path;
 
@@ -169,9 +186,15 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
     }
   };
 
-  // TODO: hasSelection
+  useEffect(() => {
+    if (selected) {
+      scrollIntoViewIfNeeded(liRef.current!);
+    }
+  }, [selected, liRef.current]);
+
   return (
     <li
+      ref={liRef}
       class="folder"
       role="treeitem"
       aria-expanded={expanded}
