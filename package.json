@@ -19,7 +19,8 @@
     "format": "biome format src scripts --write",
     "lint": "biome check src scripts",
     "lint:fix": "biome check src scripts --apply",
-    "ci": "biome ci src scripts"
+    "ci": "biome ci src scripts",
+    "test": "vitest"
   },
   "author": "tim-we",
   "license": "MIT",

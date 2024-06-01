@@ -16,7 +16,7 @@ export abstract class FSNode {
   constructor(name: string, parent?: FSFolder) {
     this.name = name;
     this.parent = parent;
-    this.absolutePath = parent ? paths.join(parent.absolutePath, name) : "";
+    this.absolutePath = parent ? paths.join(parent.absolutePath, name) : "/";
   }
 
   abstract asJSON(): FSNodeDTO;
@@ -27,12 +27,11 @@ export abstract class FSNode {
 
   get path(): string {
     if (this.parent) {
-      const parentPath = this.parent.path;
-      return parentPath ? `${parentPath}/${this.name}` : this.name;
+      return paths.join(this.parent.path, this.name);
     }
     if (this instanceof FSFolder) {
       // This is the root folder.
-      return "";
+      return "/";
     }
     throw new Error("FS path error.");
   }
