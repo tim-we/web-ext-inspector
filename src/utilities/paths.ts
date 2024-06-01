@@ -18,14 +18,13 @@ export function join(path: string, ...rest: string[]): string {
 
 export function dirname(path: string): string {
   const parts = path.replace(/^\//, "").split("/");
+  const prefix = path.startsWith("/") ? "/" : "";
 
   if (parts.length === 1) {
-    return "";
+    return prefix;
   }
 
   parts.pop();
-
-  const prefix = path.startsWith("/") ? "/" : "";
 
   return prefix + parts.join("/");
 }

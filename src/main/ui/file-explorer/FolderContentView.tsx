@@ -57,7 +57,6 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
     const index = contents.findIndex((node) => node.path === selectedPath);
 
     if (index < 0) {
-      // TODO folder paths start with '/', file paths don't. Why? FIX!
       return;
     }
 
@@ -89,8 +88,6 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       const folderContents = await wrappedWorker.getDirectoryContents(extId, currentNode.path);
       selectFSNode?.(folderContents[0].path);
     }
-
-    // TODO: scroll selected node into view
   };
 
   const jsxContent = (
