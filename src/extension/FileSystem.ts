@@ -302,7 +302,10 @@ export async function createFileSystem(
       continue;
     }
 
-    root.insertZipEntryAsFile(entry.filename, entry);
+    const rootRelativePath = entry.filename.startsWith("/")
+      ? entry.filename.substring(1)
+      : entry.filename;
+    root.insertZipEntryAsFile(rootRelativePath, entry);
   }
   return root;
 }

@@ -20,7 +20,8 @@
     "lint": "biome check src scripts",
     "lint:fix": "biome check src scripts --apply",
     "ci": "biome ci src scripts",
-    "test": "vitest"
+    "test": "vitest run --typecheck",
+    "test:watch": "vitest watch"
   },
   "author": "tim-we",
   "license": "MIT",
