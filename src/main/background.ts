@@ -10,6 +10,7 @@ import Runner from "../runner/Runner";
 
 // TODO: consider dynamically importing this (code splitting)
 import { renderCode } from "../code-renderer/CodeRenderer";
+import { compareFSNodes } from "../utilities/fs-nodes";
 
 zip.configure({
   useWebWorkers: false // this is already a worker
@@ -55,13 +56,22 @@ const exposedMethods = {
     session.runner = await Runner.create(session.extension);
   },
 
+  /**
+   * Get a list of direct children of the specified folder.
+   * Does not contain the entire subtree.
+   * List will be sorted, folders come before files.
+   */
   getDirectoryContents(sessionId: string, path: string): FSNodeDTO[] {
     const extension = sessions.get(sessionId)!.extension!;
     const folder = extension.files.getFolder(path)!;
     if (folder === undefined) {
       throw new Error(`Failed to get directory contents for "${path}"`);
     }
-    return Array.from(folder.children.values()).map((node) => node.asJSON());
+    const children = Array.from(folder.children.values())
+      .map((node) => node.asJSON())
+      .sort(compareFSNodes);
+
+    return children;
   },
 
   async getPrettyCode(sessionId: string, path: string): Promise<HighlightedCode> {

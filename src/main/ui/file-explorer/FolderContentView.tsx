@@ -27,10 +27,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
   const ulRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    wrappedWorker
-      .getDirectoryContents(extId, path)
-      .then((children) => setContents(children.sort(compareFSNodes)))
-      .catch((e) => console.error(e));
+    wrappedWorker.getDirectoryContents(extId, path).then(setContents, (e) => console.error(e));
   }, [extId, path]);
 
   if (contents === undefined) {
@@ -43,7 +40,12 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
   const isRoot = path === "/" || path === "";
 
   const keydownListener = async (e: KeyboardEvent) => {
-    if (selectionDirname !== path) {
+    if (selectedPath === undefined) {
+      // No selection -> no selection change.
+      return;
+    }
+    if (!selectionDirname!.startsWith(path)) {
+      // Keyboard interaction not relevant for the current subtree.
       return;
     }
 
@@ -54,7 +56,8 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
     // Prevent scrolling.
     e.preventDefault();
 
-    const index = contents.findIndex((node) => node.path === selectedPath);
+    // We check for prefix such that we can let the event bubble up and let the parent handle this.
+    const index = contents.findIndex((node) => node.path.startsWith(selectedPath));
 
     if (index < 0) {
       return;
@@ -75,20 +78,23 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       const direction = e.key === "ArrowDown" ? 1 : -1;
       const nextNode = contents[index + direction];
       if (nextNode === undefined) {
-        console.log("next node not found", direction, contents.length, index);
-        // TODO
+        // Next node not found (out of bounds), let parent handle this.
         return;
       }
       e.stopPropagation();
       selectFSNode?.(nextNode.path);
       return;
     } else if (e.key === "ArrowLeft" && !isRoot) {
+      e.stopPropagation();
       selectFSNode?.(path);
     } else if (e.key === "ArrowRight" && currentNode.type === "folder") {
+      e.stopPropagation();
       const folderContents = await wrappedWorker.getDirectoryContents(extId, currentNode.path);
       selectFSNode?.(folderContents[0].path);
     }
   };
+
+  // TODO: listen to focus changes
 
   const jsxContent = (
     <ul
@@ -139,6 +145,7 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
 
   useEffect(() => {
     if (selected) {
+      document.getElementById(labelId)!.focus();
       scrollIntoViewIfNeeded(liRef.current!);
     }
   }, [selected, liRef.current]);
@@ -165,8 +172,9 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
   node,
   selectFSNode
 }) => {
-  const [renderContent, setRenderContent] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  // If we collapse the folder we keep the children, s.t. they can keep their state.
+  const [renderContent, setRenderContent] = useState(false);
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
   const liRef = useRef<HTMLLIElement>(null);
@@ -175,6 +183,7 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
 
   const toggleHandler = (e: Event) => {
     setExpanded(!expanded);
+    selectFSNode?.(node.path);
     if (renderContent) {
       return;
     }
@@ -185,6 +194,7 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
 
   useEffect(() => {
     if (selected) {
+      liRef.current!.querySelector("summary")!.focus();
       scrollIntoViewIfNeeded(liRef.current!);
     }
   }, [selected, liRef.current]);
@@ -213,17 +223,6 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
     </li>
   );
 };
-
-const collator = new Intl.Collator("en");
-
-function compareFSNodes(a: FSNodeDTO, b: FSNodeDTO) {
-  if (a.type !== b.type) {
-    // Folders before files.
-    return a.type === "folder" ? -1 : 1;
-  }
-
-  return collator.compare(a.name, b.name);
-}
 
 const arrowKeys = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]);
 

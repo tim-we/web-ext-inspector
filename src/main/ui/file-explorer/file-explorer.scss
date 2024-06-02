@@ -80,10 +80,11 @@
   li.folder,
   li.file {
     padding: 2px;
+  }
 
-    &[aria-selected=true] {
-      background-color: rgba(128,128,128,0.25);
-    }
+  li.folder[aria-selected=true] > details > summary,
+  li.file[aria-selected=true] > a {
+    background-color: rgba(128,128,128,0.25);
   }
 
   li.folder .separator {

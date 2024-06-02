@@ -20,7 +20,9 @@ test("get file", async () => {
   expect(abFiles.length).toBe(2);
   expect(abFiles.includes(fs.getFile("/a/b/file2.txt")));
 
-  expect(() => { fs.getFile("does/not/exist", true)}).toThrowError();
+  expect(() => {
+    fs.getFile("does/not/exist", true);
+  }).toThrowError();
   expect(fs.getFile("does/not/exist", false)).not.toBeDefined();
 });
 
