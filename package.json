@@ -30,8 +30,8 @@
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.7.3",
-    "@mdn/browser-compat-data": "^5.5.26",
-    "@types/node": "^20.12.10",
+    "@mdn/browser-compat-data": "^5.5.31",
+    "@types/node": "^20.13.0",
     "@types/prismjs": "^1.26.4",
     "glob": "^10.3.12",
     "html-entities": "^2.5.2",
@@ -39,14 +39,14 @@
     "rimraf": "^5.0.5",
     "strip-json-comments": "^5.0.1",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11",
+    "vite": "^5.2.12",
     "vitest": "^1.6.0"
   },
   "dependencies": {
     "@babel/parser": "^7.24.5",
     "@babel/traverse": "^7.24.5",
     "@types/babel__traverse": "^7.20.5",
-    "@zip.js/zip.js": "^2.7.44",
+    "@zip.js/zip.js": "^2.7.45",
     "acorn": "^8.11.3",
     "acorn-walk": "^8.3.2",
     "astring": "^1.8.6",
@@ -55,7 +55,7 @@
     "domutils": "^3.1.0",
     "htmlparser2": "^9.1.0",
     "postcss": "^8.4.38",
-    "preact": "^10.21.0",
+    "preact": "^10.22.0",
     "pretty-bytes": "^6.1.1",
     "prismjs": "^1.29.0"
   }
