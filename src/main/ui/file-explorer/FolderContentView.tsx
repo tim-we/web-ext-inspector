@@ -205,8 +205,12 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
     if (!expanded || e.key !== "ArrowDown") {
       return;
     }
+    // Prevent scrolling.
     e.preventDefault();
+
+    // Prevent the wrapping FolderContentView from handling this.
     e.stopPropagation();
+
     // Select first node in folder:
     const folderContents = await wrappedWorker.getDirectoryContents(extId, node.path);
     selectFSNode?.(folderContents[0].path);
