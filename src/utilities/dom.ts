@@ -20,6 +20,7 @@ export function scrollIntoViewIfNeeded(element: HTMLElement): void {
     return;
   }
   element.scrollIntoView({
-    block: "nearest"
+    block: "nearest",
+    behavior: "smooth"
   });
 }

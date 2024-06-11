@@ -89,6 +89,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       selectFSNode?.(path);
     } else if (e.key === "ArrowRight" && currentNode.type === "folder") {
       e.stopPropagation();
+      // Select first node in folder:
       const folderContents = await wrappedWorker.getDirectoryContents(extId, currentNode.path);
       selectFSNode?.(folderContents[0].path);
     }
@@ -134,7 +135,7 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
   const selected = selectedPath === path;
   const clickHandler = onSelect ? () => onSelect(node, path) : undefined;
   const isCodeOrText = node.tags.includes("code") || node.tags.includes("text");
-  const dblClickHanlder = isCodeOrText
+  const dblClickHandler = isCodeOrText
     ? () => {
         // Clear accidental selection.
         window.getSelection()?.empty();
@@ -159,7 +160,7 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
       aria-selected={selected}
       data-path={path}
     >
-      <a id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHanlder} tabindex={0}>
+      <a id={labelId} class="name" onClick={clickHandler} onDblClick={dblClickHandler} tabindex={0}>
         {node.name}
       </a>
       <span class="item-info">{node.size}</span>
@@ -178,8 +179,16 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
   const liRef = useRef<HTMLLIElement>(null);
+  const extId = useContext(ExtensionIdContext)!;
 
   const selected = selectedPath === node.path;
+
+  useEffect(() => {
+    if (selected) {
+      liRef.current!.querySelector("summary")!.focus();
+      scrollIntoViewIfNeeded(liRef.current!);
+    }
+  }, [selected, liRef.current]);
 
   const toggleHandler = (e: Event) => {
     setExpanded(!expanded);
@@ -192,12 +201,16 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
     }
   };
 
-  useEffect(() => {
-    if (selected) {
-      liRef.current!.querySelector("summary")!.focus();
-      scrollIntoViewIfNeeded(liRef.current!);
+  const keyDownHandler = async (e: KeyboardEvent) => {
+    if (!expanded || e.key !== "ArrowDown") {
+      return;
     }
-  }, [selected, liRef.current]);
+    e.preventDefault();
+    e.stopPropagation();
+    // Select first node in folder:
+    const folderContents = await wrappedWorker.getDirectoryContents(extId, node.path);
+    selectFSNode?.(folderContents[0].path);
+  };
 
   return (
     <li
@@ -210,7 +223,7 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
       data-path={node.path}
     >
       <details onToggle={toggleHandler}>
-        <summary>
+        <summary onKeyDown={keyDownHandler}>
           <span id={labelId} class="name">
             {node.name}
           </span>
