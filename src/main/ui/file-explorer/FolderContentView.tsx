@@ -63,8 +63,6 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       return;
     }
 
-    const currentNode = contents[index];
-
     if (e.key === "Enter") {
       e.stopPropagation();
       const node = contents[index];
@@ -84,14 +82,6 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       e.stopPropagation();
       selectFSNode?.(nextNode.path);
       return;
-    } else if (e.key === "ArrowLeft" && !isRoot) {
-      e.stopPropagation();
-      selectFSNode?.(path);
-    } else if (e.key === "ArrowRight" && currentNode.type === "folder") {
-      e.stopPropagation();
-      // Select first node in folder:
-      const folderContents = await wrappedWorker.getDirectoryContents(extId, currentNode.path);
-      selectFSNode?.(folderContents[0].path);
     }
   };
 
@@ -190,30 +180,46 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
     }
   }, [selected, liRef.current]);
 
-  const toggleHandler = (e: Event) => {
+  const summaryClickHandler = (e: MouseEvent) => {
+    e.preventDefault();
+
     setExpanded(!expanded);
     selectFSNode?.(node.path);
+
     if (renderContent) {
       return;
     }
-    if ((e.target as HTMLDetailsElement).open) {
+
+    if (!expanded) {
       setRenderContent(true);
     }
   };
 
   const keyDownHandler = async (e: KeyboardEvent) => {
-    if (!expanded || e.key !== "ArrowDown") {
-      return;
+    if (expanded && e.key === "ArrowLeft") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (selected) {
+        setExpanded(false);
+      } else {
+        selectFSNode?.(node.path);
+      }
+    } else if (expanded && (e.key === "ArrowRight" || e.key === "ArrowDown")) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Select first node in folder.
+      const folderContents = await wrappedWorker.getDirectoryContents(extId, node.path);
+      selectFSNode?.(folderContents[0].path);
+    } else if (!expanded && e.key === "ArrowRight") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Open folder.
+      setRenderContent(true);
+      setExpanded(true);
     }
-    // Prevent scrolling.
-    e.preventDefault();
-
-    // Prevent the wrapping FolderContentView from handling this.
-    e.stopPropagation();
-
-    // Select first node in folder:
-    const folderContents = await wrappedWorker.getDirectoryContents(extId, node.path);
-    selectFSNode?.(folderContents[0].path);
   };
 
   return (
@@ -226,8 +232,8 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
       aria-selected={selected}
       data-path={node.path}
     >
-      <details onToggle={toggleHandler}>
-        <summary onKeyDown={keyDownHandler}>
+      <details onKeyDown={keyDownHandler} open={expanded}>
+        <summary onClick={summaryClickHandler}>
           <span id={labelId} class="name">
             {node.name}
           </span>
