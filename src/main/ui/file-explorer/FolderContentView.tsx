@@ -44,12 +44,13 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       // No selection -> no selection change.
       return;
     }
+
     if (!selectionDirname!.startsWith(path)) {
       // Keyboard interaction not relevant for the current subtree.
       return;
     }
 
-    if (e.key !== "Enter" && !arrowKeys.has(e.key)) {
+    if (e.key !== "Enter" && e.key !== "ArrowDown" && e.key !== "ArrowUp") {
       return;
     }
 
@@ -57,7 +58,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
     e.preventDefault();
 
     // We check for prefix such that we can let the event bubble up and let the parent handle this.
-    const index = contents.findIndex((node) => node.path.startsWith(selectedPath));
+    const index = contents.findIndex((node) => selectedPath.startsWith(node.path));
 
     if (index < 0) {
       return;
@@ -205,7 +206,7 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
       } else {
         selectFSNode?.(node.path);
       }
-    } else if (expanded && (e.key === "ArrowRight" || e.key === "ArrowDown")) {
+    } else if (expanded && selected && (e.key === "ArrowRight" || e.key === "ArrowDown")) {
       e.preventDefault();
       e.stopPropagation();
 
@@ -246,8 +247,6 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
     </li>
   );
 };
-
-const arrowKeys = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]);
 
 type FileDTO = FSNodeDTO & { type: "file" };
 type FolderDTO = FSNodeDTO & { type: "folder" };
