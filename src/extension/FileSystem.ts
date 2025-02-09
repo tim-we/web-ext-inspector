@@ -85,7 +85,7 @@ export class FSFile extends FSNode {
     this.#tags.add(tag);
   }
 
-  asJSON(): FSNodeDTO {
+  override asJSON(): FSNodeDTO {
     return {
       type: "file",
       name: this.name,
@@ -109,7 +109,7 @@ export class FSFolder extends FSNode {
     return this.#files;
   }
 
-  asJSON(): FSNodeDTO {
+  override asJSON(): FSNodeDTO {
     return {
       type: "folder",
       name: this.name,

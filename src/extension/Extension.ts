@@ -13,21 +13,22 @@ export default class Extension {
   readonly manifest: Readonly<Manifest>;
   readonly files: FSFolder;
   readonly #objectURLs = new Map<string, string>();
-  #translations: Map<string, Translations> = new Map();
+  readonly #translations: Map<string, Translations>;
 
   private constructor(
     blob: Blob,
     root: FSFolder,
     manifest: Manifest,
-    defaultTranslations?: Translations,
+    translations: Map<string, Translations>,
     icon?: string
   ) {
+    /* Some of the initialization happens in the static create method because the constructor is not async. */
+
     this.id = createUniqueId();
     this.files = root;
     this.manifest = Object.freeze(manifest);
-    if (manifest.default_locale && defaultTranslations) {
-      this.#translations.set(manifest.default_locale, defaultTranslations);
-    }
+    this.#translations = translations;
+
     this.#objectURLs.set("download", URL.createObjectURL(blob));
     if (icon) {
       this.#objectURLs.set("icon", icon);
@@ -43,10 +44,24 @@ export default class Extension {
     const manifest = JSON.parse(rawManifest.replace(/^\/\/.+$/gm, "")) as Manifest;
 
     // Translations
-    let translations: Translations | undefined;
+    const translations = new Map<string, Translations>();
     if (manifest.default_locale !== undefined) {
-      const messagesFile = files.getFile(`_locales/${manifest.default_locale}/messages.json`);
-      translations = JSON.parse(await messagesFile.text());
+      // default_locale must be present if the _locales subdirectory is present, must be absent otherwise.
+      // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/default_locale
+
+      await Promise.all(
+        Array.from(files.getFolder("_locales")!.children.values())
+          .filter((node) => node instanceof FSFolder)
+          .filter((folder) => folder.getFile("messages.json", false))
+          .map(async (folder) => {
+            const rawFileContent = await folder.getFile("messages.json").text();
+            translations.set(folder.name, JSON.parse(rawFileContent));
+          })
+      );
+
+      if (!translations.has(manifest.default_locale)) {
+        console.warn(`Default locale (${manifest.default_locale}) missing.`);
+      }
     }
 
     // Icon
@@ -85,11 +100,6 @@ export default class Extension {
       return false;
     })(manifest.background);
 
-    const locales = Array.from(this.files.getFolder("_locales")?.children?.values() ?? [])
-      .filter((node) => node instanceof FSFolder)
-      .filter((folder) => folder.getFile("messages.json", false))
-      .map((node) => node.name);
-
     return {
       id: this.id,
       downloadUrl: this.#objectURLs.get("download")!,
@@ -117,8 +127,8 @@ export default class Extension {
         jsType: Runner.supports(this) ? "classic" : undefined
       },
       translations: {
-        locales: locales,
-        strings: Object.keys(this.#translations.get(manifest.default_locale ?? "") ?? {}).length, // TODO: count strings from all languages?
+        locales: Array.from(this.#translations.keys()),
+        messages: Object.keys(this.#translations.get(manifest.default_locale ?? "") ?? {}).length, // TODO: count strings from all languages?
         defaultLocale: manifest.default_locale
       }
     };

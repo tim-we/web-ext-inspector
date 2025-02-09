@@ -4,7 +4,7 @@ import Tile from "./Tile";
 
 const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = ({
   locales,
-  strings,
+  messages,
   defaultLocale
 }) => (
   <Tile title="Translations" cssClass="translations" modal={createModalOptions}>
@@ -18,7 +18,7 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = ({
             <td>Locales</td>
           </tr>
           <tr>
-            <td class="count">{strings}</td>
+            <td class="count">{messages}</td>
             <td>Strings</td>
           </tr>
           <tr>

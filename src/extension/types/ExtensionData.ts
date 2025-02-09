@@ -35,7 +35,7 @@ export type ExtensionData = {
 
   translations: {
     locales: string[];
-    strings: number;
+    messages: number;
     defaultLocale?: string;
   };
 };
