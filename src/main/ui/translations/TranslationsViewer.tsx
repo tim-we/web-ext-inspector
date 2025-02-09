@@ -4,6 +4,8 @@ import { useState, useEffect } from "preact/hooks";
 import wrappedWorker from "../../MainWorkerRef";
 import type { TranslationsInfo } from "../../../extension/Extension";
 
+import "./translations.css";
+
 type ViewerProps = { extId: ExtensionId; meta: ExtensionData["translations"] };
 
 const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => {
@@ -44,48 +46,65 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
     });
   }, [extId, selectedLocales, loadedLocales]);
 
+  function localeLabel(locale: string): string {
+    const label = intlLocaleDisplayNames.of(locale) ?? locale;
+    const data = loadedLocales.get(locale);
+    if (data && data.percentage < 1) {
+      return `${label} (${Math.floor(100 * data.percentage)}%)`;
+    }
+    return label;
+  }
+
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Key</th>
-          {selectedLocales.map((locale) => (
-            <th key={locale}>{intlLocaleDisplayNames.of(locale) ?? locale}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {allKeys.map((key) => (
-          <tr key={key}>
-            <td title={key}>{key}</td>
-            {selectedLocales.map((locale) => {
-              const translations = loadedLocales.get(locale);
+    <>
+      <table class="translations">
+        <thead>
+          <tr>
+            <th>Key</th>
+            {selectedLocales.map((locale) => (
+              <th key={locale} title={locale}>
+                {localeLabel(locale)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {allKeys.map((key) => (
+            <tr key={key}>
+              <td title={key}>{key}</td>
+              {selectedLocales.map((locale) => {
+                const translations = loadedLocales.get(locale);
 
-              if (!translations) {
-                return <td key={`${key}:${locale}`}>...</td>;
-              }
+                if (!translations) {
+                  return <td key={`${key}:${locale}`}>...</td>;
+                }
 
-              if (!Object.hasOwn(translations.messages, key)) {
+                if (!Object.hasOwn(translations.messages, key)) {
+                  return (
+                    <td key={`${key}:${locale}`} class="missing">
+                      -
+                    </td>
+                  );
+                }
+
+                const translation = translations.messages[key];
+                const message =
+                  translation.message.length > 120
+                    ? `${translation.message.substring(0, 100)}...`
+                    : translation.message;
+
                 return (
-                  <td key={`${key}:${locale}`} class="missing">
-                    -
+                  <td key={`${key}:${locale}`} title={translation.description}>
+                    {message}
                   </td>
                 );
-              }
-
-              const translation = translations.messages[key];
-
-              return (
-                <td key={`${key}:${locale}`} title={translation.description}>
-                  {translation.message}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
-      <tfoot />
-    </table>
+              })}
+            </tr>
+          ))}
+        </tbody>
+        <tfoot />
+      </table>
+    </>
   );
 };
 

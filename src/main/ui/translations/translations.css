@@ -1,0 +1,24 @@
+table.translations {
+    border-collapse: collapse;
+
+    th, td {
+        padding: 0.2em 0.4em;
+    }
+
+    th {
+        text-align: start;
+        padding-bottom: 0.25em;
+    }
+
+    tbody {
+        td {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        tr:nth-child(odd) > td {
+            background-color: rgba(128, 128, 128, 0.1);
+        }
+    }
+}

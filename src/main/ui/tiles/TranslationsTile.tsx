@@ -1,7 +1,8 @@
 import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 import Tile from "./Tile";
-import TranslationsViewer from "../popups/TranslationsViewer";
+import TranslationsViewer from "../translations/TranslationsViewer";
+import type { PopupWindowOptions } from "../popups/PopupWindow";
 
 const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta) => {
   const { locales, messages, defaultLocale, percentage } = meta;
@@ -27,7 +28,7 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta
             </tr>
             {percentage !== undefined ? (
               <tr>
-                <td class="count">{Math.round(100 * percentage)}%</td>
+                <td class="count">{Math.floor(100 * percentage)}%</td>
                 <td>translated</td>
               </tr>
             ) : null}
@@ -40,9 +41,14 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta
 
 export default TranslationsTile;
 
-function createPopupOptions(id: ExtensionData["id"], data: ExtensionData["translations"]) {
+function createPopupOptions(
+  id: ExtensionData["id"],
+  data: ExtensionData["translations"]
+): PopupWindowOptions {
   return {
     title: "Translations",
-    content: <TranslationsViewer extId={id} meta={data} />
+    content: <TranslationsViewer extId={id} meta={data} />,
+    initialWidth: 1280,
+    initialHeight: 720
   };
 }
