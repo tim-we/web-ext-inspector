@@ -20,5 +20,20 @@ table.translations {
         tr:nth-child(odd) > td {
             background-color: rgba(128, 128, 128, 0.1);
         }
+
+        tr:hover td {
+            background-color: rgba(128, 128, 128, 0.2);
+        }
+
+        td.missing {
+            text-align: center;
+            background-color: rgba(255, 64, 64, 0.1);
+            color: red;
+            user-select: none;
+
+            tr:hover & {
+                background-color: rgba(255, 64, 64, 0.2);
+            }
+        }
     }
 }

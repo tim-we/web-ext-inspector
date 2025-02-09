@@ -1,6 +1,6 @@
 import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import wrappedWorker from "../../MainWorkerRef";
 import type { TranslationsInfo } from "../../../extension/Extension";
 
@@ -11,10 +11,14 @@ type ViewerProps = { extId: ExtensionId; meta: ExtensionData["translations"] };
 const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => {
   const [selectedLocales, setSelectedLocales] = useState<readonly string[]>([]);
   const [loadedLocales, setLoadedLocales] = useState<Map<string, TranslationsInfo>>(new Map());
+  const selectRef = useRef<HTMLSelectElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const defaultLocale = loadedLocales.get(meta.defaultLocale!);
   const allKeys = defaultLocale
     ? [...Object.keys(defaultLocale.messages), ...defaultLocale.missingKeys]
     : [];
+  const remainingLocales = Array.from(new Set(meta.locales).difference(new Set(selectedLocales)));
 
   // Set initially selected locales.
   useEffect(() => {
@@ -46,13 +50,19 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
     });
   }, [extId, selectedLocales, loadedLocales]);
 
-  function localeLabel(locale: string): string {
+  function localeLabel(locale: string, hidePercentage = false): string {
     const label = intlLocaleDisplayNames.of(locale) ?? locale;
     const data = loadedLocales.get(locale);
-    if (data && data.percentage < 1) {
+    if (!hidePercentage && data && data.percentage < 1) {
       return `${label} (${Math.floor(100 * data.percentage)}%)`;
     }
     return label;
+  }
+
+  function addLocale() {
+    if (selectRef.current) {
+      setSelectedLocales(Array.from(new Set([...selectedLocales, selectRef.current.value])));
+    }
   }
 
   return (
@@ -81,7 +91,11 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
 
                 if (!Object.hasOwn(translations.messages, key)) {
                   return (
-                    <td key={`${key}:${locale}`} class="missing">
+                    <td
+                      key={`${key}:${locale}`}
+                      class="missing"
+                      title={`${localeLabel(locale, true)} translation missing`}
+                    >
                       -
                     </td>
                   );
@@ -104,6 +118,20 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
         </tbody>
         <tfoot />
       </table>
+      {remainingLocales.length > 0 ? (
+        <div>
+          <select ref={selectRef}>
+            {remainingLocales.map((locale) => (
+              <option key={locale} value={locale} title={locale}>
+                {localeLabel(locale)}
+              </option>
+            ))}
+          </select>
+          <button type="button" ref={buttonRef} onClick={addLocale}>
+            Add
+          </button>
+        </div>
+      ) : null}
     </>
   );
 };
