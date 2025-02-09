@@ -22,10 +22,10 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
 
   // Set initially selected locales.
   useEffect(() => {
-    setSelectedLocales(
-      Array.from(new Set(navigator.languages).intersection(new Set(meta.locales)))
-    );
-  }, [meta.locales]);
+    const initialLocales = new Set(navigator.languages).intersection(new Set(meta.locales));
+    initialLocales.add(meta.defaultLocale!);
+    setSelectedLocales(Array.from(initialLocales));
+  }, [meta.locales, meta.defaultLocale]);
 
   // Load missing locales.
   useEffect(() => {
@@ -66,7 +66,7 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
   }
 
   return (
-    <>
+    <div class="translations-viewer">
       <table class="translations">
         <thead>
           <tr>
@@ -119,20 +119,22 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
         <tfoot />
       </table>
       {remainingLocales.length > 0 ? (
-        <div>
-          <select ref={selectRef}>
-            {remainingLocales.map((locale) => (
-              <option key={locale} value={locale} title={locale}>
-                {localeLabel(locale)}
-              </option>
-            ))}
-          </select>
-          <button type="button" ref={buttonRef} onClick={addLocale}>
-            Add
-          </button>
+        <div class="locale-selector">
+          <div>
+            <select ref={selectRef}>
+              {remainingLocales.map((locale) => (
+                <option key={locale} value={locale} title={locale}>
+                  {`${locale} - ${localeLabel(locale)}`}
+                </option>
+              ))}
+            </select>
+            <button type="button" class="action" ref={buttonRef} onClick={addLocale}>
+              Add
+            </button>
+          </div>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 
