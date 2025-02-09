@@ -210,8 +210,20 @@ export default class Extension {
     };
   }
 
+  /**
+   * Get the translated messages for the given locale and some meta information including:
+   * - messages (keys) that are missing (not translated) in this locale
+   * - the percentage of translated messages in this locale
+   */
   getTranslations(locale: string): TranslationsInfo | undefined {
-    const messages = this.#translations.get(locale);
+    let actualLocale = locale;
+    let messages = this.#translations.get(actualLocale);
+
+    if (!messages && locale.includes("-")) {
+      // If the requested locale is en-US we can use en as a fallback.
+      actualLocale = locale.split("-")[0];
+      messages = this.#translations.get(actualLocale);
+    }
 
     if (!messages) {
       return undefined;
@@ -224,8 +236,9 @@ export default class Extension {
     return {
       percentage: translatedKeys.size / allMessageKeys.size,
       missingKeys: missingKeys,
-      messages: messages
-    }
+      messages: messages,
+      locale: actualLocale
+    };
   }
 
   free() {
@@ -324,4 +337,5 @@ export type TranslationsInfo = {
   percentage: number;
   missingKeys: Set<string>;
   messages: Translations;
-}
+  locale: string;
+};

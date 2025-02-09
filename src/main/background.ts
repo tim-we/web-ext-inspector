@@ -5,7 +5,7 @@ import type { ExtensionData } from "../extension/types/ExtensionData";
 import * as zip from "@zip.js/zip.js";
 import * as Comlink from "comlink";
 
-import Extension, { type PermissionsInfo } from "../extension/Extension";
+import Extension, { type TranslationsInfo, type PermissionsInfo } from "../extension/Extension";
 import * as FSCursor from "../extension/FSCursor";
 import Runner from "../runner/Runner";
 
@@ -110,6 +110,12 @@ const exposedMethods = {
     const { extension } = sessions.get(sessionId)!;
 
     return extension.getPermissions();
+  },
+
+  getTranslations(sessionId: string, locale: string): TranslationsInfo | undefined {
+    const { extension } = sessions.get(sessionId)!;
+
+    return extension.getTranslations(locale);
   },
 
   getFileDownloadUrl(sessionId: string, path: string): Promise<string> {
