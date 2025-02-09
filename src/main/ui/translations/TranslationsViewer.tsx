@@ -29,7 +29,7 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
 
   // Load missing locales.
   useEffect(() => {
-    if (selectedLocales.size === loadedLocales.size) {
+    if (selectedLocales.difference(loadedLocales).size === 0) {
       return;
     }
 
