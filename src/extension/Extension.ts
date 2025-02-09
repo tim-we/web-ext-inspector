@@ -35,6 +35,12 @@ export default class Extension {
     }
   }
 
+  /**
+   * Create a new `Extension` instance.
+   *
+   * We use this method instead of the constructor because the constructor is not async.
+   * The zip.js APIs are async and we need to get some values to construct the instance.
+   */
   static async create(zipData: Blob): Promise<Extension> {
     const zipReader = new zip.ZipReader(new zip.BlobReader(zipData));
     const files = await createFileSystem(zipReader.getEntriesGenerator());
