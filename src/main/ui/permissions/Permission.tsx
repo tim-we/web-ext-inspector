@@ -7,6 +7,8 @@ const Permission: FunctionComponent<PermissionProps> = (props) => {
 
   const label = "name" in props ? props.name : props.host;
 
+  // TODO: mark private APIs such as accessibilityPrivate
+
   return <span class={classes.join(" ")}>{label}</span>;
 };
 

@@ -206,6 +206,10 @@ export default class Extension {
     this.#objectURLs.forEach((url) => URL.revokeObjectURL(url));
   }
 
+  /**
+   * Get translations of localized manifest strings.
+   * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization#internationalizing_manifest.json
+   */
   #__MSG_i18n(rawString: string, locale = this.manifest.default_locale): string {
     if (!locale || !this.#translations.has(locale)) {
       return rawString;
