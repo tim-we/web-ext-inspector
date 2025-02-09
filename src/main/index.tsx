@@ -1,7 +1,7 @@
 import type { ExtensionData } from "../extension/types/ExtensionData";
 
 import * as Preact from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 import wrappedWorker from "./MainWorkerRef";
 import ExtensionView from "./ui/extension/ExtensionView";
@@ -25,6 +25,10 @@ const App: Preact.FunctionComponent = () => {
 
   const showSelector = extensions.length === 0 || selector;
 
+  useEffect(() => {
+    wrappedWorker.loadExtension("/test/extension.xpi").then((data) => setExtensions([data]));
+  }, []);
+
   return (
     <>
       {showSelector && <ExtensionSelector closable={extensions.length > 0} />}
@@ -40,20 +44,3 @@ Preact.render(<App />, root);
 // Remove temporary style sheet because when this (deferred) script runs
 // the proper CSS has been loaded already.
 document.querySelector<HTMLLinkElement>("#temporary-style")!.remove();
-
-(async () => {
-  const data = await wrappedWorker.loadExtension("/test/extension.xpi");
-
-  Preact.render(
-    <>
-      <ExtensionSelector closable={true} />
-      <ExtensionView data={data} />
-    </>,
-    root
-  );
-
-  // if (data.dynamicAnalysis.supported) {
-  //   console.log("running extension...");
-  //   await wrappedWorker.run(data.id);
-  // }
-})();
