@@ -210,6 +210,24 @@ export default class Extension {
     };
   }
 
+  getTranslations(locale: string): TranslationsInfo | undefined {
+    const messages = this.#translations.get(locale);
+
+    if (!messages) {
+      return undefined;
+    }
+
+    const allMessageKeys = new Set(this.#translations.values().flatMap((t) => Object.keys(t)));
+    const translatedKeys = new Set(Object.keys(messages));
+    const missingKeys = allMessageKeys.difference(translatedKeys);
+
+    return {
+      percentage: translatedKeys.size / allMessageKeys.size,
+      missingKeys: missingKeys,
+      messages: messages
+    }
+  }
+
   free() {
     this.#objectURLs.forEach((url) => URL.revokeObjectURL(url));
   }
@@ -301,3 +319,9 @@ export type PermissionsInfo = {
     optional: string[];
   };
 };
+
+export type TranslationsInfo = {
+  percentage: number;
+  missingKeys: Set<string>;
+  messages: Translations;
+}
