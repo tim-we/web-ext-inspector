@@ -37,5 +37,6 @@ export type ExtensionData = {
     locales: string[];
     messages: number;
     defaultLocale?: string;
+    percentage?: number;
   };
 };

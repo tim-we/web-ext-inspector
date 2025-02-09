@@ -5,7 +5,8 @@ import Tile from "./Tile";
 const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = ({
   locales,
   messages,
-  defaultLocale
+  defaultLocale,
+  percentage
 }) => (
   <Tile title="Translations" cssClass="translations" popup={createPopupOptions}>
     {locales.length === 0 ? (
@@ -25,6 +26,12 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = ({
             <td title="Default locale">{defaultLocale ?? "-"}</td>
             <td>Default</td>
           </tr>
+          {percentage !== undefined ? (
+            <tr>
+              <td class="count">{Math.round(100 * percentage)}%</td>
+              <td>translated</td>
+            </tr>
+          ) : null}
         </tbody>
       </table>
     )}

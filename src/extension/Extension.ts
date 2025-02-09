@@ -7,6 +7,7 @@ import { FSFolder } from "./FileSystem";
 import type { ExtensionData } from "./types/ExtensionData";
 import type { Manifest } from "./types/Manifest";
 import type { Translations } from "./types/Translations";
+import { sum } from "../utilities/iterators";
 
 export default class Extension {
   readonly id: string;
@@ -106,6 +107,9 @@ export default class Extension {
       return false;
     })(manifest.background);
 
+    const messageKeys = new Set(this.#translations.values().flatMap((t) => Object.keys(t))).size;
+    const translatedMessages = sum(this.#translations.values().map((t) => Object.keys(t).length));
+
     return {
       id: this.id,
       downloadUrl: this.#objectURLs.get("download")!,
@@ -134,8 +138,12 @@ export default class Extension {
       },
       translations: {
         locales: Array.from(this.#translations.keys()),
-        messages: Object.keys(this.#translations.get(manifest.default_locale ?? "") ?? {}).length, // TODO: count strings from all languages?
-        defaultLocale: manifest.default_locale
+        messages: messageKeys,
+        defaultLocale: manifest.default_locale,
+        percentage:
+          this.#translations.size * messageKeys > 0
+            ? translatedMessages / (this.#translations.size * messageKeys)
+            : undefined
       }
     };
   }
