@@ -15,6 +15,10 @@
             display: flex;
             flex-direction: row;
             gap: var(--base-offset);
+
+            button::before {
+                background-image: url("../../../assets/bootstrap-icons/plus-lg.svg");
+            }
         }
     }
 }
@@ -29,6 +33,28 @@ table.translations {
     th {
         text-align: start;
         padding-bottom: 0.25em;
+
+        & > div {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            width: 16px;
+            height: 16px;
+            border: none;
+            padding: 0;
+            background-color: transparent;
+            background-image: url("../../../assets/bootstrap-icons/dash-circle.svg");
+            opacity: 0.8;
+
+            &:hover {
+                background-image: url("../../../assets/bootstrap-icons/dash-circle-fill.svg");
+                opacity: 1;
+            }
+        }
     }
 
     tbody {
@@ -36,10 +62,18 @@ table.translations {
             max-width: 250px;
             overflow: hidden;
             text-overflow: ellipsis;
+
+            &:first-child {
+                font-family: monospace;
+            }
         }
 
         tr:nth-child(odd) > td {
             background-color: rgba(128, 128, 128, 0.1);
+
+            &.missing {
+                background-color: rgba(255, 64, 64, 0.125);
+            }
         }
 
         tr:hover td {

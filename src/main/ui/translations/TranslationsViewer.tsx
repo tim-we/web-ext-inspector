@@ -9,7 +9,7 @@ import "./translations.css";
 type ViewerProps = { extId: ExtensionId; meta: ExtensionData["translations"] };
 
 const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => {
-  const [selectedLocales, setSelectedLocales] = useState<readonly string[]>([]);
+  const [selectedLocales, setSelectedLocales] = useState<Set<string>>(new Set());
   const [loadedLocales, setLoadedLocales] = useState<Map<string, TranslationsInfo>>(new Map());
   const selectRef = useRef<HTMLSelectElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -24,18 +24,16 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
   useEffect(() => {
     const initialLocales = new Set(navigator.languages).intersection(new Set(meta.locales));
     initialLocales.add(meta.defaultLocale!);
-    setSelectedLocales(Array.from(initialLocales));
+    setSelectedLocales(initialLocales);
   }, [meta.locales, meta.defaultLocale]);
 
   // Load missing locales.
   useEffect(() => {
-    if (selectedLocales.length === loadedLocales.size) {
+    if (selectedLocales.size === loadedLocales.size) {
       return;
     }
 
-    const notLoadedLocales = Array.from(
-      new Set(selectedLocales).difference(new Set(loadedLocales.keys()))
-    );
+    const notLoadedLocales = Array.from(selectedLocales.difference(new Set(loadedLocales.keys())));
     const copiedMap = new Map(loadedLocales);
 
     Promise.all(
@@ -61,8 +59,14 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
 
   function addLocale() {
     if (selectRef.current) {
-      setSelectedLocales(Array.from(new Set([...selectedLocales, selectRef.current.value])));
+      setSelectedLocales(new Set([...selectedLocales, selectRef.current.value]));
     }
+  }
+
+  function removeLocale(locale: string) {
+    const copy = new Set(selectedLocales);
+    copy.delete(locale);
+    setSelectedLocales(copy);
   }
 
   return (
@@ -71,9 +75,14 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
         <thead>
           <tr>
             <th>Key</th>
-            {selectedLocales.map((locale) => (
-              <th key={locale} title={locale}>
-                {localeLabel(locale)}
+            {Array.from(selectedLocales).map((locale) => (
+              <th key={locale}>
+                <div>
+                  <span title={locale}>{localeLabel(locale)}</span>
+                  {selectedLocales.size > 1 ? (
+                    <button type="button" title="remove" onClick={() => removeLocale(locale)} />
+                  ) : null}
+                </div>
               </th>
             ))}
           </tr>
@@ -82,7 +91,7 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
           {allKeys.map((key) => (
             <tr key={key}>
               <td title={key}>{key}</td>
-              {selectedLocales.map((locale) => {
+              {Array.from(selectedLocales).map((locale) => {
                 const translations = loadedLocales.get(locale);
 
                 if (!translations) {
@@ -128,7 +137,7 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
                 </option>
               ))}
             </select>
-            <button type="button" class="action" ref={buttonRef} onClick={addLocale}>
+            <button type="button" class="action with-icon" ref={buttonRef} onClick={addLocale}>
               Add
             </button>
           </div>
