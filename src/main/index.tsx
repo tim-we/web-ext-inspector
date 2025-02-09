@@ -8,7 +8,7 @@ import ExtensionView from "./ui/extension/ExtensionView";
 import ExtensionSelector from "./ui/selector/ExtensionSelector";
 
 import "./ui/main.css";
-import { modalRoot } from "./ui/modals/ModalWindow";
+import { popupRoot } from "./ui/popups/PopupWindow";
 
 declare const __VERSION__: string;
 
@@ -16,7 +16,7 @@ const root = document.querySelector("main")!;
 
 document.querySelector<HTMLSpanElement>("#app-version")!.innerText = `v${__VERSION__}`;
 
-document.body.append(modalRoot);
+document.body.append(popupRoot);
 
 const App: Preact.FunctionComponent = () => {
   // TODO: consider Preact Signals

@@ -15,7 +15,7 @@ const MetaTile: FunctionComponent<ExtensionData["meta"]> = ({
   manifestVersion
 }) => {
   return (
-    <Tile title="Meta" cssClass="meta" modal={createModalOptions}>
+    <Tile title="Meta" cssClass="meta" popup={createPopupOptions}>
       {icon && <img src={icon} alt="extension icon" />}
       <div class="hfill" />
       <ul>
@@ -38,9 +38,12 @@ const MetaTile: FunctionComponent<ExtensionData["meta"]> = ({
 
 export default MetaTile;
 
-function createModalOptions() {
+function createPopupOptions() {
   return {
     title: "Meta Information",
     content: "Not yet implemented."
   };
 }
+
+// TODO:
+// - list of features (actions, options page, content scripts, ...)

@@ -13,7 +13,7 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
 }) => {
   // TODO: WebAssembly ?
   return (
-    <Tile title="Files" cssClass="files" modal={createFileExplorerModalOptions}>
+    <Tile title="Files" cssClass="files" popup={createFileExplorerPopupOptions}>
       <table>
         <tbody>
           <tr class={javascript === 0 ? "none" : ""}>
@@ -41,7 +41,7 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
 
 export default FilesTile;
 
-function createFileExplorerModalOptions(extensionId: string) {
+function createFileExplorerPopupOptions(extensionId: string) {
   return {
     title: "File Explorer",
     icon: "file-explorer",

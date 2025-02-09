@@ -7,10 +7,10 @@ import "prismjs/themes/prism-okaidia.css";
 import "./code-viewer.css";
 
 import wrappedWorker from "../../MainWorkerRef";
-import { showModalWindow } from "../modals/ModalWindow";
+import { showPopupWindow } from "../popups/PopupWindow";
 
 export function openCodeViewer(extensionId: ExtensionId, path: string): void {
-  showModalWindow(extensionId, {
+  showPopupWindow(extensionId, {
     title: path.replace(/^\//, ""),
     icon: "code-viewer",
     content: <CodeViewer extId={extensionId} path={path} />,

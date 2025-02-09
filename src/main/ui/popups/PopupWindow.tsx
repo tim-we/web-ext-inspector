@@ -3,38 +3,39 @@ import type { ComponentChildren, FunctionComponent } from "preact";
 import * as Preact from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
-import "./modal-window.css";
+import "./popup-window.css";
 import { useRef } from "preact/hooks";
 
-export const modalRoot = document.createElement("div");
-modalRoot.id = "modal-root";
+export const popupRoot = document.createElement("div");
+popupRoot.id = "popup-root";
 
-const modalWindows = new Map<ExtensionId, Set<HTMLElement>>();
+const popupWindows = new Map<ExtensionId, Set<HTMLElement>>();
 
-export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions): Promise<void> {
-  const modal = document.createElement("aside");
-  modal.classList.add("modal-window");
+export function showPopupWindow(extId: ExtensionId, options: PopupWindowOptions): Promise<void> {
+  const popup = document.createElement("aside");
+  popup.role = "dialog";
+  popup.classList.add("popup-window");
   if (options.color) {
-    modal.style.setProperty("--color", options.color);
+    popup.style.setProperty("--color", options.color);
   }
 
   // Hide element until its size has been computed.
-  modal.style.visibility = "hidden";
+  popup.style.visibility = "hidden";
 
-  modal.addEventListener("click", (e) => e.stopPropagation());
-  modalRoot.append(modal);
+  popup.addEventListener("click", (e) => e.stopPropagation());
+  popupRoot.append(popup);
 
   // Window movement & resizing code.
   const createMoveOrResizeFn = (resize: boolean) => (e: MouseEvent) => {
     e.stopPropagation();
-    modal.classList.add("moving");
+    popup.classList.add("moving");
 
-    if (modalRoot.lastElementChild !== modal) {
-      // Move node so its the last child (and thus on top of other modals).
-      modalRoot.append(modal);
+    if (popupRoot.lastElementChild !== popup) {
+      // Move node so its the last child (and thus on top of other popup windows).
+      popupRoot.append(popup);
     }
 
-    const rect = modal.getBoundingClientRect();
+    const rect = popup.getBoundingClientRect();
     let x = resize ? rect.width : rect.x;
     let y = resize ? rect.height : rect.y;
 
@@ -42,9 +43,9 @@ export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions)
       x += e.movementX;
       y += e.movementY;
       if (resize) {
-        updateModalSize(modal, x, y);
+        updatePopupSize(popup, x, y);
       } else {
-        updateModalPosition(modal, rect, x, y);
+        updatePopupPosition(popup, rect, x, y);
       }
 
       // Avoid accidental text selection.
@@ -52,7 +53,7 @@ export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions)
     };
 
     const cleanup = () => {
-      modal.classList.remove("moving");
+      popup.classList.remove("moving");
       window.removeEventListener("mousemove", moveCallback);
       window.removeEventListener("mouseup", cleanup);
       window.removeEventListener("mouseleave", cleanup);
@@ -63,29 +64,29 @@ export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions)
     window.addEventListener("mouseleave", cleanup);
   };
 
-  // Register modal window.
-  const extWindows = modalWindows.get(extId) ?? new Set();
-  extWindows.add(modal);
-  modalWindows.set(extId, extWindows);
+  // Register popup window.
+  const extWindows = popupWindows.get(extId) ?? new Set();
+  extWindows.add(popup);
+  popupWindows.set(extId, extWindows);
 
   return new Promise((resolve) => {
     const closeFn = async () => {
-      modal.classList.add("closing");
-      await modal.animate(
+      popup.classList.add("closing");
+      await popup.animate(
         [
           { opacity: 1, transform: "scale(1, 1)" },
           { opacity: 0, transform: "scale(0.8,0.8)" }
         ],
         { duration: 100, easing: "ease-in" }
       ).finished;
-      Preact.render(null, modal);
-      modal.remove();
-      extWindows.delete(modal);
+      Preact.render(null, popup);
+      popup.remove();
+      extWindows.delete(popup);
       resolve();
     };
 
     Preact.render(
-      <InnerModal
+      <InnerPopup
         title={options.title}
         icon={options.icon}
         closeFn={closeFn}
@@ -93,22 +94,22 @@ export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions)
         resizeStartFn={createMoveOrResizeFn(true)}
       >
         {options.content}
-      </InnerModal>,
-      modal
+      </InnerPopup>,
+      popup
     );
 
     // Compute size & position.
     if (options.initialWidth !== undefined) {
-      modal.style.width = `${Math.min(options.initialWidth, window.innerWidth)}px`;
+      popup.style.width = `${Math.min(options.initialWidth, window.innerWidth)}px`;
     }
     if (options.initialHeight !== undefined) {
-      modal.style.height = `${Math.min(options.initialHeight, window.innerHeight)}px`;
+      popup.style.height = `${Math.min(options.initialHeight, window.innerHeight)}px`;
     }
-    const rect = modal.getBoundingClientRect();
+    const rect = popup.getBoundingClientRect();
     const x = Math.floor(0.5 * (window.innerWidth - rect.width));
     const y = Math.floor(0.5 * (window.innerHeight - rect.height));
 
-    modal.animate(
+    popup.animate(
       [
         { opacity: 0, transform: "scale(0.9,0.9)" },
         { opacity: 1, transform: "scale(1, 1)" }
@@ -116,17 +117,17 @@ export function showModalWindow(extId: ExtensionId, options: ModalWindowOptions)
       { duration: 225, easing: "ease-out" }
     );
 
-    // Show modal and move it to the computed position.
-    modal.style.top = `${y}px`;
-    modal.style.left = `${x}px`;
-    modal.style.removeProperty("visibility");
+    // Show popup and move it to the computed position.
+    popup.style.top = `${y}px`;
+    popup.style.left = `${x}px`;
+    popup.style.removeProperty("visibility");
 
-    // Move focus to modal window.
-    setTimeout(() => modal.focus(), 1000); // TODO: doesn't work
+    // Move focus to popup window.
+    setTimeout(() => popup.focus(), 1000); // TODO: doesn't work
   });
 }
 
-const InnerModal: FunctionComponent<IMProps> = ({
+const InnerPopup: FunctionComponent<IMProps> = ({
   title,
   icon,
   closeFn,
@@ -140,9 +141,9 @@ const InnerModal: FunctionComponent<IMProps> = ({
     if (contentRef.current === null) {
       return;
     }
-    const modal = contentRef.current.parentElement!;
+    const popup = contentRef.current.parentElement!;
     const focused = document.activeElement;
-    if (modal.contains(focused)) {
+    if (popup.contains(focused)) {
       return;
     }
     contentRef.current.focus();
@@ -165,31 +166,31 @@ const InnerModal: FunctionComponent<IMProps> = ({
   );
 };
 
-function updateModalPosition(modal: HTMLElement, rect: DOMRect, x: number, y: number): void {
+function updatePopupPosition(popup: HTMLElement, rect: DOMRect, x: number, y: number): void {
   const safeX = Math.max(0, Math.min(x, window.innerWidth - rect.width));
   const safeY = Math.max(0, Math.min(y, window.innerHeight - rect.height));
 
-  modal.style.top = `${safeY}px`;
-  modal.style.left = `${safeX}px`;
+  popup.style.top = `${safeY}px`;
+  popup.style.left = `${safeX}px`;
 }
 
-function updateModalSize(modal: HTMLElement, width: number, height: number): void {
-  modal.style.width = `${Math.round(width)}px`;
-  modal.style.height = `${Math.round(height)}px`;
+function updatePopupSize(popup: HTMLElement, width: number, height: number): void {
+  popup.style.width = `${Math.round(width)}px`;
+  popup.style.height = `${Math.round(height)}px`;
 }
 
 window.addEventListener("resize", () => {
-  const allWindows = Array.from(modalWindows.values()).flatMap((wnds) => Array.from(wnds.values()));
-  for (const modal of allWindows) {
+  const allWindows = Array.from(popupWindows.values()).flatMap((wnds) => Array.from(wnds.values()));
+  for (const popup of allWindows) {
     // Move windows s.t. they stay in the viewbox if possible.
-    const rect = modal.getBoundingClientRect();
-    const x = Number.parseInt(modal.style.left, 10);
-    const y = Number.parseInt(modal.style.top, 10);
-    updateModalPosition(modal, rect, x, y);
+    const rect = popup.getBoundingClientRect();
+    const x = Number.parseInt(popup.style.left, 10);
+    const y = Number.parseInt(popup.style.top, 10);
+    updatePopupPosition(popup, rect, x, y);
   }
 });
 
-export type ModalWindowOptions = {
+export type PopupWindowOptions = {
   title: string;
   icon?: string;
   content: ComponentChildren;

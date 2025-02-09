@@ -2,7 +2,7 @@ import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
 import ExtensionIdContext from "../contexts/ExtensionIdContext";
-import { type ModalWindowOptions, showModalWindow } from "../modals/ModalWindow";
+import { type PopupWindowOptions, showPopupWindow } from "../popups/PopupWindow";
 
 import { useContext, useState } from "preact/hooks";
 import ExtensionColorContext from "../contexts/ExtensionColorContext";
@@ -10,11 +10,11 @@ import "./tiles.css";
 
 type Props = {
   title: string;
-  modal: (extId: ExtensionData["id"]) => ModalWindowOptions;
+  popup: (extId: ExtensionData["id"]) => PopupWindowOptions;
   cssClass?: string;
 };
 
-const Tile: FunctionComponent<Props> = ({ title, cssClass, modal: modalOptions, children }) => {
+const Tile: FunctionComponent<Props> = ({ title, cssClass, popup: popupOptions, children }) => {
   const extensionId = useContext(ExtensionIdContext)!;
   const color = useContext(ExtensionColorContext);
   const [hasWindow, setHasWindow] = useState(false);
@@ -27,10 +27,10 @@ const Tile: FunctionComponent<Props> = ({ title, cssClass, modal: modalOptions, 
 
     const options = {
       color,
-      ...modalOptions(extensionId)
+      ...popupOptions(extensionId)
     };
 
-    showModalWindow(extensionId, options).then(() => setHasWindow(false));
+    showPopupWindow(extensionId, options).then(() => setHasWindow(false));
     setHasWindow(true);
   };
 

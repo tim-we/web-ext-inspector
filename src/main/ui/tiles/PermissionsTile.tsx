@@ -8,7 +8,7 @@ const PermissionsTile: FunctionComponent<ExtensionData["permissions"]> = ({
   optional,
   host
 }) => (
-  <Tile title="Permissions" cssClass="permissions" modal={createModalOptions}>
+  <Tile title="Permissions" cssClass="permissions" popup={createPopupOptions}>
     <table>
       <tbody>
         <tr>
@@ -30,7 +30,7 @@ const PermissionsTile: FunctionComponent<ExtensionData["permissions"]> = ({
 
 export default PermissionsTile;
 
-function createModalOptions(extensionId: ExtensionData["id"]) {
+function createPopupOptions(extensionId: ExtensionData["id"]) {
   return {
     title: "Permissions",
     content: <PermissionsViewer extId={extensionId} />

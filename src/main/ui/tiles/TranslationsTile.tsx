@@ -7,7 +7,7 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = ({
   messages,
   defaultLocale
 }) => (
-  <Tile title="Translations" cssClass="translations" modal={createModalOptions}>
+  <Tile title="Translations" cssClass="translations" popup={createPopupOptions}>
     {locales.length === 0 ? (
       <span>no translations</span>
     ) : (
@@ -33,7 +33,7 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = ({
 
 export default TranslationsTile;
 
-function createModalOptions() {
+function createPopupOptions() {
   return {
     title: "Translations",
     content: "Not yet implemented."

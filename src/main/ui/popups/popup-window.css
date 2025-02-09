@@ -1,12 +1,12 @@
 @import "../variables.css";
 
-#modal-root {
+#popup-root {
   position: fixed;
   top: 0;
   left: 0;
 }
 
-.modal-window {
+.popup-window {
   position: absolute;
 
   display: flex;
@@ -142,7 +142,7 @@
   }
 }
 
-.modal-window header > .icon {
+.popup-window header > .icon {
   &.mw-icon-file-explorer {
     background-image: url("../../../assets/bootstrap-icons/folder2-open.svg");
   }
