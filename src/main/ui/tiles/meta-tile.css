@@ -1,0 +1,46 @@
+.tile.meta {
+  &.meta > h3::before {
+    background-image: url("../../../assets/bootstrap-icons/info-circle-fill.svg");
+  }
+
+  & > .content {
+    flex-direction: row;
+    justify-content: space-around;
+
+    img {
+      aspect-ratio: 1;
+      flex-shrink: 1;
+      min-width: 42px;
+      min-height: 42px;
+    }
+
+    .hfill {
+      min-width: 10px;
+      flex-grow: 1;
+    }
+
+    ul {
+      flex-grow: 1;
+      min-width: 100px;
+    }
+
+    ul > li {
+      display: flex;
+      flex-direction: column;
+      line-height: 1em;
+
+      &:not(:last-child) {
+        margin-bottom: 0.35em;
+      }
+
+      span:first-child {
+        font-size: 0.8em;
+        opacity: 0.75;
+      }
+
+      span:last-child {
+        font-family: monospace;
+      }
+    }
+  }
+}

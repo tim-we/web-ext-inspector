@@ -5,17 +5,20 @@ import FileExplorer from "../file-explorer/FileExplorer";
 import Tile from "./Tile";
 import DonutChart from "../common/DonutChart";
 
+import "./files-tile.css";
+
 const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
   javascript,
   html,
   css,
-  other,
-  size
+  json,
+  other
 }) => {
   const chartData = [
-    { amount: javascript, color: "rgb(240, 220, 78)" },
+    { amount: javascript, color: "rgb(247, 224, 24)" },
     { amount: html, color: "rgb(229, 76, 33)" },
     { amount: css, color: "rebeccapurple" },
+    { amount: json, color: "rgb(16, 182, 16)" },
     { amount: other, color: "rgb(213, 213, 213)" }
     // WASM: rgb(101, 78, 240)
   ];
@@ -30,7 +33,7 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
             <tr class={javascript === 0 ? "none" : ""}>
               <td>{javascript}</td>
               <td>
-                JavaScript <ChartColorIndicator color="rgb(240, 220, 78)" />
+                JavaScript <ChartColorIndicator color="rgb(247, 224, 24)" />
               </td>
             </tr>
             <tr class={html === 0 ? "none" : ""}>
@@ -45,6 +48,12 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
                 CSS <ChartColorIndicator color="rebeccapurple" />
               </td>
             </tr>
+            <tr class={json === 0 ? "none" : ""}>
+              <td>{json}</td>
+              <td>
+                JSON <ChartColorIndicator color="rgb(16, 182, 16)" />
+              </td>
+            </tr>
             <tr class={other === 0 ? "none" : ""}>
               <td>{other}</td>
               <td>
@@ -53,7 +62,6 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
             </tr>
           </tbody>
         </table>
-        <span class="total-size">{`Total size: ${size}`}</span>
       </div>
     </Tile>
   );

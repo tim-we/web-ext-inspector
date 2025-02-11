@@ -2,6 +2,8 @@ import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 import Tile from "./Tile";
 
+import "./meta-tile.css";
+
 const sources = {
   amo: "addons.mozilla.org",
   cws: "Chrome Web Store",
@@ -9,10 +11,10 @@ const sources = {
 };
 const MetaTile: FunctionComponent<ExtensionData["meta"]> = ({
   icon,
-  version,
   author,
   source,
-  manifestVersion
+  manifestVersion,
+  size
 }) => {
   return (
     <Tile title="Meta" cssClass="meta" popup={createPopupOptions}>
@@ -20,16 +22,16 @@ const MetaTile: FunctionComponent<ExtensionData["meta"]> = ({
       <div class="hfill" />
       <ul>
         <li>
-          <span>Version</span>
-          <span>{version}</span>
-        </li>
-        <li>
           <span>Manifest Version</span>
           <span>{manifestVersion}</span>
         </li>
         <li>
           <span>{author ? "Author" : "Source"}</span>
           <span>{author ?? sources[source]}</span>
+        </li>
+        <li title="Uncompressed size">
+          <span>Size</span>
+          <span>{size}</span>
         </li>
       </ul>
     </Tile>

@@ -1,0 +1,12 @@
+.donut-chart {
+  aspect-ratio: 1;
+  width: 64px;
+  transition-property: opacity 0.2s, filter 0.4s, transform 0.25s;
+  transition-duration: 0.25s;
+
+  @starting-style {
+    opacity: 0;
+    filter: saturate(0);
+    transform: scale(0.5, 0.5);
+  }
+}

@@ -1,5 +1,7 @@
 import type { FunctionComponent } from "preact";
 
+import "./donut-chart.css";
+
 type ChartProps = {
   data: {
     amount: number;

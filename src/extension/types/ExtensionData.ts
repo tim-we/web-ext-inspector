@@ -11,6 +11,7 @@ export type ExtensionData = {
     created?: string;
     lastUpdated?: string;
     manifestVersion: 2 | 3;
+    size: string;
   };
 
   permissions: {
@@ -23,8 +24,8 @@ export type ExtensionData = {
     javascript: number;
     html: number;
     css: number;
+    json: number;
     other: number;
-    size: string;
   };
 
   dynamicAnalysis: {

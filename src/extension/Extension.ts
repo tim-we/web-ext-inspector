@@ -91,7 +91,8 @@ export default class Extension {
     const files = {
       javascript: this.files.countFiles(/\.(js|mjs)$/),
       html: this.files.countFiles(/\.(htm|html)$/),
-      css: this.files.countFiles(/\.css$/)
+      css: this.files.countFiles(/\.css$/),
+      json: this.files.countFiles(/\.json$/)
     };
 
     const backgroundScripts = ((bg) => {
@@ -119,7 +120,8 @@ export default class Extension {
         icon: this.#objectURLs.get("icon"),
         source: "file", // FIXME
         author: this.#getAuthor(),
-        manifestVersion: manifest.manifest_version
+        manifestVersion: manifest.manifest_version,
+        size: prettyBytes(this.files.uncompressedSize)
       },
       permissions: {
         required: manifest.permissions?.length ?? 0,
@@ -128,8 +130,7 @@ export default class Extension {
       },
       files: {
         ...files,
-        other: this.files.numFiles - (files.javascript + files.html + files.css),
-        size: prettyBytes(this.files.uncompressedSize)
+        other: this.files.numFiles - (files.javascript + files.html + files.css + files.json)
       },
       dynamicAnalysis: {
         supported: Runner.supports(this),

@@ -65,7 +65,7 @@
 
   &:focus,
   &:focus-visible,
-  &:hover {
+  &:not(:disabled):hover {
     border-color: rgb(120, 120, 120);
 
     > h3 {
@@ -89,104 +89,10 @@
     }
   }
 
-  .donut-chart {
-    aspect-ratio: 1;
-    width: 64px;
-  }
-
-  &.meta > .content {
-    flex-direction: row;
-    justify-content: space-around;
-
-    img {
-      aspect-ratio: 1;
-      flex-shrink: 1;
-      min-width: 42px;
-      min-height: 42px;
-    }
-
-    .hfill {
-      min-width: 10px;
-      flex-grow: 1;
-    }
-
-    ul {
-      flex-grow: 1;
-      min-width: 100px;
-    }
-
-    ul > li {
-      display: flex;
-      flex-direction: column;
-      line-height: 1em;
-
-      &:not(:last-child) {
-        margin-bottom: 0.35em;
-      }
-
-      span:first-child {
-        font-size: 0.8em;
-        opacity: 0.75;
-      }
-
-      span:last-child {
-        font-family: monospace;
-      }
-    }
-  }
-
   &.permissions > .content {
     table {
       line-height: 2em;
       text-transform: uppercase;
-    }
-  }
-
-  &.files > .content {
-    display: flex;
-    flex-direction: row;
-    gap: var(--base-offset);
-
-    div.column {
-      display: flex;
-      flex-direction: column;
-    }
-
-    table {
-      font-size: 0.9em;
-      margin-bottom: 0.5em;
-      text-transform: uppercase;
-      border: none;
-
-      tr.none {
-        opacity: 0.64;
-      }
-
-      td {
-        vertical-align: middle;
-      }
-
-      td:first-child {
-        font-size: 1.11em;
-        padding-right: 0.15em;
-      }
-    }
-
-    .total-size {
-      font-size: 0.9em;
-    }
-
-    .chart-color-indicator {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      margin-left: 0.2em;
-
-      tr.none & {
-        display: none;
-      }
     }
   }
 
@@ -233,16 +139,8 @@
     }
   }
 
-  &.meta > h3::before {
-    background-image: url("../../../assets/bootstrap-icons/info-circle-fill.svg");
-  }
-
   &.permissions > h3::before {
     background-image: url("../../../assets/bootstrap-icons/shield-fill-exclamation.svg");
-  }
-
-  &.files > h3::before {
-    background-image: url("../../../assets/bootstrap-icons/folder-fill.svg");
   }
 
   &.translations > h3::before {
