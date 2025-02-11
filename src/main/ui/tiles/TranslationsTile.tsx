@@ -15,8 +15,21 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta
           { amount: 1 - percentage, color: "rgb(128, 128, 128)" }
         ];
 
+  function createPopupOptions(id: ExtensionData["id"]): PopupWindowOptions {
+    return {
+      title: "Translations",
+      content: <TranslationsViewer extId={id} meta={meta} />,
+      initialWidth: 1280,
+      initialHeight: 720
+    };
+  }
+
   return (
-    <Tile title="Translations" cssClass="translations" popup={(id) => createPopupOptions(id, meta)}>
+    <Tile
+      title="Translations"
+      cssClass="translations"
+      popup={locales.length > 0 ? createPopupOptions : undefined}
+    >
       {locales.length === 0 ? (
         <span class="none">no translations</span>
       ) : (
@@ -51,15 +64,3 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta
 };
 
 export default TranslationsTile;
-
-function createPopupOptions(
-  id: ExtensionData["id"],
-  data: ExtensionData["translations"]
-): PopupWindowOptions {
-  return {
-    title: "Translations",
-    content: <TranslationsViewer extId={id} meta={data} />,
-    initialWidth: 1280,
-    initialHeight: 720
-  };
-}

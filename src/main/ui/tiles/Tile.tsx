@@ -10,7 +10,7 @@ import "./tiles.css";
 
 type Props = {
   title: string;
-  popup: (extId: ExtensionData["id"]) => PopupWindowOptions;
+  popup?: (extId: ExtensionData["id"]) => PopupWindowOptions;
   cssClass?: string;
 };
 
@@ -19,23 +19,30 @@ const Tile: FunctionComponent<Props> = ({ title, cssClass, popup: popupOptions, 
   const color = useContext(ExtensionColorContext);
   const [hasWindow, setHasWindow] = useState(false);
 
-  const clickHandler = (e: Event) => {
-    e.stopPropagation();
-    if (hasWindow) {
-      return;
-    }
+  const clickHandler = popupOptions
+    ? (e: Event) => {
+        e.stopPropagation();
+        if (hasWindow) {
+          return;
+        }
 
-    const options = {
-      color,
-      ...popupOptions(extensionId)
-    };
+        const options = {
+          color,
+          ...popupOptions(extensionId)
+        };
 
-    showPopupWindow(extensionId, options).then(() => setHasWindow(false));
-    setHasWindow(true);
-  };
+        showPopupWindow(extensionId, options).then(() => setHasWindow(false));
+        setHasWindow(true);
+      }
+    : undefined;
 
   return (
-    <button class={`tile ${cssClass ?? ""}`} onClick={clickHandler} type="button">
+    <button
+      class={`tile ${cssClass ?? ""}`}
+      onClick={clickHandler}
+      type="button"
+      disabled={!popupOptions}
+    >
       <h3>{title}</h3>
       <div class="content">{children}</div>
     </button>

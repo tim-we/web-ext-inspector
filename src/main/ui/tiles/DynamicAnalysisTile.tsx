@@ -7,7 +7,7 @@ type Props = ExtensionData["dynamicAnalysis"];
 
 const DynamicAnalysisTile: FunctionComponent<Props> = ({ supported, background, jsType }) => {
   return (
-    <Tile title="Dynamic Analysis" cssClass="da" popup={createPopupOptions}>
+    <Tile title="Dynamic Analysis" cssClass="da">
       <ul>
         <li>{supported ? "supported" : "not supported"}</li>
         <li>{background ? "has background scripts" : "no background scripts"}</li>
@@ -18,10 +18,3 @@ const DynamicAnalysisTile: FunctionComponent<Props> = ({ supported, background, 
 };
 
 export default DynamicAnalysisTile;
-
-function createPopupOptions() {
-  return {
-    title: "Dynamic Analysis",
-    content: "Not yet implemented."
-  };
-}
