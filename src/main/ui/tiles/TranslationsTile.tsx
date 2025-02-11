@@ -3,37 +3,48 @@ import type { ExtensionData } from "../../../extension/types/ExtensionData";
 import Tile from "./Tile";
 import TranslationsViewer from "../translations/TranslationsViewer";
 import type { PopupWindowOptions } from "../popups/PopupWindow";
+import DonutChart from "../common/DonutChart";
 
 const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta) => {
   const { locales, messages, defaultLocale, percentage } = meta;
+  const donutData =
+    percentage === undefined
+      ? []
+      : [
+          { amount: percentage, color: `hsl(${Math.round(10 + 65 * percentage)} 90% 48%)` },
+          { amount: 1 - percentage, color: "rgb(128, 128, 128)" }
+        ];
 
   return (
     <Tile title="Translations" cssClass="translations" popup={(id) => createPopupOptions(id, meta)}>
       {locales.length === 0 ? (
-        <span>no translations</span>
+        <span class="none">no translations</span>
       ) : (
-        <table>
-          <tbody>
-            <tr>
-              <td class="count">{locales.length}</td>
-              <td>Locales</td>
-            </tr>
-            <tr>
-              <td class="count">{messages}</td>
-              <td>Strings</td>
-            </tr>
-            <tr>
-              <td title="Default locale">{defaultLocale ?? "-"}</td>
-              <td>Default</td>
-            </tr>
-            {percentage !== undefined ? (
+        <div>
+          {percentage === 1 ? <span class="full" /> : <DonutChart data={donutData} />}
+          <table>
+            <tbody>
               <tr>
-                <td class="count">{Math.floor(100 * percentage)}%</td>
-                <td>translated</td>
+                <td class="count">{locales.length}</td>
+                <td>Locales</td>
               </tr>
-            ) : null}
-          </tbody>
-        </table>
+              <tr>
+                <td class="count">{messages}</td>
+                <td>Strings</td>
+              </tr>
+              <tr>
+                <td title="Default locale">{defaultLocale ?? "-"}</td>
+                <td>Default</td>
+              </tr>
+              {percentage !== undefined ? (
+                <tr>
+                  <td class="count">{Math.floor(100 * percentage)}%</td>
+                  <td>translated</td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
       )}
     </Tile>
   );

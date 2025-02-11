@@ -18,7 +18,7 @@ const DonutChart: FunctionComponent<ChartProps> = ({ data }) => {
   let offset = 0;
 
   return (
-    <svg viewBox="0 0 100 100" aria-hidden="true">
+    <svg class="donut-chart" viewBox="0 0 100 100" aria-hidden="true">
       {data.map((dp, i) => {
         const size = Math.ceil(circumference * dp.amount / total);
         const angle = Math.round((360 * offset) - 90);
