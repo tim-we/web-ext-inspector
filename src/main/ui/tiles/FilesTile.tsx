@@ -7,21 +7,20 @@ import DonutChart from "../common/DonutChart";
 
 import "./files-tile.css";
 
-const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
-  javascript,
-  html,
-  css,
-  json,
-  other
-}) => {
-  const chartData = [
-    { amount: javascript, color: "rgb(247, 224, 24)" },
-    { amount: html, color: "rgb(229, 76, 33)" },
-    { amount: css, color: "rebeccapurple" },
-    { amount: json, color: "rgb(16, 182, 16)" },
-    { amount: other, color: "rgb(213, 213, 213)" }
-    // WASM: rgb(101, 78, 240)
-  ];
+const mappings: Record<FileType, { label: string; color: string }> = {
+  javascript: { label: "JavaScript", color: "rgb(247, 224, 24)" },
+  html: { label: "HTML", color: "rgb(229, 76, 33)" },
+  css: { label: "CSS", color: "rebeccapurple" },
+  json: { label: "JSON", color: "rgb(16, 182, 16)" },
+  other: { label: "Other", color: "rgb(199, 199, 199)" }
+  // WASM: rgb(101, 78, 240)
+};
+
+const FilesTile: FunctionComponent<ExtensionData["files"]> = (data) => {
+  const chartData = Object.entries(mappings).map(([key, props]) => ({
+    amount: data[key as FileType],
+    color: props.color
+  }));
 
   // TODO: WebAssembly ?
   return (
@@ -30,36 +29,14 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = ({
       <div class="column">
         <table>
           <tbody>
-            <tr class={javascript === 0 ? "none" : ""}>
-              <td>{javascript}</td>
-              <td>
-                JavaScript <ChartColorIndicator color="rgb(247, 224, 24)" />
-              </td>
-            </tr>
-            <tr class={html === 0 ? "none" : ""}>
-              <td>{html}</td>
-              <td>
-                HTML <ChartColorIndicator color="rgb(229, 76, 33)" />
-              </td>
-            </tr>
-            <tr class={css === 0 ? "none" : ""}>
-              <td>{css}</td>
-              <td>
-                CSS <ChartColorIndicator color="rebeccapurple" />
-              </td>
-            </tr>
-            <tr class={json === 0 ? "none" : ""}>
-              <td>{json}</td>
-              <td>
-                JSON <ChartColorIndicator color="rgb(16, 182, 16)" />
-              </td>
-            </tr>
-            <tr class={other === 0 ? "none" : ""}>
-              <td>{other}</td>
-              <td>
-                other <ChartColorIndicator color="rgb(213, 213, 213)" />
-              </td>
-            </tr>
+            {Object.entries(mappings).map(([key, value]) => (
+              <tr key={key} class={data[key as FileType] === 0 ? "none" : ""}>
+                <td>{data[key as FileType]}</td>
+                <td>
+                  {value.label} <ChartColorIndicator color={value.color} />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -82,3 +59,5 @@ function createFileExplorerPopupOptions(extensionId: string) {
 const ChartColorIndicator: FunctionComponent<{ color: string }> = ({ color }) => (
   <span class="chart-color-indicator" style={`background-color: ${color}`} />
 );
+
+type FileType = keyof ExtensionData["files"];
