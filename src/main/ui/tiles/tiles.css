@@ -20,6 +20,10 @@
   border-radius: 2px;
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.125);
 
+  transition-property: opacity, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+
   > h3 {
     margin: 0;
     margin-bottom: var(--base-offset);
@@ -75,6 +79,11 @@
         opacity: 0.882; /* 225/255 */
       }
     }
+  }
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.6, 0.6);
   }
 }
 
@@ -149,5 +158,35 @@
 
   &.da > h3::before {
     background-image: url("../../../assets/bootstrap-icons/play-circle-fill.svg");
+  }
+}
+
+@media not (prefers-reduced-motion) {
+  .tile {
+    &:nth-child(1) {
+      transition-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      transition-delay: 0.075s;
+    }
+
+    &:nth-child(3) {
+      transition-delay: 0.15s;
+    }
+
+    &:nth-child(4) {
+      transition-delay: 0.225s;
+    }
+
+    &:nth-child(5) {
+      transition-delay: 0.3s;
+    }
+  }
+}
+
+@media (prefers-reduced-motion) {
+  .tile {
+    transition-duration: 0s;
   }
 }

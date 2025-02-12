@@ -6,7 +6,7 @@
 
   @starting-style {
     opacity: 0;
-    filter: saturate(0);
-    transform: scale(0.5, 0.5);
+    filter: saturate(0%);
+    transform: rotate(-0.4rad);
   }
 }

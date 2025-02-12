@@ -49,5 +49,10 @@
         display: none;
       }
     }
+
+    .donut-chart {
+      transition-delay: 0.2s;
+      transition-duration: 0.5s;
+    }
   }
 }
