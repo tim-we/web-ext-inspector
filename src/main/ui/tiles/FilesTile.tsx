@@ -1,9 +1,9 @@
 import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
+import DonutChart from "../common/DonutChart";
 import FileExplorer from "../file-explorer/FileExplorer";
 import Tile from "./Tile";
-import DonutChart from "../common/DonutChart";
 
 import "./files-tile.css";
 

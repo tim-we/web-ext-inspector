@@ -1,13 +1,13 @@
 import * as zip from "@zip.js/zip.js";
 import prettyBytes from "pretty-bytes";
 import Runner from "../runner/Runner";
+import { sum } from "../utilities/iterators";
 import createUniqueId from "../utilities/unique-id";
 import { createFileSystem } from "./FileSystem";
 import { FSFolder } from "./FileSystem";
 import type { ExtensionData } from "./types/ExtensionData";
 import type { Manifest } from "./types/Manifest";
 import type { Translations } from "./types/Translations";
-import { sum } from "../utilities/iterators";
 
 export default class Extension {
   readonly id: string;

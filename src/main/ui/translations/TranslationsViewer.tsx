@@ -1,8 +1,8 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
-import { useState, useEffect, useRef } from "preact/hooks";
-import wrappedWorker from "../../MainWorkerRef";
+import { useEffect, useRef, useState } from "preact/hooks";
 import type { TranslationsInfo } from "../../../extension/Extension";
+import type { ExtensionData } from "../../../extension/types/ExtensionData";
+import wrappedWorker from "../../MainWorkerRef";
 
 import "./translations.css";
 

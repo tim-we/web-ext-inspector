@@ -26,7 +26,7 @@ const App: Preact.FunctionComponent = () => {
   const showSelector = extensions.length === 0 || selector;
 
   useEffect(() => {
-    wrappedWorker.loadExtension("/test/extension3.xpi").then((data) => setExtensions([data]));
+    wrappedWorker.loadExtension("/test/extension.xpi").then((data) => setExtensions([data]));
   }, []);
 
   return (

@@ -1,0 +1,36 @@
+.tile.translations {
+  & > .content > div {
+    display: flex;
+    flex-direction: row;
+    gap: var(--base-offset);
+  }
+
+  span.none,
+  span.full {
+    line-height: 2rem;
+
+    &::before {
+      content: " ";
+      display: inline-block;
+      vertical-align: middle;
+      background-size: cover;
+      width: 2rem;
+      height: 2rem;
+      margin-right: var(--base-offset);
+    }
+  }
+
+  span.none::before {
+    background-image: url("../../../assets/bootstrap-icons/x-circle-fill.svg");
+
+    /* Make it red-ish (gray -> add color -> change color -> increase saturation */
+    filter: invert(0.5) sepia(1) hue-rotate(320deg) saturate(6);
+  }
+
+  span.full::before {
+    background-image: url("../../../assets/bootstrap-icons/check-circle-fill.svg");
+
+    /* Make it green-ish */
+    filter: invert(0.5) sepia(1) hue-rotate(39deg) saturate(10);
+  }
+}

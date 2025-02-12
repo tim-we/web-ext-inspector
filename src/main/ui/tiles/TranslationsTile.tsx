@@ -1,9 +1,11 @@
 import type { FunctionComponent } from "preact";
 import type { ExtensionData } from "../../../extension/types/ExtensionData";
-import Tile from "./Tile";
-import TranslationsViewer from "../translations/TranslationsViewer";
-import type { PopupWindowOptions } from "../popups/PopupWindow";
 import DonutChart from "../common/DonutChart";
+import type { PopupWindowOptions } from "../popups/PopupWindow";
+import TranslationsViewer from "../translations/TranslationsViewer";
+import Tile from "./Tile";
+
+import "./translations-tile.css";
 
 const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta) => {
   const { locales, messages, defaultLocale, percentage } = meta;
