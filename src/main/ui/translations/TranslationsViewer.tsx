@@ -103,6 +103,7 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
                     <td
                       key={`${key}:${locale}`}
                       class="missing"
+                      lang="en"
                       title={`${localeLabel(locale, true)} translation missing`}
                     >
                       -
@@ -117,7 +118,7 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
                     : translation.message;
 
                 return (
-                  <td key={`${key}:${locale}`} title={translation.description}>
+                  <td key={`${key}:${locale}`} title={translation.description} lang={locale}>
                     {message}
                   </td>
                 );
