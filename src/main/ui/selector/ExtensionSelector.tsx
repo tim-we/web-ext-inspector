@@ -15,6 +15,7 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
   const [source, setSource] = useState<ExtensionSourceId>("amo");
   const [extensionId, setExtensionId] = useState("");
   const [file, setFile] = useState<File | undefined>(undefined);
+  const inputId = useId();
 
   const selectSourceId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -64,12 +65,13 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
         {source !== "file" ? (
           <>
             <div class="row">
-              <span class="url">
+              <label class="url" for={inputId}>
                 {source === "amo"
                   ? "addons.mozilla.org/en-US/firefox/addon/"
                   : "chromewebstore.google.com/detail/*/"}
-              </span>
+              </label>
               <input
+                id={inputId}
                 type="text"
                 value={extensionId}
                 placeholder="extension id"
