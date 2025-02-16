@@ -26,7 +26,7 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
 
   const storeLink = {
     amo: "https://addons.mozilla.org",
-    cws: "https://chrome.google.com/webstore",
+    cws: "https://chromewebstore.google.com",
     file: undefined
   }[source];
 
@@ -67,7 +67,7 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
               <span class="url">
                 {source === "amo"
                   ? "addons.mozilla.org/en-US/firefox/addon/"
-                  : "chrome.google.com/webstore/detail/*/"}
+                  : "chromewebstore.google.com/detail/*/"}
               </span>
               <input
                 type="text"
