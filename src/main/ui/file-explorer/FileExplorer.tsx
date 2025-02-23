@@ -3,7 +3,7 @@ import type { FSNodeDTO } from "../../../extension/FileSystem";
 
 import { useState } from "preact/hooks";
 
-import ExtensionIdContext from "../contexts/ExtensionIdContext";
+import SessionContext from "../contexts/SessionContext";
 import FilePreview from "./FilePreview";
 import FolderContentView from "./FolderContentView";
 
@@ -24,7 +24,7 @@ const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
   };
 
   return (
-    <ExtensionIdContext.Provider value={extensionId}>
+    <SessionContext.Provider value={extensionId}>
       <SelectedFSNodeContext.Provider value={selectedFSNode}>
         <div class="file-explorer">
           <FolderContentView
@@ -38,7 +38,7 @@ const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
           ) : null}
         </div>
       </SelectedFSNodeContext.Provider>
-    </ExtensionIdContext.Provider>
+    </SessionContext.Provider>
   );
 };
 

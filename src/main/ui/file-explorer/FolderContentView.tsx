@@ -8,7 +8,7 @@ import { scrollIntoViewIfNeeded } from "../../../utilities/dom";
 import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
 import { openCodeViewer } from "../code-viewer/CodeViewer";
-import ExtensionIdContext from "../contexts/ExtensionIdContext";
+import SessionContext from "../contexts/SessionContext";
 import SelectedFSNodeContext from "../contexts/SelectedFSNodeContext";
 import TagList from "./TagList";
 
@@ -21,7 +21,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
   showFilePreview,
   selectFSNode
 }) => {
-  const extId = useContext(ExtensionIdContext)!;
+  const extId = useContext(SessionContext)!;
   const selectedPath = useContext(SelectedFSNodeContext);
   const [contents, setContents] = useState<FSNodeDTO[] | undefined>(undefined);
   const ulRef = useRef<HTMLUListElement>(null);
@@ -80,7 +80,7 @@ export default FolderContentView;
 
 const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
   const onSelect = useContext(FSHContext);
-  const extId = useContext(ExtensionIdContext)!;
+  const extId = useContext(SessionContext)!;
   const selectedPath = useContext(SelectedFSNodeContext);
   const labelId = useId();
   const liRef = useRef<HTMLLIElement>(null);

@@ -3,7 +3,7 @@ import { useContext, useRef, useState } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import * as paths from "../../../utilities/paths";
 import wrappedWorker from "../../MainWorkerRef";
-import ExtensionIdContext from "../contexts/ExtensionIdContext";
+import SessionContext from "../contexts/SessionContext";
 import TagList from "./TagList";
 
 import ActionButton from "../common/ActionButton";
@@ -62,7 +62,7 @@ const FilePreview: FunctionComponent<FilePreviewProps> = ({ node, onClose }) => 
 export default FilePreview;
 
 const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
-  const extId = useContext(ExtensionIdContext)!;
+  const extId = useContext(SessionContext)!;
   const isAudio = node.tags.includes("audio");
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 

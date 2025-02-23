@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "preact/hooks";
 import ActionButton from "../common/ActionButton";
 import "../main-section.css";
 import "./selector.css";
+import ExtensionLoadingProgress from "./ExtensionLoadingProgress";
 
 type ExtensionSourceId = "amo" | "cws" | "file";
 
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
+  const [state, setState] = useState<"selecting" | "loading">("selecting");
   const [source, setSource] = useState<ExtensionSourceId>("amo");
   const [extensionId, setExtensionId] = useState("");
   const [file, setFile] = useState<File | undefined>(undefined);
@@ -23,6 +25,10 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
   const handleSubmit = (e: Event) => {
     e.preventDefault();
     // TODO
+
+    if (source === "file" && file) {
+      setState("loading");
+    }
   };
 
   const storeLink = {
@@ -30,6 +36,18 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
     cws: "https://chromewebstore.google.com",
     file: undefined
   }[source];
+
+  if (state === "loading" && file) {
+    return (
+      <ExtensionLoadingProgress
+        source={{ type: "url", url: URL.createObjectURL(file) }}
+        callback={(result) => {
+          setState("selecting");
+          console.log("done", result);
+        }}
+      />
+    );
+  }
 
   return (
     <article class="main-section extension-selection">

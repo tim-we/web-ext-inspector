@@ -1,5 +1,3 @@
-import type { ExtensionData } from "../extension/types/ExtensionData";
-
 import * as Preact from "preact";
 import { useEffect, useState } from "preact/hooks";
 
@@ -8,9 +6,9 @@ import ExtensionView from "./ui/extension/ExtensionView";
 import ExtensionSelector from "./ui/selector/ExtensionSelector";
 
 import "./ui/main.css";
+import SessionProxy from "./SessionProxy";
+import { useSessionStore } from "./ui/SessionStore";
 import { popupRoot } from "./ui/popups/PopupWindow";
-
-declare const __VERSION__: string;
 
 const root = document.querySelector("main")!;
 
@@ -19,21 +17,24 @@ document.querySelector<HTMLSpanElement>("#app-version")!.innerText = `v${__VERSI
 document.body.append(popupRoot);
 
 const App: Preact.FunctionComponent = () => {
-  // TODO: consider Preact Signals
-  const [extensions, setExtensions] = useState<ExtensionData[]>([]);
+  const { sessions, addSession } = useSessionStore();
   const [selector, setSelector] = useState<boolean>(true);
 
-  const showSelector = extensions.length === 0 || selector;
+  const showSelector = sessions.length === 0 || selector;
 
   useEffect(() => {
-    wrappedWorker.loadExtension("/test/extension.xpi").then((data) => setExtensions([data]));
-  }, []);
+    const url = "/test/extension.xpi";
+    wrappedWorker.startSession(url).then(async (session) => {
+      const proxy = await SessionProxy.create({ type: "url", url }, session);
+      addSession(proxy);
+    });
+  }, [addSession]);
 
   return (
     <>
-      {showSelector && <ExtensionSelector closable={extensions.length > 0} />}
-      {extensions.map((data) => (
-        <ExtensionView key={data.id} data={data} />
+      {showSelector && <ExtensionSelector closable={sessions.length > 0} />}
+      {sessions.map((session) => (
+        <ExtensionView key={session.id} session={session} />
       ))}
     </>
   );

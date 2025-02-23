@@ -1,14 +1,14 @@
 import type { FunctionComponent } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import type { TranslationsInfo } from "../../../extension/Extension";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
-import wrappedWorker from "../../MainWorkerRef";
+import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
+import type SessionProxy from "../../SessionProxy";
 
 import "./translations.css";
 
-type ViewerProps = { extId: ExtensionId; meta: ExtensionData["translations"] };
+type ViewerProps = { session: SessionProxy; meta: ExtensionSummary["translations"] };
 
-const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => {
+const TranslationsViewer: FunctionComponent<ViewerProps> = ({ session, meta }) => {
   const [selectedLocales, setSelectedLocales] = useState<Set<string>>(new Set());
   const [loadedLocales, setLoadedLocales] = useState<Map<string, TranslationsInfo>>(new Map());
   const selectRef = useRef<HTMLSelectElement>(null);
@@ -36,17 +36,17 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
     const notLoadedLocales = Array.from(selectedLocales.difference(new Set(loadedLocales.keys())));
     const copiedMap = new Map(loadedLocales);
 
-    Promise.all(
-      notLoadedLocales.map((locale) => wrappedWorker.getTranslations(extId, locale))
-    ).then((results) => {
-      for (const result of results) {
-        if (result) {
-          copiedMap.set(result.locale, result);
+    Promise.all(notLoadedLocales.map((locale) => session.getTranslations(locale))).then(
+      (results) => {
+        for (const result of results) {
+          if (result) {
+            copiedMap.set(result.locale, result);
+          }
         }
+        setLoadedLocales(copiedMap);
       }
-      setLoadedLocales(copiedMap);
-    });
-  }, [extId, selectedLocales, loadedLocales]);
+    );
+  }, [session, selectedLocales, loadedLocales]);
 
   function localeLabel(locale: string, hidePercentage = false): string {
     const label = intlLocaleDisplayNames.of(locale) ?? locale;
@@ -151,5 +151,3 @@ const TranslationsViewer: FunctionComponent<ViewerProps> = ({ extId, meta }) => 
 const intlLocaleDisplayNames = new Intl.DisplayNames([navigator.language], { type: "language" });
 
 export default TranslationsViewer;
-
-type ExtensionId = ExtensionData["id"];

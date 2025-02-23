@@ -1,39 +1,23 @@
 import * as zip from "@zip.js/zip.js";
 import prettyBytes from "pretty-bytes";
-import Runner from "../runner/Runner";
 import { sum } from "../utilities/iterators";
-import createUniqueId from "../utilities/unique-id";
 import { createFileSystem } from "./FileSystem";
 import { FSFolder } from "./FileSystem";
-import type { ExtensionData } from "./types/ExtensionData";
+import type { ExtensionSummary } from "./types/ExtensionSummary";
 import type { Manifest } from "./types/Manifest";
 import type { Translations } from "./types/Translations";
 
 export default class Extension {
-  readonly id: string;
   readonly manifest: Readonly<Manifest>;
   readonly files: FSFolder;
-  readonly #objectURLs = new Map<string, string>();
   readonly #translations: Map<string, Translations>;
 
-  private constructor(
-    blob: Blob,
-    root: FSFolder,
-    manifest: Manifest,
-    translations: Map<string, Translations>,
-    icon?: string
-  ) {
+  private constructor(root: FSFolder, manifest: Manifest, translations: Map<string, Translations>) {
     /* Some of the initialization happens in the static create method because the constructor is not async. */
 
-    this.id = createUniqueId();
     this.files = root;
     this.manifest = Object.freeze(manifest);
     this.#translations = translations;
-
-    this.#objectURLs.set("download", URL.createObjectURL(blob));
-    if (icon) {
-      this.#objectURLs.set("icon", icon);
-    }
   }
 
   /**
@@ -71,82 +55,7 @@ export default class Extension {
       }
     }
 
-    // Icon
-    const iconPath = getIconPath(manifest, files);
-    const iconURL = iconPath
-      ? URL.createObjectURL(await files.getFile(iconPath).asBlob())
-      : undefined;
-
-    return new Extension(zipData, files, manifest, translations, iconURL);
-  }
-
-  getSummary(): ExtensionData {
-    const manifest = this.manifest;
-
-    const hostPermissions = [
-      ...(manifest.permissions ?? []),
-      ...(manifest.optional_permissions ?? [])
-    ].filter(isHostPermission).length;
-
-    const files = {
-      javascript: this.files.countFiles(/\.(js|mjs)$/),
-      html: this.files.countFiles(/\.(htm|html)$/),
-      css: this.files.countFiles(/\.css$/),
-      json: this.files.countFiles(/\.json$/)
-    };
-
-    const backgroundScripts = ((bg) => {
-      if (bg === undefined) {
-        return false;
-      }
-      if (bg.page !== undefined) {
-        return true;
-      }
-      if (bg.scripts?.length > 0) {
-        return true;
-      }
-      return false;
-    })(manifest.background);
-
-    const messageKeys = new Set(this.#translations.values().flatMap((t) => Object.keys(t))).size;
-    const translatedMessages = sum(this.#translations.values().map((t) => Object.keys(t).length));
-
-    return {
-      id: this.id,
-      downloadUrl: this.#objectURLs.get("download")!,
-      meta: {
-        name: this.#__MSG_i18n(this.manifest.name),
-        version: manifest.version,
-        icon: this.#objectURLs.get("icon"),
-        source: "file", // FIXME
-        author: this.#getAuthor(),
-        manifestVersion: manifest.manifest_version,
-        size: prettyBytes(this.files.uncompressedSize)
-      },
-      permissions: {
-        required: manifest.permissions?.length ?? 0,
-        optional: manifest.optional_permissions?.length ?? 0,
-        host: hostPermissions
-      },
-      files: {
-        ...files,
-        other: this.files.numFiles - (files.javascript + files.html + files.css + files.json)
-      },
-      dynamicAnalysis: {
-        supported: Runner.supports(this),
-        background: backgroundScripts,
-        jsType: Runner.supports(this) ? "classic" : undefined
-      },
-      translations: {
-        locales: Array.from(this.#translations.keys()),
-        messages: messageKeys,
-        defaultLocale: manifest.default_locale,
-        percentage:
-          this.#translations.size * messageKeys > 0
-            ? translatedMessages / (this.#translations.size * messageKeys)
-            : undefined
-      }
-    };
+    return new Extension(files, manifest, translations);
   }
 
   i18n(
@@ -242,8 +151,34 @@ export default class Extension {
     };
   }
 
-  free() {
-    this.#objectURLs.forEach((url) => URL.revokeObjectURL(url));
+  getLocales() {
+    return [...this.#translations.keys()];
+  }
+
+  get meta(): Omit<ExtensionSummary["meta"], "icon"> {
+    return {
+      name: this.#__MSG_i18n(this.manifest.name),
+      version: this.manifest.version,
+      source: "file", // FIXME
+      author: this.#getAuthor(),
+      manifestVersion: this.manifest.manifest_version,
+      size: prettyBytes(this.files.uncompressedSize)
+    };
+  }
+
+  get translationInfo(): ExtensionSummary["translations"] {
+    const messageKeys = new Set(this.#translations.values().flatMap((t) => Object.keys(t))).size;
+    const translatedMessages = sum(this.#translations.values().map((t) => Object.keys(t).length));
+
+    return {
+      locales: this.getLocales(),
+      messages: messageKeys,
+      defaultLocale: this.manifest.default_locale,
+      percentage:
+        this.#translations.size * messageKeys > 0
+          ? translatedMessages / (this.#translations.size * messageKeys)
+          : undefined
+    };
   }
 
   /**
@@ -287,32 +222,6 @@ export default class Extension {
 
     return undefined;
   }
-}
-
-function getIconPath(manifest: Manifest, root: FSFolder): string | undefined {
-  if (!manifest.icons) {
-    return;
-  }
-
-  const sizes = Object.entries(manifest.icons).map(([size, path]) => ({
-    size: Number.parseInt(size, 10),
-    path
-  }));
-
-  if (sizes.length === 0) {
-    return;
-  }
-
-  // sort sizes descending
-  sizes.sort((a, b) => b.size - a.size);
-
-  const optimalSizes = sizes
-    .filter(({ path }) => root.getFile(path, true))
-    .filter(({ size }) => size >= 48 && size <= 96);
-
-  const { path } = optimalSizes[0] ?? sizes[0];
-
-  return path;
 }
 
 function isHostPermission(permission: string): boolean {

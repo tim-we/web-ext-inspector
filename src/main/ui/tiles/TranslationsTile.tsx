@@ -1,13 +1,14 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
 import DonutChart from "../common/DonutChart";
+import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
 import type { PopupWindowOptions } from "../popups/PopupWindow";
 import TranslationsViewer from "../translations/TranslationsViewer";
 import Tile from "./Tile";
 
 import "./translations-tile.css";
+import type SessionProxy from "../../SessionProxy";
 
-const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta) => {
+const TranslationsTile: FunctionComponent<ExtensionSummary["translations"]> = (meta) => {
   const { locales, messages, defaultLocale, percentage } = meta;
   const donutData =
     percentage === undefined
@@ -17,10 +18,10 @@ const TranslationsTile: FunctionComponent<ExtensionData["translations"]> = (meta
           { amount: 1 - percentage, color: "rgb(128, 128, 128)" }
         ];
 
-  function createPopupOptions(id: ExtensionData["id"]): PopupWindowOptions {
+  function createPopupOptions(session: SessionProxy): PopupWindowOptions {
     return {
       title: "Translations",
-      content: <TranslationsViewer extId={id} meta={meta} />,
+      content: <TranslationsViewer session={session} meta={meta} />,
       initialWidth: 1280,
       initialHeight: 720
     };

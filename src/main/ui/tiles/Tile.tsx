@@ -1,26 +1,27 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
-
-import ExtensionIdContext from "../contexts/ExtensionIdContext";
-import { type PopupWindowOptions, showPopupWindow } from "../popups/PopupWindow";
-
 import { useContext, useState } from "preact/hooks";
+
+import SessionContext from "../contexts/SessionContext";
+import { type PopupWindowOptions, showPopupWindow } from "../popups/PopupWindow";
+import type SessionProxy from "../../SessionProxy";
+
 import ExtensionColorContext from "../contexts/ExtensionColorContext";
 import "./tiles.css";
 
 type Props = {
   title: string;
-  popup?: (extId: ExtensionData["id"]) => PopupWindowOptions;
+  popup?: (session: SessionProxy) => Promise<PopupWindowOptions> | PopupWindowOptions;
   cssClass?: string;
 };
 
 const Tile: FunctionComponent<Props> = ({ title, cssClass, popup: popupOptions, children }) => {
-  const extensionId = useContext(ExtensionIdContext)!;
+  const session = useContext(SessionContext)!;
+  DEV: console.assert(session !== undefined);
   const color = useContext(ExtensionColorContext);
   const [hasWindow, setHasWindow] = useState(false);
 
   const clickHandler = popupOptions
-    ? (e: Event) => {
+    ? async (e: Event) => {
         e.stopPropagation();
         if (hasWindow) {
           return;
@@ -28,10 +29,10 @@ const Tile: FunctionComponent<Props> = ({ title, cssClass, popup: popupOptions, 
 
         const options = {
           color,
-          ...popupOptions(extensionId)
+          ...(await popupOptions(session))
         };
 
-        showPopupWindow(extensionId, options).then(() => setHasWindow(false));
+        showPopupWindow(session, options).then(() => setHasWindow(false));
         setHasWindow(true);
       }
     : undefined;

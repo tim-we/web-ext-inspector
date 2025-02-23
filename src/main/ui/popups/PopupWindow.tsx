@@ -1,17 +1,17 @@
 import type { ComponentChildren, FunctionComponent } from "preact";
 
 import * as Preact from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
 import "./popup-window.css";
 import { useRef } from "preact/hooks";
+import type { Session } from "../../Session";
 
 export const popupRoot = document.createElement("div");
 popupRoot.id = "popup-root";
 
-const popupWindows = new Map<ExtensionId, Set<HTMLElement>>();
+const popupWindows = new Map<SessionId, Set<HTMLElement>>();
 
-export function showPopupWindow(extId: ExtensionId, options: PopupWindowOptions): Promise<void> {
+export function showPopupWindow(sessionId: SessionId, options: PopupWindowOptions): Promise<void> {
   const popup = document.createElement("aside");
   popup.role = "dialog";
   popup.classList.add("popup-window");
@@ -65,9 +65,9 @@ export function showPopupWindow(extId: ExtensionId, options: PopupWindowOptions)
   };
 
   // Register popup window.
-  const extWindows = popupWindows.get(extId) ?? new Set();
+  const extWindows = popupWindows.get(sessionId) ?? new Set();
   extWindows.add(popup);
-  popupWindows.set(extId, extWindows);
+  popupWindows.set(sessionId, extWindows);
 
   return new Promise((resolve) => {
     const closeFn = async () => {
@@ -207,4 +207,4 @@ type IMProps = {
   resizeStartFn: (e: MouseEvent) => void;
 };
 
-type ExtensionId = ExtensionData["id"];
+type SessionId = Session["id"];

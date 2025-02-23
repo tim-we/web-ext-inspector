@@ -1,11 +1,10 @@
-export type ExtensionData = {
-  id: string;
-  downloadUrl: string;
+import type { ExtensionSource } from "../sources/ExtensionSource";
 
+export type ExtensionSummary = {
   meta: {
     name: string;
     version: string;
-    source: "amo" | "cws" | "file";
+    source: ExtensionSource["type"];
     author?: string;
     icon?: string;
     created?: string;
