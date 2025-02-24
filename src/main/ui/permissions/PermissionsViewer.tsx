@@ -1,6 +1,5 @@
 import type { FunctionComponent } from "preact";
 import type { PermissionsInfo } from "../../../extension/Extension";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
 
 import { useEffect, useState } from "preact/hooks";
 
@@ -8,15 +7,16 @@ import wrappedWorker from "../../MainWorkerRef";
 import Permission from "./Permission";
 
 import "./permissions.css";
+import type SessionProxy from "../../SessionProxy";
 
-type ViewerProps = { extId: ExtensionId };
+type ViewerProps = { session: SessionProxy };
 
-const PermissionsViewer: FunctionComponent<ViewerProps> = ({ extId }) => {
+const PermissionsViewer: FunctionComponent<ViewerProps> = ({ session }) => {
   const [permissions, setPermissions] = useState<PermissionsInfo | undefined>(undefined);
 
   useEffect(() => {
-    wrappedWorker.getPermissions(extId).then(setPermissions, (e) => console.error(e));
-  }, [extId]);
+    session.getPermissions().then(setPermissions, (e) => console.error(e));
+  }, [session]);
 
   if (permissions === undefined) {
     return <span>...</span>;
@@ -48,5 +48,3 @@ const PermissionsViewer: FunctionComponent<ViewerProps> = ({ extId }) => {
 };
 
 export default PermissionsViewer;
-
-type ExtensionId = ExtensionData["id"];

@@ -1,9 +1,10 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
 import PermissionsViewer from "../permissions/PermissionsViewer";
 import Tile from "./Tile";
+import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
+import type SessionProxy from "../../SessionProxy";
 
-const PermissionsTile: FunctionComponent<ExtensionData["permissions"]> = ({
+const PermissionsTile: FunctionComponent<ExtensionSummary["permissions"]> = ({
   required,
   optional,
   host
@@ -30,9 +31,9 @@ const PermissionsTile: FunctionComponent<ExtensionData["permissions"]> = ({
 
 export default PermissionsTile;
 
-function createPopupOptions(extensionId: ExtensionData["id"]) {
+function createPopupOptions(session: SessionProxy) {
   return {
     title: "Permissions",
-    content: <PermissionsViewer extId={extensionId} />
+    content: <PermissionsViewer session={session} />
   };
 }

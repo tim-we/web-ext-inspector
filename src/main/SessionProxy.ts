@@ -3,22 +3,26 @@ import type { ExtensionSource } from "../extension/sources/ExtensionSource";
 import type { ExtensionSummary } from "../extension/types/ExtensionSummary";
 import type { Session } from "./Session";
 import type { TranslationsInfo } from "../extension/Extension";
+import type Extension from "../extension/Extension";
 
 export default class SessionProxy {
   readonly id: Session["id"];
   readonly summary: Readonly<ExtensionSummary>;
 
   readonly #source: Readonly<ExtensionSource>;
-  readonly #remote: Readonly<Remote<Session>>;
+  readonly #remoteSession: Readonly<Remote<Session>>;
+  readonly #remoteExtension: Readonly<Remote<Extension>>;
 
   private constructor(
     id: Session["id"],
     source: ExtensionSource,
     remote: Remote<Session>,
+    extension: Remote<Extension>,
     summary: ExtensionSummary
   ) {
     this.id = id;
-    this.#remote = remote;
+    this.#remoteSession = remote;
+    this.#remoteExtension = extension;
     this.#source = source;
     this.summary = summary;
   }
@@ -26,16 +30,21 @@ export default class SessionProxy {
   static async create(source: ExtensionSource, session: Remote<Session>): Promise<SessionProxy> {
     const id = await session.id;
     const summary = await session.getSummary();
+    const extension = await session.getExtension();
 
-    return new SessionProxy(id, source, session, summary);
+    return new SessionProxy(id, source, session, extension, summary);
   }
 
   getTranslations(locale: string): Promise<TranslationsInfo | undefined> {
-    return this.#remote.getTranslations(locale);
+    return this.#remoteSession.getTranslations(locale);
+  }
+
+  getPermissions() {
+    return this.#remoteExtension.getPermissions();
   }
 
   async dispose() {
-    this.#remote.free();
-    this.#remote[releaseProxy]();
+    this.#remoteSession.free();
+    this.#remoteSession[releaseProxy]();
   }
 }

@@ -32,7 +32,7 @@ const Tile: FunctionComponent<Props> = ({ title, cssClass, popup: popupOptions, 
           ...(await popupOptions(session))
         };
 
-        showPopupWindow(session, options).then(() => setHasWindow(false));
+        showPopupWindow(session.id, options).then(() => setHasWindow(false));
         setHasWindow(true);
       }
     : undefined;

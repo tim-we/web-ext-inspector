@@ -1,3 +1,5 @@
+import * as Comlink from "comlink";
+
 import type { SupportedLanguage } from "../code-renderer/CodeRenderer";
 import Extension, { type TranslationsInfo } from "../extension/Extension";
 import * as FSCursor from "../extension/FSCursor";
@@ -36,6 +38,10 @@ export class Session {
     session.#objectURLs.set("download", URL.createObjectURL(zipData));
 
     return session;
+  }
+
+  getExtension(): Readonly<Extension> & Comlink.ProxyMarked {
+    return Comlink.proxy(this.#extension);
   }
 
   getSummary(): ExtensionSummary {
