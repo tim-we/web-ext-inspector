@@ -1,5 +1,6 @@
 import type { FunctionComponent } from "preact";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
+import type SessionProxy from "../../SessionProxy";
 
 import { useState } from "preact/hooks";
 
@@ -11,10 +12,10 @@ import "./file-explorer.css";
 import SelectedFSNodeContext from "../contexts/SelectedFSNodeContext";
 
 type ExplorerProps = {
-  extensionId: string;
+  session: SessionProxy;
 };
 
-const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
+const FileExplorer: FunctionComponent<ExplorerProps> = ({ session }) => {
   const [previewFile, setPreviewFile] = useState<FileNodeDTO | undefined>(undefined);
   const [selectedFSNode, setSelectedFSNode] = useState<string | undefined>(undefined);
 
@@ -24,7 +25,7 @@ const FileExplorer: FunctionComponent<ExplorerProps> = ({ extensionId }) => {
   };
 
   return (
-    <SessionContext.Provider value={extensionId}>
+    <SessionContext.Provider value={session}>
       <SelectedFSNodeContext.Provider value={selectedFSNode}>
         <div class="file-explorer">
           <FolderContentView

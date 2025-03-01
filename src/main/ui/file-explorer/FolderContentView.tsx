@@ -21,7 +21,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
   showFilePreview,
   selectFSNode
 }) => {
-  const extId = useContext(SessionContext)!;
+  const session = useContext(SessionContext)!;
   const selectedPath = useContext(SelectedFSNodeContext);
   const [contents, setContents] = useState<FSNodeDTO[] | undefined>(undefined);
   const ulRef = useRef<HTMLUListElement>(null);
@@ -29,8 +29,8 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
   const isRoot = path === "/" || path === "";
 
   useEffect(() => {
-    wrappedWorker.getDirectoryContents(extId, path).then(setContents, (e) => console.error(e));
-  }, [extId, path]);
+    session.getDirectoryContents(path).then(setContents, (e) => console.error(e));
+  }, [session, path]);
 
   if (contents === undefined) {
     return <span class="folder-content">...</span>;
@@ -47,7 +47,7 @@ const FolderContentView: FunctionComponent<FCVProps> = ({
       return;
     }
     e.preventDefault();
-    const next = await wrappedWorker.changeFileSystemCursor(extId, selectedPath, e.key);
+    const next = await session.changeFileSystemCursor(selectedPath, e.key);
     selectFSNode(next);
   };
 
@@ -103,7 +103,7 @@ const FileView: FunctionComponent<{ node: FileDTO }> = ({ node }) => {
       document.getElementById(labelId)!.focus();
       scrollIntoViewIfNeeded(liRef.current!);
     }
-  }, [selected, liRef.current, labelId]);
+  }, [selected, labelId]);
 
   return (
     <li
@@ -141,7 +141,7 @@ const FolderView: FunctionComponent<{ node: FolderDTO; selectFSNode?: FSNodeSele
       liRef.current!.querySelector("summary")!.focus();
       scrollIntoViewIfNeeded(liRef.current!);
     }
-  }, [selected, liRef.current]);
+  }, [selected]);
 
   useEffect(() => {
     if (expanded || !selectedPath || !selectFSNode) {

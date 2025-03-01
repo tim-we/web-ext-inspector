@@ -43,8 +43,17 @@ export default class SessionProxy {
     return this.#remoteExtension.getPermissions();
   }
 
+  getDirectoryContents(path: string) {
+    return this.#remoteSession.getDirectoryContents(path);
+  }
+
+  changeFileSystemCursor(selectedPath: string, key: KeyboardEvent["key"]) {
+    return this.#remoteSession.changeFileSystemCursor(selectedPath, key);
+  }
+
   async dispose() {
     this.#remoteSession.free();
     this.#remoteSession[releaseProxy]();
+    this.#remoteExtension[releaseProxy]();
   }
 }

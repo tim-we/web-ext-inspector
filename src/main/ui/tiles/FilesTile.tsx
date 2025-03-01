@@ -1,5 +1,6 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
+import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
+import type SessionProxy from "../../SessionProxy";
 
 import DonutChart from "../common/DonutChart";
 import FileExplorer from "../file-explorer/FileExplorer";
@@ -16,7 +17,7 @@ const mappings: Record<FileType, { label: string; color: string }> = {
   // WASM: rgb(101, 78, 240)
 };
 
-const FilesTile: FunctionComponent<ExtensionData["files"]> = (data) => {
+const FilesTile: FunctionComponent<ExtensionSummary["files"]> = (data) => {
   const chartData = Object.entries(mappings).map(([key, props]) => ({
     amount: data[key as FileType],
     color: props.color
@@ -46,11 +47,11 @@ const FilesTile: FunctionComponent<ExtensionData["files"]> = (data) => {
 
 export default FilesTile;
 
-function createFileExplorerPopupOptions(extensionId: string) {
+function createFileExplorerPopupOptions(session: SessionProxy) {
   return {
     title: "File Explorer",
     icon: "file-explorer",
-    content: <FileExplorer extensionId={extensionId} />,
+    content: <FileExplorer session={session} />,
     initialWidth: 700,
     initialHeight: 500
   };
@@ -60,4 +61,4 @@ const ChartColorIndicator: FunctionComponent<{ color: string }> = ({ color }) =>
   <span class="chart-color-indicator" style={`background-color: ${color}`} />
 );
 
-type FileType = keyof ExtensionData["files"];
+type FileType = keyof ExtensionSummary["files"];
