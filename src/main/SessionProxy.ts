@@ -51,6 +51,10 @@ export default class SessionProxy {
     return this.#remoteSession.changeFileSystemCursor(selectedPath, key);
   }
 
+  getPrettyCode(path: string) {
+    return this.#remoteSession.getPrettyCode(path);
+  }
+
   async dispose() {
     this.#remoteSession.free();
     this.#remoteSession[releaseProxy]();

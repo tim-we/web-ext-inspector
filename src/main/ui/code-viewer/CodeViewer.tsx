@@ -1,30 +1,29 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
-import type { HighlightedCode } from "../../background";
+import type { HighlightedCode } from "../../Session";
 
 import { useEffect, useState } from "preact/hooks";
 import "prismjs/themes/prism-okaidia.css";
 import "./code-viewer.css";
 
-import wrappedWorker from "../../MainWorkerRef";
 import { showPopupWindow } from "../popups/PopupWindow";
+import type SessionProxy from "../../SessionProxy";
 
-export function openCodeViewer(extensionId: ExtensionId, path: string): void {
-  showPopupWindow(extensionId, {
+export function openCodeViewer(session: SessionProxy, path: string): void {
+  showPopupWindow(session.id, {
     title: path.replace(/^\//, ""),
     icon: "code-viewer",
-    content: <CodeViewer extId={extensionId} path={path} />,
+    content: <CodeViewer session={session} path={path} />,
     initialWidth: 800,
     initialHeight: 1000
   });
 }
 
-const CodeViewer: FunctionComponent<Props> = ({ extId, path }) => {
+const CodeViewer: FunctionComponent<Props> = ({ session, path }) => {
   const [content, setContent] = useState<HighlightedCode | undefined>(undefined);
 
   useEffect(() => {
-    wrappedWorker.getPrettyCode(extId, path).then(setContent, (e) => console.error(e));
-  }, [extId, path]);
+    session.getPrettyCode(path).then(setContent, (e) => console.error(e));
+  }, [session, path]);
 
   if (content === undefined) {
     return <span>Loading...</span>;
@@ -39,9 +38,7 @@ const CodeViewer: FunctionComponent<Props> = ({ extId, path }) => {
   return <pre>{unsafeCode}</pre>;
 };
 
-type ExtensionId = ExtensionData["id"];
-
 type Props = {
-  extId: ExtensionId;
+  session: SessionProxy;
   path: string;
 };
