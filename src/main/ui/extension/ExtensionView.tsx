@@ -13,6 +13,7 @@ import "../main-section.css";
 import "./extension.css";
 import type SessionProxy from "../../SessionProxy";
 import TranslationsTile from "../tiles/TranslationsTile";
+import { DownloadFileIcon, RemoveIcon, ShareIcon } from "../icons/LucideIcons";
 
 type Props = {
   session: SessionProxy;
@@ -36,14 +37,20 @@ const ExtensionView: FunctionComponent<Props> = ({ session, collapse }) => {
               </span>
             </h2>
             <div class="buttons" aria-label="Buttons">
-              {/* TODO: share (link) button */}
+              <button type="button" title="Share" disabled>
+                <ShareIcon />
+              </button>
               <button
                 class="download"
                 title="Download"
                 onClick={() => downloadExtension(session)}
                 type="button"
-              />
-              <button class="remove" title="Remove" type="button" />
+              >
+                <DownloadFileIcon />
+              </button>
+              <button class="remove" title="Remove" type="button">
+                <RemoveIcon />
+              </button>
             </div>
           </summary>
           <div class="tiles">

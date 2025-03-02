@@ -50,13 +50,13 @@
   .buttons {
     right: 15px;
 
-    .download {
+    /*.download {
       background-image: url("../../../assets/bootstrap-icons/file-earmark-arrow-down-fill.svg");
     }
 
     .remove {
       background-image: url("../../../assets/bootstrap-icons/trash3-fill.svg");
-    }
+    }*/
   }
 
   &::before,

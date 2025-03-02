@@ -43,18 +43,25 @@
       cursor: pointer;
       padding: 0;
       margin: 0;
-      width: 1.375em;
-      height: 1.375em;
+      width: round(1.25rem, 1px);
+      height: round(1.25rem, 1px);
       background-repeat: no-repeat;
       background-position: center;
       background-size: 100%;
       opacity: 0.5;
       transition: opacity 0.2s;
 
-      &:hover,
-      &:focus,
-      &:focus-visible {
-        opacity: 1;
+      &:not(:disabled) {
+        &:hover,
+        &:focus,
+        &:focus-visible {
+          opacity: 1;
+        }
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
       }
     }
   }
