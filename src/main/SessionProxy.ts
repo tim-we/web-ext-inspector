@@ -55,6 +55,10 @@ export default class SessionProxy {
     return this.#remoteSession.getPrettyCode(path);
   }
 
+  getFileDownloadUrl(path: string): Promise<string> {
+    return this.#remoteExtension.getFileURL(path);
+  }
+
   async dispose() {
     this.#remoteSession.free();
     this.#remoteSession[releaseProxy]();

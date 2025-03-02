@@ -1,9 +1,9 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
+import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
 
 import Tile from "./Tile";
 
-type Props = ExtensionData["dynamicAnalysis"];
+type Props = ExtensionSummary["dynamicAnalysis"];
 
 const DynamicAnalysisTile: FunctionComponent<Props> = ({ supported, background, jsType }) => {
   return (

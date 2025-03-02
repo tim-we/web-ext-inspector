@@ -1,16 +1,16 @@
 import * as Comlink from "comlink";
 import type { FunctionComponent } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import type Extension from "../../../extension/Extension";
 import wrappedWorker from "../../MainWorkerRef";
 import type { LoadingStatus } from "../../background";
 import { useSessionStore } from "../SessionStore";
 
 type Props = {
   source: ExtensionSource;
+  onClose?: () => unknown;
 };
 
-const ExtensionLoadingProgress: FunctionComponent<Props> = ({ source }) => {
+const ExtensionLoadingProgress: FunctionComponent<Props> = ({ source, onClose }) => {
   const { addSession: addExtension } = useSessionStore();
   const [state, setState] = useState<LoadingStatus | "error">("worker-init");
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -27,7 +27,10 @@ const ExtensionLoadingProgress: FunctionComponent<Props> = ({ source }) => {
         Comlink.proxy((newState: LoadingStatus) => setState(newState))
       )
       .then(
-        (data) => addExtension(data),
+        (data) => {
+          addExtension(data);
+          onClose?.();
+        },
         (error: string) => setErrorMessage(error)
       );
   }, [JSON.stringify(source), addExtension]);

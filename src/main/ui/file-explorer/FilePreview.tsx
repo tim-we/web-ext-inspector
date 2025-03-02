@@ -2,7 +2,6 @@ import type { FunctionComponent } from "preact";
 import { useContext, useRef, useState } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import * as paths from "../../../utilities/paths";
-import wrappedWorker from "../../MainWorkerRef";
 import SessionContext from "../contexts/SessionContext";
 import TagList from "./TagList";
 
@@ -62,12 +61,12 @@ const FilePreview: FunctionComponent<FilePreviewProps> = ({ node, onClose }) => 
 export default FilePreview;
 
 const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
-  const extId = useContext(SessionContext)!;
+  const session = useContext(SessionContext)!;
   const isAudio = node.tags.includes("audio");
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   const playFn = async () => {
-    const url = await wrappedWorker.getFileDownloadUrl(extId, node.path);
+    const url = await session.getFileDownloadUrl(node.path);
     const audio = new Audio(url);
     await audio.play();
     setAudioElement(audio);
@@ -83,7 +82,7 @@ const PreviewButtons: FunctionComponent<PreviewButtonsProps> = ({ node }) => {
 
   const downloadFn = async () => {
     const a = document.createElement("a");
-    a.href = await wrappedWorker.getFileDownloadUrl(extId, node.path);
+    a.href = await session.getFileDownloadUrl(node.path);
     a.download = node.name;
     a.click();
   };

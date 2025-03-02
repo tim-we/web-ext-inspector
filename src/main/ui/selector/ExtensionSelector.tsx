@@ -41,10 +41,7 @@ const ExtensionSelector: FunctionComponent<Props> = ({ closable }) => {
     return (
       <ExtensionLoadingProgress
         source={{ type: "url", url: URL.createObjectURL(file) }}
-        callback={(result) => {
-          setState("selecting");
-          console.log("done", result);
-        }}
+        onClose={() => setState("selecting")}
       />
     );
   }

@@ -77,5 +77,5 @@ export function move(root: FSFolder, currentPosition: string, key: KeyboardEvent
     return currentNode;
   }
 
-  return nextNode;
+  return nextNode ?? currentNode;
 }

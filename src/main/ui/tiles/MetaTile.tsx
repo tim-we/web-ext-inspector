@@ -1,5 +1,5 @@
 import type { FunctionComponent } from "preact";
-import type { ExtensionData } from "../../../extension/types/ExtensionData";
+import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
 import Tile from "./Tile";
 
 import "./meta-tile.css";
@@ -7,9 +7,10 @@ import "./meta-tile.css";
 const sources = {
   amo: "addons.mozilla.org",
   cws: "Chrome Web Store",
-  file: "Local file"
+  file: "Local file",
+  url: "URL"
 };
-const MetaTile: FunctionComponent<ExtensionData["meta"]> = ({
+const MetaTile: FunctionComponent<ExtensionSummary["meta"]> = ({
   icon,
   author,
   source,
