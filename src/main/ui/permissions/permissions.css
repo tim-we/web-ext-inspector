@@ -1,3 +1,12 @@
+@import url("../variables.css");
+
+.permission-set {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .permission {
   --permission-height: 24px;
 
@@ -9,6 +18,8 @@
   border: 1px solid rgba(255, 255, 255, 0.25);
   height: var(--permission-height);
   line-height: calc(var(--permission-height) - 2px);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  cursor: default;
 
   &.required {
     background-color: rgb(227, 103, 12);

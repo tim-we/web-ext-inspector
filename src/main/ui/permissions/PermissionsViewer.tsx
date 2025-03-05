@@ -3,7 +3,6 @@ import type { PermissionsInfo } from "../../../extension/Extension";
 
 import { useEffect, useState } from "preact/hooks";
 
-import wrappedWorker from "../../MainWorkerRef";
 import Permission from "./Permission";
 
 import "./permissions.css";
@@ -27,21 +26,25 @@ const PermissionsViewer: FunctionComponent<ViewerProps> = ({ session }) => {
     <>
       <fieldset>
         <legend>API</legend>
-        {permissions.api.required.map((p) => (
-          <Permission key={p} name={p} required={true} />
-        ))}
-        {permissions.api.optional.map((p) => (
-          <Permission key={p} name={p} required={false} />
-        ))}
+        <div class="permission-set">
+          {permissions.api.required.map((p) => (
+            <Permission key={p} name={p} required={true} />
+          ))}
+          {permissions.api.optional.map((p) => (
+            <Permission key={p} name={p} required={false} />
+          ))}
+        </div>
       </fieldset>
       <fieldset>
         <legend>Host</legend>
-        {permissions.host.required.map((p) => (
-          <Permission key={p} host={p} required={true} />
-        ))}
-        {permissions.host.optional.map((p) => (
-          <Permission key={p} host={p} required={false} />
-        ))}
+        <div class="permission-set">
+          {permissions.host.required.map((p) => (
+            <Permission key={p} host={p} required={true} />
+          ))}
+          {permissions.host.optional.map((p) => (
+            <Permission key={p} host={p} required={false} />
+          ))}
+        </div>
       </fieldset>
     </>
   );
