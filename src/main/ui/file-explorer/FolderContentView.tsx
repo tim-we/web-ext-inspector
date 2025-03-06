@@ -5,11 +5,9 @@ import { createContext } from "preact";
 import { useContext, useEffect, useId, useRef, useState } from "preact/hooks";
 
 import { scrollIntoViewIfNeeded } from "../../../utilities/dom";
-import * as paths from "../../../utilities/paths";
-import wrappedWorker from "../../MainWorkerRef";
 import { openCodeViewer } from "../code-viewer/CodeViewer";
-import SessionContext from "../contexts/SessionContext";
 import SelectedFSNodeContext from "../contexts/SelectedFSNodeContext";
+import SessionContext from "../contexts/SessionContext";
 import TagList from "./TagList";
 
 const noop = () => undefined;

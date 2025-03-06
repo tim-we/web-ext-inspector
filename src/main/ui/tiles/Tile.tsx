@@ -1,9 +1,9 @@
 import type { FunctionComponent } from "preact";
 import { useContext, useState } from "preact/hooks";
 
+import type SessionProxy from "../../SessionProxy";
 import SessionContext from "../contexts/SessionContext";
 import { type PopupWindowOptions, showPopupWindow } from "../popups/PopupWindow";
-import type SessionProxy from "../../SessionProxy";
 
 import ExtensionColorContext from "../contexts/ExtensionColorContext";
 import "./tiles.css";

@@ -12,8 +12,8 @@ import SessionContext from "../contexts/SessionContext";
 import "../main-section.css";
 import "./extension.css";
 import type SessionProxy from "../../SessionProxy";
-import TranslationsTile from "../tiles/TranslationsTile";
 import { DownloadFileIcon, RemoveIcon, ShareIcon } from "../icons/LucideIcons";
+import TranslationsTile from "../tiles/TranslationsTile";
 
 type Props = {
   session: SessionProxy;

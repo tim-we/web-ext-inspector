@@ -1,8 +1,8 @@
 import type { FunctionComponent } from "preact";
-import PermissionsViewer from "../permissions/PermissionsViewer";
-import Tile from "./Tile";
 import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
 import type SessionProxy from "../../SessionProxy";
+import PermissionsViewer from "../permissions/PermissionsViewer";
+import Tile from "./Tile";
 
 const PermissionsTile: FunctionComponent<ExtensionSummary["permissions"]> = ({
   required,

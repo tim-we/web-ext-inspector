@@ -1,7 +1,7 @@
 import * as Comlink from "comlink";
 
 import type { SupportedLanguage } from "../code-renderer/CodeRenderer";
-import Extension, { type TranslationsInfo } from "../extension/Extension";
+import Extension from "../extension/Extension";
 import * as FSCursor from "../extension/FSCursor";
 import type { FSNodeDTO } from "../extension/FileSystem";
 import Runner from "../runner/Runner";
@@ -9,6 +9,7 @@ import createUniqueId from "../utilities/unique-id";
 
 // TODO: consider dynamically importing this (code splitting)
 import { renderCode } from "../code-renderer/CodeRenderer";
+import type { LocaleInfo } from "../extension/modules/Translations";
 import type { ExtensionSummary } from "../extension/types/ExtensionSummary";
 
 export class Session {
@@ -92,7 +93,7 @@ export class Session {
         background: backgroundScripts,
         jsType: Runner.supports(this.#extension) ? "classic" : undefined
       },
-      translations: extension.translationInfo
+      translations: extension.translations.getSummary()
     };
   }
 
@@ -111,8 +112,8 @@ export class Session {
     return children;
   }
 
-  getTranslations(locale: string): TranslationsInfo | undefined {
-    return this.#extension.getTranslations(locale);
+  getTranslations(locale: string): LocaleInfo | undefined {
+    return this.#extension.translations.getLocaleData(locale);
   }
 
   changeFileSystemCursor(currentNode: string, key: KeyboardEvent["key"]): string {

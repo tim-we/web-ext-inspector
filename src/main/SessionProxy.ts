@@ -1,9 +1,9 @@
 import { type Remote, releaseProxy } from "comlink";
+import type { TranslationsInfo } from "../extension/Extension";
+import type Extension from "../extension/Extension";
 import type { ExtensionSource } from "../extension/sources/ExtensionSource";
 import type { ExtensionSummary } from "../extension/types/ExtensionSummary";
 import type { Session } from "./Session";
-import type { TranslationsInfo } from "../extension/Extension";
-import type Extension from "../extension/Extension";
 
 export default class SessionProxy {
   readonly id: Session["id"];

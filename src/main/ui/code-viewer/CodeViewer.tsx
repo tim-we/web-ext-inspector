@@ -5,8 +5,8 @@ import { useEffect, useState } from "preact/hooks";
 import "prismjs/themes/prism-okaidia.css";
 import "./code-viewer.css";
 
-import { showPopupWindow } from "../popups/PopupWindow";
 import type SessionProxy from "../../SessionProxy";
+import { showPopupWindow } from "../popups/PopupWindow";
 
 export function openCodeViewer(session: SessionProxy, path: string): void {
   showPopupWindow(session.id, {

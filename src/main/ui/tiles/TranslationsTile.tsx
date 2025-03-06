@@ -1,6 +1,6 @@
 import type { FunctionComponent } from "preact";
-import DonutChart from "../common/DonutChart";
 import type { ExtensionSummary } from "../../../extension/types/ExtensionSummary";
+import DonutChart from "../common/DonutChart";
 import type { PopupWindowOptions } from "../popups/PopupWindow";
 import TranslationsViewer from "../translations/TranslationsViewer";
 import Tile from "./Tile";
