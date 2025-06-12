@@ -37,6 +37,6 @@ async function getChromeVersionsInfo() {
 await getChromeVersionsInfo()
   .then(
     (info) => info.channels.Stable.version,
-    () => "133.0.6943.126" // fallback (19.02.2025)
+    () => "137.0.7151.70" // fallback (12.06.2025)
   )
   .then(console.log);

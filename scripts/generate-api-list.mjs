@@ -9,7 +9,7 @@ import stripJsonComments from "strip-json-comments";
 
 // Chrome: https://github.com/cvsuser-chromium/chromium/tree/master/chrome/common/extensions/api
 
-const tag = "FIREFOX_136_0_RELEASE";
+const tag = "FIREFOX_139_0b1_RELEASE";
 const schemaURLs = ["browser", "toolkit"].map(
   (x) =>
     `https://hg.mozilla.org/mozilla-unified/archive/${tag}.zip/${x}/components/extensions/schemas/`
