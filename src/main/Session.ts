@@ -1,16 +1,15 @@
 import * as Comlink from "comlink";
 
 import type { SupportedLanguage } from "../code-renderer/CodeRenderer";
-import Extension from "../extension/Extension";
-import * as FSCursor from "../extension/FSCursor";
-import type { FSNodeDTO } from "../extension/FileSystem";
-import Runner from "../runner/Runner";
-import createUniqueId from "../utilities/unique-id";
-
 // TODO: consider dynamically importing this (code splitting)
 import { renderCode } from "../code-renderer/CodeRenderer";
+import Extension from "../extension/Extension";
+import type { FSNodeDTO } from "../extension/FileSystem";
+import * as FSCursor from "../extension/FSCursor";
 import type { LocaleInfo } from "../extension/modules/Translations";
 import type { ExtensionSummary } from "../extension/types/ExtensionSummary";
+import Runner from "../runner/Runner";
+import createUniqueId from "../utilities/unique-id";
 
 export class Session {
   readonly id: string;
@@ -187,7 +186,7 @@ function isHostPermission(permission: string): boolean {
     return true;
   }
 
-  return /\:\/\//.test(permission);
+  return /:\/\//.test(permission);
 }
 
 export type HighlightedCode = {

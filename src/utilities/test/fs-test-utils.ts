@@ -1,5 +1,5 @@
 import type * as zip from "@zip.js/zip.js";
-import { type FSFolder, createFileSystem } from "../../extension/FileSystem";
+import { createFileSystem, type FSFolder } from "../../extension/FileSystem";
 
 export async function createTestFS(filePaths: string[]): Promise<FSFolder> {
   const generator = async function* () {

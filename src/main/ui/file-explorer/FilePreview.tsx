@@ -2,10 +2,9 @@ import type { FunctionComponent } from "preact";
 import { useContext, useRef, useState } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import * as paths from "../../../utilities/paths";
+import ActionButton from "../common/ActionButton";
 import SessionContext from "../contexts/SessionContext";
 import TagList from "./TagList";
-
-import ActionButton from "../common/ActionButton";
 import "./file-preview.css";
 
 const closeAnimationKeyframes: Keyframe[] = [

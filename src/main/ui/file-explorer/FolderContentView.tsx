@@ -1,8 +1,7 @@
 import type { FunctionComponent } from "preact";
-import type { FSNodeDTO } from "../../../extension/FileSystem";
-
 import { createContext } from "preact";
 import { useContext, useEffect, useId, useRef, useState } from "preact/hooks";
+import type { FSNodeDTO } from "../../../extension/FileSystem";
 
 import { scrollIntoViewIfNeeded } from "../../../utilities/dom";
 import { openCodeViewer } from "../code-viewer/CodeViewer";

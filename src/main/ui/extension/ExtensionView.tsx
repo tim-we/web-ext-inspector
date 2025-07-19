@@ -1,14 +1,12 @@
 import type { FunctionComponent } from "preact";
-
-import DynamicAnalysisTile from "../tiles/DynamicAnalysisTile";
-import FilesTile from "../tiles/FilesTile";
-import MetaTile from "../tiles/MetaTile";
-import PermissionsTile from "../tiles/PermissionsTile";
-
 import { useState } from "preact/hooks";
 import { startUserDownload } from "../../../utilities/download";
 import ExtensionColorContext from "../contexts/ExtensionColorContext";
 import SessionContext from "../contexts/SessionContext";
+import DynamicAnalysisTile from "../tiles/DynamicAnalysisTile";
+import FilesTile from "../tiles/FilesTile";
+import MetaTile from "../tiles/MetaTile";
+import PermissionsTile from "../tiles/PermissionsTile";
 import "../main-section.css";
 import "./extension.css";
 import type SessionProxy from "../../SessionProxy";
@@ -36,7 +34,7 @@ const ExtensionView: FunctionComponent<Props> = ({ session, collapse }) => {
                 {meta.version}
               </span>
             </h2>
-            <div class="buttons" aria-label="Buttons">
+            <div class="buttons">
               <button type="button" title="Share" disabled>
                 <ShareIcon />
               </button>
@@ -68,7 +66,7 @@ const ExtensionView: FunctionComponent<Props> = ({ session, collapse }) => {
 
 export default ExtensionView;
 
-async function downloadExtension(extension: SessionProxy): Promise<void> {
+async function downloadExtension(_extension: SessionProxy): Promise<void> {
   // TODO: Create AsyncButton or ActionButton component for async actions
   const url = await Promise.resolve(""); // TODO get download URL
   // TODO generate filename from extension name or slug and version

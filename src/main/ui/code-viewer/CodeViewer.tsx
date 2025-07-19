@@ -1,7 +1,6 @@
 import type { FunctionComponent } from "preact";
-import type { HighlightedCode } from "../../Session";
-
 import { useEffect, useState } from "preact/hooks";
+import type { HighlightedCode } from "../../Session";
 import "prismjs/themes/prism-okaidia.css";
 import "./code-viewer.css";
 

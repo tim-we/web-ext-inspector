@@ -1,8 +1,8 @@
 import * as Comlink from "comlink";
 import type { FunctionComponent } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import wrappedWorker from "../../MainWorkerRef";
 import type { LoadingStatus } from "../../background";
+import wrappedWorker from "../../MainWorkerRef";
 import { useSessionStore } from "../SessionStore";
 
 type Props = {
@@ -15,7 +15,6 @@ const ExtensionLoadingProgress: FunctionComponent<Props> = ({ source, onClose })
   const [state, setState] = useState<LoadingStatus | "error">("worker-init");
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: JSON.stringify is not supported by biome
   useEffect(() => {
     if (source.type !== "url") {
       // TODO

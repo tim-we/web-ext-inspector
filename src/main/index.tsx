@@ -7,8 +7,8 @@ import ExtensionSelector from "./ui/selector/ExtensionSelector";
 
 import "./ui/main.css";
 import SessionProxy from "./SessionProxy";
-import { useSessionStore } from "./ui/SessionStore";
 import { popupRoot } from "./ui/popups/PopupWindow";
+import { useSessionStore } from "./ui/SessionStore";
 
 const root = document.querySelector("main")!;
 
@@ -18,7 +18,7 @@ document.body.append(popupRoot);
 
 const App: Preact.FunctionComponent = () => {
   const { sessions, addSession } = useSessionStore();
-  const [selector, setSelector] = useState<boolean>(true);
+  const [selector, _setSelector] = useState<boolean>(true);
 
   const showSelector = sessions.length === 0 || selector;
 

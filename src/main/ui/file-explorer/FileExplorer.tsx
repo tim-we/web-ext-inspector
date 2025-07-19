@@ -1,8 +1,7 @@
 import type { FunctionComponent } from "preact";
+import { useState } from "preact/hooks";
 import type { FSNodeDTO } from "../../../extension/FileSystem";
 import type SessionProxy from "../../SessionProxy";
-
-import { useState } from "preact/hooks";
 
 import SessionContext from "../contexts/SessionContext";
 import FilePreview from "./FilePreview";

@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { parse } from "acorn";
+
 import type { Node } from "acorn";
+import { parse } from "acorn";
 import * as walk from "acorn-walk";
 import { generate } from "astring";
 import type {
@@ -58,7 +59,7 @@ walk.ancestor(
 
       imports.add(node.source.value);
     },
-    Identifier(node: IdentifierNode, state, ancestors) {
+    Identifier(node: IdentifierNode, _state, ancestors) {
       // TODO: detect WASM
       if (node.name !== "browser" && node.name !== "chrome") {
         return;
@@ -74,14 +75,14 @@ walk.ancestor(
       apiUsage.add(`browser.${apiScope.property.name}.${apiMethod.property.name}`);
       apiUsageCode.add(generate(ancestors.at(-4)));
     },
-    NewExpression(node: NewExpressionNode, state, ancestors) {
+    NewExpression(node: NewExpressionNode, _state, _ancestors) {
       if (node.arguments.length === 0 || node.arguments.length > 2) {
         return;
       }
       if (node.callee.type !== "Identifier" || node.callee.name !== "Worker") {
         return;
       }
-      const [urlNode, optionsNode] = node.arguments as [LiteralNode, Node];
+      const [urlNode, _optionsNode] = node.arguments as [LiteralNode, Node];
       if (urlNode.type !== "Literal") {
         console.warn("Unhandled worker.", node);
       }

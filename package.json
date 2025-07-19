@@ -18,7 +18,7 @@
     "check:format": "biome format src scripts",
     "format": "biome format src scripts --write",
     "lint": "biome check src scripts",
-    "lint:fix": "biome check src scripts --apply",
+    "lint:fix": "biome check src scripts --write --diagnostic-level=error",
     "ci": "biome ci src scripts",
     "test": "vitest run --typecheck",
     "test:watch": "vitest watch",
@@ -30,7 +30,7 @@
     "last 2 Firefox versions, last 2 Chrome versions"
   ],
   "devDependencies": {
-    "@biomejs/biome": "^2.1.1",
+    "@biomejs/biome": "2.1.2",
     "@mdn/browser-compat-data": "^6.0.31",
     "@types/babel__traverse": "^7.20.7",
     "@types/node": "^24.0.13",

@@ -66,7 +66,7 @@ export class FSFile extends FSNode {
     this.#zipEntry = entry;
     this.byteSize = entry.uncompressedSize;
 
-    const extension = name.match(/^[^\/:]*\.(\w+)$/)?.at(1) ?? "";
+    const extension = name.match(/^[^/:]*\.(\w+)$/)?.at(1) ?? "";
     const fileInfo = knownFileNames[name] ?? knownFileExtensions[extension];
 
     if (fileInfo) {

@@ -1,6 +1,6 @@
 // @ts-nocheck
+
 import { parse } from "acorn";
-import type { Node } from "acorn";
 import * as walk from "acorn-walk";
 import { generate } from "astring";
 import type { ImportDeclaration, ImportExpressionNode } from "./acorn.nodes";
@@ -27,7 +27,7 @@ walk.simple(ast, {
       console.warn("Unhandled import", node);
       return;
     }
-    const requestedUrl = node.source.value;
+    const _requestedUrl = node.source.value;
     node.source.value = moduleUrl;
     node.source.raw = JSON.stringify(moduleUrl);
   },
@@ -36,7 +36,7 @@ walk.simple(ast, {
       console.warn("Unhandled dynamic import", node);
       return;
     }
-    const requestedUrl = node.source.value;
+    const _requestedUrl = node.source.value;
     node.source.value = moduleUrl;
     node.source.raw = JSON.stringify(moduleUrl);
   }

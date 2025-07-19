@@ -1,7 +1,6 @@
 import type { FunctionComponent } from "preact";
-import type { PermissionsInfo } from "../../../extension/Extension";
-
 import { useEffect, useState } from "preact/hooks";
+import type { PermissionsInfo } from "../../../extension/Extension";
 
 import Permission from "./Permission";
 

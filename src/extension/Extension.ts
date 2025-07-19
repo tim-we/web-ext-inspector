@@ -1,7 +1,7 @@
 import * as zip from "@zip.js/zip.js";
 import prettyBytes from "pretty-bytes";
-import { createFileSystem } from "./FileSystem";
 import type { FSFolder } from "./FileSystem";
+import { createFileSystem } from "./FileSystem";
 import Translations from "./modules/Translations";
 import type { ExtensionSummary } from "./types/ExtensionSummary";
 import type { Manifest } from "./types/Manifest";
@@ -110,7 +110,7 @@ function isHostPermission(permission: string): boolean {
     return true;
   }
 
-  return /\:\/\//.test(permission);
+  return /:\/\//.test(permission);
 }
 
 export type PermissionsInfo = {

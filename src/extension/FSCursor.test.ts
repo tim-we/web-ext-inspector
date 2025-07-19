@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import * as FSCursor from "./FSCursor";
-import { type FSFolder, createFileSystem } from "./FileSystem";
+import { createFileSystem, type FSFolder } from "./FileSystem";
 import { createTestFS } from "./FileSystem.test";
+import * as FSCursor from "./FSCursor";
 
 describe("within a folder", async () => {
   const fs = await createTestFS(["/a", "/b", "/c", "/d"]);
