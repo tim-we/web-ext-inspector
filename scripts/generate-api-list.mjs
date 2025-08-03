@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import bcd from "@mdn/browser-compat-data" with { type: "json" };
 import { BlobReader, TextWriter, ZipReader } from "@zip.js/zip.js";
-import { globSync } from "glob";
 import { decode as htmlDecode } from "html-entities";
 import stringify from "json-stable-stringify";
 import stripJsonComments from "strip-json-comments";
@@ -55,7 +54,7 @@ if (fs.mkdirSync(schemaDir, { recursive: true }) !== undefined) {
 }
 
 // Collect API info
-const jsonFiles = globSync(path.join(schemaDir, "*.json"));
+const jsonFiles = fs.globSync(path.join(schemaDir, "*.json"));
 const apiInfos = {};
 
 for (const file of jsonFiles) {
@@ -106,11 +105,11 @@ for (const file of jsonFiles) {
 
 const compactInfos = {
   functions: Object.entries(apiInfos)
-    .filter(([k, v]) => v.type === "function")
-    .map(([k, v]) => k),
+    .filter(([_k, v]) => v.type === "function")
+    .map(([k]) => k),
   events: Object.entries(apiInfos)
-    .filter(([k, v]) => v.type === "event")
-    .map(([k, v]) => k)
+    .filter(([_k, v]) => v.type === "event")
+    .map(([k]) => k)
 };
 
 // Output
